@@ -15,13 +15,13 @@ export async function generateMetadata({ params }) {
     title: `${product.title} - Zesty Paws Headless Storefront`,
     description: `Buy ${product.title} online. Premium active ingredients (DE111, AlaskOmega), fast US tracked shipping, and 30-day happiness guarantee.`,
     alternates: {
-      canonical: `https://zestypaws.com/products/${product.handle}`,
+      canonical: `https://cat-dog-animal.vercel.app/products/${product.handle}`,
     },
     openGraph: {
       title: `${product.title} - Premium Supplement Bites`,
       description: `Shop veterinarian-approved ${product.title} with clinical bio-actives. Guaranteed direct savings.`,
       images: [product.images[0]],
-      url: `https://zestypaws.com/products/${product.handle}`,
+      url: `https://cat-dog-animal.vercel.app/products/${product.handle}`,
     }
   };
 }
@@ -61,7 +61,7 @@ export default async function ProductPage({ params }) {
       "priceValidUntil": "2027-12-31",
       "itemCondition": "https://schema.org/NewCondition",
       "availability": "https://schema.org/InStock",
-      "url": `https://zestypaws.com/products/${product.handle}`
+      "url": `https://cat-dog-animal.vercel.app/products/${product.handle}`
     },
     "aggregateRating": {
       "@type": "AggregateRating",

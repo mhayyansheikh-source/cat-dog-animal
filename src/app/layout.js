@@ -15,12 +15,12 @@ export const metadata = {
   description: "Experience premium clinical-grade pet supplements at direct-to-consumer prices. Certified natural joint, calming, allergy, and immune support bites for dogs and cats. Fast US tracked delivery.",
   keywords: "zesty paws, dog supplements, cat joint support, calming bites, puppy vitamins, allergy immune pet supplements",
   alternates: {
-    canonical: "https://zestypaws.com",
+    canonical: "https://cat-dog-animal.vercel.app",
   },
   openGraph: {
     title: "Zesty Paws Headless Storefront - Premium Pet Wellness",
     description: "Veterinarian-recommended clinical supplement bites for cats and dogs. Fast US tracked delivery.",
-    url: "https://zestypaws.com",
+    url: "https://cat-dog-animal.vercel.app",
     siteName: "Zesty Paws Headless",
     locale: "en_US",
     type: "website",
