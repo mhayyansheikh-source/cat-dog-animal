@@ -167,13 +167,12 @@ export async function getShopifyProductByHandle(handle) {
 
 export async function createShopifyCheckout(lineItems) {
   const mutation = `
-    mutation checkoutCreate($input: CheckoutCreateInput!) {
-      checkoutCreate(input: $input) {
-        checkout {
-          webUrl
+    mutation cartCreate($input: CartInput!) {
+      cartCreate(input: $input) {
+        cart {
+          checkoutUrl
         }
-        checkoutUserErrors {
-          code
+        userErrors {
           field
           message
         }
@@ -181,14 +180,20 @@ export async function createShopifyCheckout(lineItems) {
     }
   `;
 
+  // Map variantId parameter keys to merchandiseId as expected by CartInput
+  const lines = lineItems.map((item) => ({
+    merchandiseId: item.variantId || item.id,
+    quantity: item.quantity,
+  }));
+
   const data = await shopifyFetch({
     query: mutation,
-    variables: { input: { lineItems } }
+    variables: { input: { lines } }
   });
 
-  if (data?.checkoutCreate?.checkoutUserErrors?.length > 0) {
-    console.error("Shopify Checkout mutation errors:", data.checkoutCreate.checkoutUserErrors);
+  if (data?.cartCreate?.userErrors?.length > 0) {
+    console.error("Shopify Cart mutation errors:", data.cartCreate.userErrors);
   }
 
-  return data?.checkoutCreate?.checkout?.webUrl || null;
+  return data?.cartCreate?.cart?.checkoutUrl || null;
 }
