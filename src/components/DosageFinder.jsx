@@ -2,10 +2,9 @@
 
 import React, { useState } from "react";
 import { useCart } from "@/context/CartContext";
-import productsData from "@/data/products.json";
 import { Check, ArrowRight, RotateCcw, Award } from "lucide-react";
 
-export default function DosageFinder() {
+export default function DosageFinder({ products = [] }) {
   const { addToCart } = useCart();
   const [step, setStep] = useState(1);
   const [petType, setPetType] = useState("");
@@ -47,7 +46,7 @@ export default function DosageFinder() {
       }
     }
 
-    const matchedProduct = productsData.find(p => p.handle === recommendedHandle) || productsData[0];
+    const matchedProduct = products.find(p => p.handle === recommendedHandle) || products[0];
     return { product: matchedProduct, dosage };
   };
 

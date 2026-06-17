@@ -2,14 +2,13 @@
 
 import React, { useState } from "react";
 import ProductCard from "./ProductCard";
-import productsData from "@/data/products.json";
 import { motion } from "framer-motion";
 
-export default function ProductTabs() {
+export default function ProductTabs({ products = [] }) {
   const [activeTab, setActiveTab] = useState("all");
 
   // Filtering products
-  const filteredProducts = productsData.filter((product) => {
+  const filteredProducts = products.filter((product) => {
     if (activeTab === "all") return true;
     if (activeTab === "dog") return product.product_type === "Dog";
     if (activeTab === "cat") return product.product_type === "Cat";

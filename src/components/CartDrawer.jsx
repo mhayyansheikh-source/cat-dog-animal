@@ -5,6 +5,7 @@ import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Trash2, Plus, Minus, ShoppingBag, CreditCard, Shield } from "lucide-react";
 import Link from "next/link";
+import { createShopifyCheckout } from "@/utils/shopify";
 
 export default function CartDrawer() {
   const {
@@ -62,9 +63,25 @@ export default function CartDrawer() {
     discountPromoText = "🎉 Max 15% bulk discount applied to your order!";
   }
 
-  // Handle Mock Checkout click
-  const handleCheckout = () => {
-    alert(`Redirecting to Shopify Checkout secure gateway...\nTotal Amount: $${total.toFixed(2)} USD`);
+  // Handle Shopify checkout redirect
+  const handleCheckout = async () => {
+    try {
+      const lineItems = cartItems.map((item) => ({
+        variantId: item.variant.id,
+        quantity: item.quantity,
+      }));
+
+      // Trigger mutation
+      const checkoutUrl = await createShopifyCheckout(lineItems);
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      } else {
+        alert("Failed to build a checkout session. Please try again.");
+      }
+    } catch (e) {
+      console.error("Error creating checkout:", e);
+      alert("Checkout error: " + e.message);
+    }
   };
 
   return (

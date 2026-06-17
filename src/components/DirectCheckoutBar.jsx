@@ -2,12 +2,27 @@
 
 import React from "react";
 import { CreditCard } from "lucide-react";
+import { createShopifyCheckout } from "@/utils/shopify";
 
 export default function DirectCheckoutBar({ product, activeVariant }) {
   if (!product || !activeVariant) return null;
 
-  const handleDirectBuy = () => {
-    alert(`Bypassing cart... Redirecting directly to Shopify checkout gateway.\nItem: ${product.title} (${activeVariant.title})\nPrice: $${activeVariant.price}`);
+  const handleDirectBuy = async () => {
+    try {
+      const lineItems = [{
+        variantId: activeVariant.id,
+        quantity: 1
+      }];
+      
+      const checkoutUrl = await createShopifyCheckout(lineItems);
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      } else {
+        alert("Failed to build a direct checkout session.");
+      }
+    } catch (e) {
+      console.error("Direct buy redirect error:", e);
+    }
   };
 
   return (
