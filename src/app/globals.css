@@ -1,26 +1,273 @@
-@import "tailwindcss";
+@import "bootstrap/dist/css/bootstrap.min.css";
 
+/* Zesty Paws Brand Identity Tokens */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand Core Colors */
+  --zesty-orange: #FF7A00;
+  --zesty-orange-rgb: 255, 122, 0;
+  --primary-gold: #F7BE00;
+  --primary-gold-rgb: 247, 190, 0;
+  
+  /* Trust & Compliance Colors */
+  --forest-green: #00653B;
+  --forest-green-rgb: 0, 101, 59;
+  --active-green: #217B37;
+  --active-green-rgb: 33, 123, 55;
+  
+  /* Text & Surface Elements */
+  --charcoal-dark: #383838;
+  --charcoal-dark-rgb: 56, 56, 56;
+  --soft-sand: #FFFDF9;
+  --pale-gray: #E1E1E1;
+  --pale-gray-darker: #AFAFAF;
+  --white: #FFFFFF;
+  --alert-red: #DE2A2A;
+  --low-stock-red: #B2292E;
+
+  /* Typography Fallbacks */
+  --font-heading: Georgia, "Times New Roman", serif;
+  --font-body: var(--font-outfit), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Card & Button Geometry */
+  --button-border-radius: 30px;
+  --card-border-radius: 16px;
+  --badge-border-radius: 8px;
+  
+  /* Global Layout Variables */
+  --header-height: 80px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Base Overrides */
+html, body {
+  background-color: var(--white);
+  color: var(--charcoal-dark);
+  font-family: var(--font-body);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+  height: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Typography Elements */
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--charcoal-dark);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+p, span, li, button, input, select, textarea, .font-body {
+  font-family: var(--font-body);
+}
+
+/* Premium Layout Elements */
+.bg-soft-sand {
+  background-color: var(--soft-sand) !important;
+}
+
+.bg-zesty-orange {
+  background-color: var(--zesty-orange) !important;
+}
+
+.bg-forest-green {
+  background-color: var(--forest-green) !important;
+}
+
+.text-zesty-orange {
+  color: var(--zesty-orange) !important;
+}
+
+.text-forest-green {
+  color: var(--forest-green) !important;
+}
+
+.text-active-green {
+  color: var(--active-green) !important;
+}
+
+.text-charcoal-dark {
+  color: var(--charcoal-dark) !important;
+}
+
+/* Rounded geometry overlays */
+.rounded-card {
+  border-radius: var(--card-border-radius) !important;
+  border: 1px solid var(--pale-gray);
+  overflow: hidden;
+  background-color: var(--white);
+}
+
+.rounded-pill-cta {
+  border-radius: var(--button-border-radius) !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.75rem 2rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+}
+
+/* Button variants styling */
+.btn-zesty-primary {
+  background-color: var(--primary-gold) !important;
+  color: var(--charcoal-dark) !important;
+  border: 2px solid var(--primary-gold) !important;
+}
+
+.btn-zesty-primary:hover {
+  background-color: var(--white) !important;
+  color: var(--charcoal-dark) !important;
+  border: 2px solid var(--primary-gold) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(247, 190, 0, 0.2);
+}
+
+.btn-zesty-secondary {
+  background-color: var(--zesty-orange) !important;
+  color: var(--white) !important;
+  border: 2px solid var(--zesty-orange) !important;
+}
+
+.btn-zesty-secondary:hover {
+  background-color: var(--white) !important;
+  color: var(--zesty-orange) !important;
+  border: 2px solid var(--zesty-orange) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 122, 0, 0.2);
+}
+
+.btn-zesty-outline {
+  background-color: transparent !important;
+  color: var(--charcoal-dark) !important;
+  border: 2px solid var(--charcoal-dark) !important;
+}
+
+.btn-zesty-outline:hover {
+  background-color: var(--charcoal-dark) !important;
+  color: var(--white) !important;
+  border: 2px solid var(--charcoal-dark) !important;
+  transform: translateY(-2px);
+}
+
+/* Custom Scrollbar for premium touch */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--soft-sand);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--pale-gray-darker);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--zesty-orange);
+}
+
+/* Announcement Bar Rolling Effects */
+.announcement-bar {
+  background-color: var(--forest-green);
+  color: var(--white);
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+/* Glassmorphism & premium UI overlay classes */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Micro-animations */
+.hover-scale {
+  transition: transform 0.2s ease-in-out;
+}
+.hover-scale:hover {
+  transform: scale(1.03);
+}
+
+.star-rating {
+  color: var(--primary-gold);
+  display: inline-flex;
+  gap: 2px;
+}
+
+/* Dropshipping shipping details component style */
+.shipping-alert-box {
+  background-color: rgba(33, 123, 55, 0.08);
+  border: 1px dashed var(--active-green);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 0.9rem;
+}
+
+/* Interactive Accordions for AEO/GEO Structured FAQs */
+.geo-faq-item {
+  border-bottom: 1px solid var(--pale-gray);
+  padding: 1rem 0;
+}
+.geo-faq-question {
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.geo-faq-answer {
+  padding-top: 0.5rem;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+/* Variant selectors styling */
+.variant-swatch {
+  border: 2px solid var(--pale-gray);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+}
+.variant-swatch.active {
+  border-color: var(--zesty-orange);
+  background-color: rgba(255, 122, 0, 0.05);
+  color: var(--zesty-orange);
+}
+
+.variant-swatch:hover:not(.active) {
+  border-color: var(--pale-gray-darker);
+}
+
+/* Volume discounts style */
+.volume-card {
+  border: 2px solid var(--pale-gray);
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+.volume-card.active {
+  border-color: var(--zesty-orange);
+  background-color: rgba(255, 122, 0, 0.05);
+}
+.volume-card .discount-badge {
+  position: absolute;
+  top: -10px;
+  right: 10px;
+  background-color: var(--zesty-orange);
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: bold;
 }
