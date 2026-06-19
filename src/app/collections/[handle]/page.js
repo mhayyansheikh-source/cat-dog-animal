@@ -28,7 +28,7 @@ const COLLECTION_CONFIGS = {
     getProducts: async (liveProducts) => liveProducts,
     sidebar: {
       categories: [
-        { label: "All Products", count: liveProducts ? liveProducts.length : 0 },
+        { label: "All Products", count: 12 },
         { label: "Supplements", count: 8 },
         { label: "Treats & Chews", count: 6 },
         { label: "Food", count: 3 },
