@@ -20,7 +20,7 @@ async function shopifyFetch({ query, variables = {} }) {
       method: "POST",
       headers,
       body: JSON.stringify({ query, variables }),
-      next: { revalidate: 300 } // Cache data on Vercel for 5 minutes
+      next: { revalidate: 30 } // Cache data on Vercel for 5 minutes
     });
 
     const result = await response.json();
