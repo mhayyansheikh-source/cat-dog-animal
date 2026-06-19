@@ -10,8 +10,15 @@ export default function ProductTabs({ products = [] }) {
   // Filtering products
   const filteredProducts = products.filter((product) => {
     if (activeTab === "all") return true;
-    if (activeTab === "dog") return product.product_type === "Dog";
-    if (activeTab === "cat") return product.product_type === "Cat";
+    if (activeTab === "cat-supplements") {
+      return product.product_type === "Cat Supplements" || product.product_type === "Cat Toy";
+    }
+    if (activeTab === "standard") {
+      return product.tags.includes("standard") || !product.handle.includes("top-cat");
+    }
+    if (activeTab === "top-cat") {
+      return product.tags.includes("top-cat") || product.handle.includes("top-cat");
+    }
     return true;
   });
 
@@ -24,21 +31,22 @@ export default function ProductTabs({ products = [] }) {
             className="fw-bold text-uppercase small font-body d-block mb-2"
             style={{ color: "var(--orange)", letterSpacing: "0.12em" }}
           >
-            Our Supplements Catalog
+            Our Cat Supplements Catalog
           </span>
           <h2 className="font-heading display-5 fw-bold mt-2" style={{ color: "var(--charcoal)" }}>
             Led by Science, Loved by Pets
           </h2>
           <p className="text-muted font-body max-w-lg mx-auto" style={{ fontSize: "16px" }}>
-            Choose the perfect formula to maintain your pet's wellness. Switch below to preview puppy and kitty formulations.
+            Choose the perfect formula to maintain your cat's wellness and activity. Switch below to preview formulations and editions.
           </p>
 
           {/* Switcher Buttons */}
           <div className="d-flex justify-content-center gap-2 mt-4 flex-wrap">
             {[
               { id: "all", label: "🌟 Show All" },
-              { id: "dog", label: "🐕 Dog Supplements" },
-              { id: "cat", label: "🐈 Cat Supplements" },
+              { id: "cat-supplements", label: "🐈 Cat Supplements" },
+              { id: "standard", label: "📦 Standard Edition" },
+              { id: "top-cat", label: "🐾 Top Cat Edition" },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -47,14 +55,14 @@ export default function ProductTabs({ products = [] }) {
                 style={{
                   backgroundColor:
                     activeTab === tab.id
-                      ? tab.id === "cat"
+                      ? (tab.id === "cat-supplements" || tab.id === "top-cat")
                         ? "var(--teal)"
                         : "var(--orange)"
                       : "var(--white)",
                   color: activeTab === tab.id ? "var(--white)" : "var(--gray)",
                   borderColor:
                     activeTab === tab.id
-                      ? tab.id === "cat"
+                      ? (tab.id === "cat-supplements" || tab.id === "top-cat")
                         ? "var(--teal)"
                         : "var(--orange)"
                       : "var(--border)",

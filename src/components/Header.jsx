@@ -82,13 +82,18 @@ export default function Header() {
                 </Link>
               </li>
               <li className="nav-item px-2">
-                <a href="#shop-dogs" className="nav-link hover-scale" style={{ color: "var(--charcoal-dark)" }}>
-                  Dog Supplements
+                <a href="#catalog-section" className="nav-link hover-scale" style={{ color: "var(--charcoal-dark)" }}>
+                  Cat Supplements
                 </a>
               </li>
               <li className="nav-item px-2">
-                <a href="#shop-cats" className="nav-link hover-scale" style={{ color: "var(--charcoal-dark)" }}>
-                  Cat Supplements
+                <a href="#catalog-section" className="nav-link hover-scale" style={{ color: "var(--charcoal-dark)" }}>
+                  Standard Edition
+                </a>
+              </li>
+              <li className="nav-item px-2">
+                <a href="#catalog-section" className="nav-link hover-scale" style={{ color: "var(--charcoal-dark)" }}>
+                  Top Cat Edition
                 </a>
               </li>
               <li className="nav-item px-2">

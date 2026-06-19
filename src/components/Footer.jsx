@@ -17,50 +17,79 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-light border-top pt-5 pb-3 mt-auto">
+    <footer className="premium-footer pt-5 pb-4 mt-auto">
       <div className="container">
         <div className="row g-4 mb-5">
           {/* Brand & Mission column */}
           <div className="col-lg-3 col-md-6">
-            <h5 className="font-heading mb-3" style={{ color: "var(--zesty-orange)" }}>
-              Peteora
-            </h5>
-            <p className="small text-muted mb-4">
-              Our mission is to keep your pet feeling zesty from head to tail. We partner directly with premium veterinary ingredient suppliers to provide delicious, clinical-grade supplements at direct-to-consumer prices.
+            <div className="d-flex align-items-center mb-3">
+              <svg
+                className="me-2"
+                width="34"
+                height="34"
+                viewBox="0 0 100 100"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="50" cy="50" r="45" fill="#FF7A00" fillOpacity="0.1" />
+                <path
+                  d="M50 35C45 35 41 39 41 44C41 49 45 53 50 53C55 53 59 49 59 44C59 39 55 35 50 35Z"
+                  fill="#FF7A00"
+                />
+                <circle cx="33" cy="30" r="7" fill="#F7BE00" />
+                <circle cx="67" cy="30" r="7" fill="#F7BE00" />
+                <circle cx="23" cy="45" r="7" fill="#FF7A00" />
+                <circle cx="77" cy="45" r="7" fill="#FF7A00" />
+                <path
+                  d="M30 65C38 75 62 75 70 65C62 60 38 60 30 65Z"
+                  fill="#00653B"
+                />
+              </svg>
+              <span className="font-heading fs-4 fw-bold tracking-wide" style={{ color: "var(--zesty-orange)" }}>
+                Pet<span style={{ color: "var(--white)" }}>eora</span>
+              </span>
+            </div>
+            <p className="small mb-4 text-white-50" style={{ lineHeight: "1.6" }}>
+              Our mission is to keep your pet active, happy, and feeling zesty. We partner directly with premium suppliers to offer clinical-grade pet care products at direct-to-consumer prices.
             </p>
             <div className="d-flex align-items-center gap-2 mb-3">
-              <ShieldCheck size={20} className="text-forest-green" />
-              <span className="small fw-bold text-forest-green">100% Quality Audited & Approved</span>
+              <ShieldCheck size={20} style={{ color: "var(--orange)" }} />
+              <span className="small fw-semibold text-white-50">100% Quality Audited & Approved</span>
             </div>
             {/* NASC quality badge text simulation */}
-            <div className="p-2 border rounded d-inline-block bg-white shadow-sm" style={{ borderStyle: "dashed" }}>
-              <span className="font-heading fs-6 text-dark me-2">★ NASC</span>
-              <span className="small text-muted font-body">Audited Quality Member</span>
+            <div className="p-2 border rounded d-inline-block shadow-sm" style={{ borderStyle: "dashed", borderColor: "rgba(255, 255, 255, 0.15)", backgroundColor: "rgba(255, 255, 255, 0.03)" }}>
+              <span className="font-heading fs-6 text-white me-2">★ NASC</span>
+              <span className="small text-white-50 font-body">Audited Quality Member</span>
             </div>
           </div>
 
           {/* Useful Links Column */}
           <div className="col-lg-2 col-md-6">
-            <h6 className="fw-bold mb-3 text-uppercase small text-muted">Shop Categories</h6>
+            <h6 className="fw-bold mb-3 text-uppercase small text-white-50">Shop Categories</h6>
             <ul className="list-unstyled mb-0 small">
               <li className="mb-2">
-                <a href="#shop-dogs" className="text-dark text-decoration-none hover-scale d-inline-block">
-                  Dog Supplements
-                </a>
-              </li>
-              <li className="mb-2">
-                <a href="#shop-cats" className="text-dark text-decoration-none hover-scale d-inline-block">
+                <a href="#catalog-section" className="footer-link">
                   Cat Supplements
                 </a>
               </li>
               <li className="mb-2">
-                <a href="#concern-grid" className="text-dark text-decoration-none hover-scale d-inline-block">
-                  Shop by Health Concern
+                <a href="#catalog-section" className="footer-link">
+                  Standard Edition
                 </a>
               </li>
               <li className="mb-2">
-                <a href="#science" className="text-dark text-decoration-none hover-scale d-inline-block">
-                  Active Ingredients
+                <a href="#catalog-section" className="footer-link">
+                  Top Cat Edition
+                </a>
+              </li>
+              <li className="mb-2">
+                <a href="#catalog-section" className="footer-link">
+                  Cardboard Scratchers
+                </a>
+              </li>
+              <li className="mb-2">
+                <a href="#catalog-section" className="footer-link">
+                  Replacement Parts
                 </a>
               </li>
             </ul>
@@ -68,54 +97,58 @@ export default function Footer() {
 
           {/* Quick links support Column */}
           <div className="col-lg-2 col-md-6">
-            <h6 className="fw-bold mb-3 text-uppercase small text-muted">Customer Care</h6>
-            <ul className="list-unstyled mb-0 small">
-              <li className="mb-2">
-                <span className="text-dark">US Tracked Delivery (5-12 Days)</span>
+            <h6 className="fw-bold mb-3 text-uppercase small text-white-50">Customer Care</h6>
+            <ul className="list-unstyled mb-0 small text-white-50">
+              <li className="mb-2 d-flex align-items-start gap-2">
+                <span style={{ color: "var(--orange)", fontSize: "0.8rem", marginTop: "3px" }}>➔</span>
+                <span>US Tracked Delivery (5-12 Days)</span>
               </li>
-              <li className="mb-2">
-                <span className="text-dark">30-Day Happiness Guarantee</span>
+              <li className="mb-2 d-flex align-items-start gap-2">
+                <span style={{ color: "var(--orange)", fontSize: "0.8rem", marginTop: "3px" }}>➔</span>
+                <span>30-Day Happiness Guarantee</span>
               </li>
-              <li className="mb-2">
-                <span className="text-dark">Direct Sourcing Slashes Costs</span>
+              <li className="mb-2 d-flex align-items-start gap-2">
+                <span style={{ color: "var(--orange)", fontSize: "0.8rem", marginTop: "3px" }}>➔</span>
+                <span>Direct Sourcing Slashes Costs</span>
               </li>
-              <li className="mb-2">
-                <span className="text-dark">Support: shoppingmaniaglobalstore@gmail.com</span>
+              <li className="mb-2 d-flex align-items-start gap-2">
+                <span style={{ color: "var(--orange)", fontSize: "0.8rem", marginTop: "3px" }}>➔</span>
+                <span>Support: shoppingmaniaglobalstore@gmail.com</span>
               </li>
             </ul>
           </div>
 
           {/* Policies & Legal Column */}
           <div className="col-lg-2 col-md-6">
-            <h6 className="fw-bold mb-3 text-uppercase small text-muted">Policies &amp; Legal</h6>
+            <h6 className="fw-bold mb-3 text-uppercase small text-white-50">Policies &amp; Legal</h6>
             <ul className="list-unstyled mb-0 small font-body">
               <li className="mb-2">
-                <Link href="/policies/refund-policy" className="text-dark text-decoration-none hover-scale d-inline-block">
+                <Link href="/policies/refund-policy" className="footer-link">
                   Return and refund policy
                 </Link>
               </li>
               <li className="mb-2">
-                <Link href="/policies/privacy-policy" className="text-dark text-decoration-none hover-scale d-inline-block">
+                <Link href="/policies/privacy-policy" className="footer-link">
                   Privacy policy
                 </Link>
               </li>
               <li className="mb-2">
-                <Link href="/policies/terms-of-service" className="text-dark text-decoration-none hover-scale d-inline-block">
+                <Link href="/policies/terms-of-service" className="footer-link">
                   Terms of service
                 </Link>
               </li>
               <li className="mb-2">
-                <Link href="/policies/shipping-policy" className="text-dark text-decoration-none hover-scale d-inline-block">
+                <Link href="/policies/shipping-policy" className="footer-link">
                   Shipping policy
                 </Link>
               </li>
               <li className="mb-2">
-                <Link href="/policies/contact-information" className="text-dark text-decoration-none hover-scale d-inline-block">
+                <Link href="/policies/contact-information" className="footer-link">
                   Contact information
                 </Link>
               </li>
               <li className="mb-2">
-                <Link href="/policies/legal-notice" className="text-dark text-decoration-none hover-scale d-inline-block">
+                <Link href="/policies/legal-notice" className="footer-link">
                   Legal notice
                 </Link>
               </li>
@@ -124,8 +157,8 @@ export default function Footer() {
 
           {/* Newsletter Column */}
           <div className="col-lg-3 col-md-6">
-            <h6 className="fw-bold mb-3 text-uppercase small text-muted">Join the Peteora Pack</h6>
-            <p className="small text-muted mb-3">
+            <h6 className="fw-bold mb-3 text-uppercase small text-white-50">Join the Peteora Pack</h6>
+            <p className="small text-white-50 mb-3" style={{ lineHeight: "1.5" }}>
               Subscribe to unlock 10% off your first order, access secret flash sales, and get veterinary pet care tips.
             </p>
             {subscribed ? (
@@ -136,14 +169,14 @@ export default function Footer() {
               <form onSubmit={handleSubscribe} className="input-group mb-3">
                 <input
                   type="email"
-                  className="form-control"
+                  className="form-control footer-input"
                   placeholder="Your pet's email address..."
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   aria-label="Email subscription list"
                 />
-                <button className="btn btn-zesty-primary" type="submit">
+                <button className="btn footer-btn" type="submit">
                   Join
                 </button>
               </form>
@@ -151,30 +184,29 @@ export default function Footer() {
             
             {/* Payment Trust Marks column */}
             <div className="mt-4">
-              <p className="small text-muted mb-2">100% Secure Checkout Guaranteed</p>
-              <div className="d-flex gap-2 flex-wrap fs-4 text-muted">
-                {/* Simulated payment badges */}
-                <span className="badge bg-white border text-dark font-body px-2 py-1">💳 Visa</span>
-                <span className="badge bg-white border text-dark font-body px-2 py-1">💳 Mastercard</span>
-                <span className="badge bg-white border text-dark font-body px-2 py-1">💳 ShopPay</span>
-                <span className="badge bg-white border text-dark font-body px-2 py-1">💳 PayPal</span>
+              <p className="small text-white-50 mb-2">100% Secure Checkout Guaranteed</p>
+              <div className="d-flex gap-2 flex-wrap fs-4">
+                <span className="payment-badge">💳 Visa</span>
+                <span className="payment-badge">💳 Mastercard</span>
+                <span className="payment-badge">💳 ShopPay</span>
+                <span className="payment-badge">💳 PayPal</span>
               </div>
             </div>
           </div>
         </div>
 
-        <hr className="my-4" />
+        <hr className="my-4" style={{ borderColor: "rgba(255, 255, 255, 0.1)" }} />
 
         {/* FDA Compliance & Health disclaimer - Mandatory for Pet wellness niches */}
-        <div className="p-3 bg-white border rounded mb-4" style={{ borderColor: "var(--pale-gray)" }}>
-          <p className="small text-muted mb-0 font-body" style={{ fontSize: "0.785rem", lineHeight: "1.4" }}>
+        <div className="disclaimer-box mb-4">
+          <p className="small text-white-50 mb-0 font-body" style={{ fontSize: "0.785rem", lineHeight: "1.5" }}>
             <strong>* FDA & VETERINARY ADVISORY DISCLAIMER:</strong> The statements made regarding these products have not been evaluated by the Food and Drug Administration. These products are not intended to diagnose, treat, cure, or prevent any disease. The details presented on this store are for informational purposes only and are not a substitute for advice from your veterinarian. Always consult your veterinarian before starting any wellness program or dietary supplements for your pets.
           </p>
         </div>
 
         <div className="row align-items-center">
           <div className="col-12 text-center">
-            <p className="small text-muted mb-0">
+            <p className="small text-white-50 mb-0">
               © {new Date().getFullYear()} Peteora. All rights reserved. Target US Market.
             </p>
           </div>
