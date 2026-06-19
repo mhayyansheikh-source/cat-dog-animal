@@ -91,7 +91,7 @@ export default function ProductDetailsClient({ product }) {
         {/* Right Column: Checkout Config & Details */}
         <div className="col-lg-6 text-start">
           <div className="d-flex align-items-center gap-2 mb-2">
-            <span className="badge bg-forest-green text-white fw-bold">✓ 100% TOXIC-FREE MATERIAL</span>
+            <span className="badge bg-forest-green text-white fw-bold">✓ PREMIUM QUALITY</span>
             <div className="d-flex align-items-center gap-1 text-warning star-rating small">
               ★ ★ ★ ★ ★ <span className="text-muted font-body" style={{ fontSize: "0.75rem" }}>(4.9/5 Rating)</span>
             </div>
@@ -143,14 +143,14 @@ export default function ProductDetailsClient({ product }) {
               Choose Bundle Package & Save:
             </span>
             <div className="d-flex flex-column gap-2">
-              {/* Option 1: 1 Toy */}
+              {/* Option 1: 1 Item */}
               <div
                 onClick={() => setSelectedBulkQty(1)}
                 className={`volume-card d-flex align-items-center justify-content-between ${selectedBulkQty === 1 ? "active" : ""}`}
               >
                 <div>
-                  <strong className="d-block">Buy 1 Kitty Kurlz Toy</strong>
-                  <span className="small text-muted font-body">Perfect for single cat households</span>
+                  <strong className="d-block">Buy 1 Item</strong>
+                  <span className="small text-muted font-body">Perfect for trying it out</span>
                 </div>
                 <div className="text-end">
                   <strong className="fs-5">${basePrice.toFixed(2)}</strong>
@@ -158,15 +158,15 @@ export default function ProductDetailsClient({ product }) {
                 </div>
               </div>
 
-              {/* Option 2: 2 Toys (10% Off) */}
+              {/* Option 2: 2 Items (10% Off) */}
               <div
                 onClick={() => setSelectedBulkQty(2)}
                 className={`volume-card d-flex align-items-center justify-content-between ${selectedBulkQty === 2 ? "active" : ""}`}
               >
-                <span className="discount-badge">★ CONNECT & DUAL-PLAY</span>
+                <span className="discount-badge">★ STOCK UP</span>
                 <div>
-                  <strong className="d-block">Buy 2 Toys (Save 10% Off)</strong>
-                  <span className="small text-success font-body">Recommended - connect 2 for a giant custom track</span>
+                  <strong className="d-block">Buy 2 Items (Save 10% Off)</strong>
+                  <span className="small text-success font-body">Recommended - ensure you don't run out</span>
                 </div>
                 <div className="text-end">
                   <strong className="fs-5 text-success">${getBulkCardPrice(2).toFixed(2)}</strong>
@@ -174,15 +174,15 @@ export default function ProductDetailsClient({ product }) {
                 </div>
               </div>
 
-              {/* Option 3: 3 Toys (15% Off) */}
+              {/* Option 3: 3 Items (15% Off) */}
               <div
                 onClick={() => setSelectedBulkQty(3)}
                 className={`volume-card d-flex align-items-center justify-content-between ${selectedBulkQty === 3 ? "active" : ""}`}
               >
-                <span className="discount-badge bg-success">🏆 MULTI-CAT PLAYMAZE</span>
+                <span className="discount-badge bg-success">🏆 BEST VALUE</span>
                 <div>
-                  <strong className="d-block">Buy 3 Toys (Save 15% Off)</strong>
-                  <span className="small text-success font-body">Create the ultimate shifting play maze</span>
+                  <strong className="d-block">Buy 3 Items (Save 15% Off)</strong>
+                  <span className="small text-success font-body">Maximum savings for your pet</span>
                 </div>
                 <div className="text-end">
                   <strong className="fs-5 text-success">${getBulkCardPrice(3).toFixed(2)}</strong>
@@ -199,7 +199,7 @@ export default function ProductDetailsClient({ product }) {
               className="w-100 rounded-pill-cta btn-zesty-primary py-3 fs-5 d-flex align-items-center justify-content-center gap-2 shadow"
             >
               <ShoppingCart size={22} />
-              ADD TO CART - ACTIVATE DYNAMIC PLAY
+              ADD TO CART
             </button>
           </div>
 
@@ -216,41 +216,34 @@ export default function ProductDetailsClient({ product }) {
               <table className="table border align-middle font-body small bg-white">
                 <thead className="table-light text-center">
                   <tr>
-                    <th>Specification</th>
+                    <th>Feature</th>
                     <th className="text-success fw-bold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>
-                      Kitty Kurlz Shape-Shifter
+                      Peteora Standard
                     </th>
-                    <th>Cheap Generic Cardboard</th>
+                    <th>Generic Brands</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td><strong>Cardboard Durability</strong></td>
+                    <td><strong>Quality & Materials</strong></td>
                     <td className="text-success fw-semibold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>
-                      ✓ Premium, heavy-duty double-reinforced corrugated cardboard
+                      ✓ Premium, durable materials and clean ingredients
                     </td>
-                    <td>Thin, low-density cardboard that shreds in days</td>
+                    <td>Cheap fillers, flimsy plastics, or low-grade materials</td>
                   </tr>
                   <tr>
-                    <td><strong>Connector Magnets</strong></td>
+                    <td><strong>Safety Standards</strong></td>
                     <td className="text-success fw-semibold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>
-                      ✓ High-strength built-in connection magnetic ends
+                      ✓ Rigorously tested for pet safety and wellness
                     </td>
-                    <td>No magnets, sliding or messy taping required</td>
+                    <td>Unknown origins with questionable safety records</td>
                   </tr>
                   <tr>
-                    <td><strong>Form & Layout</strong></td>
+                    <td><strong>Effectiveness</strong></td>
                     <td className="text-success fw-semibold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>
-                      ✓ Shape-shifting 3-in-1 design (scratch, ball track, lounge)
+                      ✓ Loved by pets, formulated for results
                     </td>
-                    <td>Flat, single-purpose static design that cats lose interest in</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Non-Toxic Materials</strong></td>
-                    <td className="text-success fw-semibold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>
-                      ✓ 100% natural, odorless, safe cornstarch glue bindings
-                    </td>
-                    <td>Toxic chemical adhesives with bad chemical smells</td>
+                    <td>Hit or miss performance</td>
                   </tr>
                 </tbody>
               </table>
@@ -263,16 +256,16 @@ export default function ProductDetailsClient({ product }) {
             <div className="border rounded bg-white shadow-sm p-2">
               {[
                 {
-                  q: `How do you connect multiple units together?`,
-                  a: `Each Kitty Kurlz toy has heavy-duty magnetic endpoints. Simply bring the ends of two or more units together, and they will snap automatically, forming a giant loop or a custom play track!`
+                  q: `How fast is shipping?`,
+                  a: `We process all orders within 24-48 hours. Standard US delivery typically takes 5-8 business days, and all orders include tracking information.`
                 },
                 {
-                  q: `Does it include the ball?`,
-                  a: `Yes! Every Kitty Kurlz unit comes with a premium rolling bell ball that stays secure inside the track, providing endless clawing and chasing fun.`
+                  q: `Do you offer a guarantee?`,
+                  a: `Yes! We are so confident your pet will love our products that we offer a 30-day money back guarantee. If you're not satisfied, just reach out to our support team.`
                 },
                 {
-                  q: `How durable is the cardboard against heavy scratching?`,
-                  a: `Extremely durable! We use premium high-density double-corrugated cardboard that is designed to withstand intense clawing while keeping your furniture safe. The Top Cat Edition features reinforced tracks for active multi-cat homes.`
+                  q: `Are your products safe for my pet?`,
+                  a: `Absolutely. Pet safety is our #1 priority. All our products are vetted, tested, and made from high-quality materials and ingredients to ensure the well-being of your companion.`
                 }
               ].map((faq, index) => (
                 <div key={index} className="geo-faq-item">

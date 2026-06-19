@@ -15,14 +15,14 @@ export async function generateMetadata({ params }) {
   
   return {
     title: `${product.title} - Peteora`,
-    description: `Buy ${product.title} online. 3-in-1 shape-shifting interactive cardboard cat scratcher toy, fast US tracked shipping, and 30-day satisfaction guarantee.`,
+    description: `Buy ${product.title} online at Peteora. Premium pet wellness, accessories, and supplies. Fast US shipping.`,
     alternates: {
       canonical: `https://peteora.com/products/${product.handle}`,
     },
     openGraph: {
-      title: `${product.title} - Premium Cat Scratcher Toy`,
-      description: `Shop the shape-shifting magnetic ${product.title} scratcher. Satisfy scratching instincts and save your furniture.`,
-      images: [product.images[0]],
+      title: `${product.title} - Peteora`,
+      description: `Shop ${product.title} at Peteora. Premium care for your companion.`,
+      images: [product.images && product.images.length > 0 ? product.images[0] : ""],
       url: `https://peteora.com/products/${product.handle}`,
     }
   };
