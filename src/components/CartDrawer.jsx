@@ -66,6 +66,17 @@ export default function CartDrawer() {
   // Handle Shopify checkout redirect
   const handleCheckout = async () => {
     try {
+      // Prevent checkout if there are stale mock items in the cart
+      const hasLegacyItems = cartItems.some(item => !item.variant.id.startsWith("gid://shopify/ProductVariant/"));
+      if (hasLegacyItems) {
+        alert("Your cart contains outdated test items. We are clearing your cart so you can add live products.");
+        removeFromCart(cartItems[0].variant.id); // Or ideally clearCart() if we expose it
+        // To properly clear the entire cart, we can just reload or clear localStorage
+        localStorage.removeItem("zesty_cart");
+        window.location.reload();
+        return;
+      }
+
       const lineItems = cartItems.map((item) => ({
         variantId: item.variant.id,
         quantity: item.quantity,
