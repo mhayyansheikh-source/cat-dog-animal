@@ -11,10 +11,10 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <header className="sticky-top bg-white border-bottom shadow-sm">
+    <header className="premium-header">
       {/* Dropshipping-Urgency Announcement Bar */}
-      <div className="announcement-bar d-flex justify-content-center align-items-center py-2 px-3 gap-2">
-        <span className="badge bg-warning text-dark font-weight-bold">⚡ EXCLUSIVE USA DEAL</span>
+      <div className="premium-announcement-bar d-flex justify-content-center align-items-center py-2 px-3 gap-2">
+        <span className="badge bg-warning text-dark font-weight-bold" style={{ borderRadius: "100px", padding: "0.25rem 0.6rem" }}>⚡ EXCLUSIVE USA DEAL</span>
         <span className="small text-white">Free Tracked 5-12 Day Shipping to the United States on all orders over $35!</span>
       </div>
 
@@ -54,12 +54,13 @@ export default function Header() {
           <div className="d-flex align-items-center gap-2 d-lg-none">
             <button
               onClick={() => setIsCartOpen(true)}
-              className="btn position-relative p-2"
+              className="btn premium-cart-btn d-flex align-items-center justify-content-center p-2 rounded-circle hover-scale"
+              style={{ width: "40px", height: "40px", position: "relative" }}
               aria-label="Open cart"
             >
-              <ShoppingCart size={24} style={{ color: "var(--charcoal-dark)" }} />
+              <ShoppingCart size={20} />
               {cartCount > 0 && (
-                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ fontSize: "0.65rem", padding: "0.25em 0.5em" }}>
                   {cartCount}
                 </span>
               )}
@@ -77,32 +78,32 @@ export default function Header() {
           <div className={`collapse navbar-collapse ${isMenuOpen ? "show" : ""}`} id="navbarNav">
             <ul className="navbar-nav mx-auto mb-3 mb-lg-0 fw-semibold">
               <li className="nav-item px-2">
-                <Link href="/" className="nav-link hover-scale" style={{ color: "var(--charcoal-dark)" }}>
+                <Link href="/" className="nav-link premium-nav-link">
                   Home
                 </Link>
               </li>
               <li className="nav-item px-2">
-                <a href="#catalog-section" className="nav-link hover-scale" style={{ color: "var(--charcoal-dark)" }}>
+                <a href="#catalog-section" className="nav-link premium-nav-link">
                   Cat Supplements
                 </a>
               </li>
               <li className="nav-item px-2">
-                <a href="#catalog-section" className="nav-link hover-scale" style={{ color: "var(--charcoal-dark)" }}>
+                <a href="#catalog-section" className="nav-link premium-nav-link">
                   Standard Edition
                 </a>
               </li>
               <li className="nav-item px-2">
-                <a href="#catalog-section" className="nav-link hover-scale" style={{ color: "var(--charcoal-dark)" }}>
+                <a href="#catalog-section" className="nav-link premium-nav-link">
                   Top Cat Edition
                 </a>
               </li>
               <li className="nav-item px-2">
-                <a href="#science" className="nav-link hover-scale" style={{ color: "var(--charcoal-dark)" }}>
+                <a href="#science" className="nav-link premium-nav-link">
                   Science & Safety
                 </a>
               </li>
               <li className="nav-item px-2">
-                <a href="#dosage-finder" className="nav-link hover-scale fw-bold text-zesty-orange">
+                <a href="#dosage-finder" className="nav-link premium-nav-link fw-bold text-zesty-orange">
                   Dosage Quiz
                 </a>
               </li>
@@ -113,15 +114,15 @@ export default function Header() {
               {/* Cart Button */}
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="btn position-relative d-flex align-items-center justify-content-center p-2 rounded-circle hover-scale"
-                style={{ backgroundColor: "var(--soft-sand)", border: "1px solid var(--pale-gray)" }}
+                className="btn premium-cart-btn d-flex align-items-center gap-2 px-3 py-2 rounded-pill shadow-sm"
                 aria-label="Open shopping cart"
               >
-                <ShoppingCart size={22} style={{ color: "var(--charcoal-dark)" }} />
-                {cartCount > 0 && (
-                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
-                    {cartCount}
-                  </span>
+                <ShoppingCart size={18} />
+                <span className="fw-bold small">Cart</span>
+                {cartCount > 0 ? (
+                  <span className="cart-badge-count">{cartCount}</span>
+                ) : (
+                  <span className="cart-badge-count empty">0</span>
                 )}
               </button>
             </div>

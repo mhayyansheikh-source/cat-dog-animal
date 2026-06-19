@@ -364,3 +364,89 @@ p, span, li, button, input, select, textarea, .font-body {
   border-radius: 8px !important;
   padding: 1.25rem !important;
 }
+
+/* Premium Glassmorphic Header & Navigation Styling */
+.premium-header {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1020 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+}
+
+.premium-announcement-bar {
+  background: linear-gradient(90deg, var(--teal-dark) 0%, var(--teal) 100%) !important;
+  color: var(--white) !important;
+  font-size: 0.825rem !important;
+  font-weight: 600 !important;
+  padding: 0.45rem 1rem !important;
+  letter-spacing: 0.3px !important;
+}
+
+.premium-nav-link {
+  color: var(--charcoal-dark) !important;
+  position: relative !important;
+  font-weight: 600 !important;
+  transition: color 0.25s ease !important;
+  padding: 0.5rem 0.75rem !important;
+}
+
+.premium-nav-link:hover {
+  color: var(--orange) !important;
+}
+
+.premium-nav-link::after {
+  content: '' !important;
+  position: absolute !important;
+  width: 0 !important;
+  height: 2px !important;
+  bottom: 2px !important;
+  left: 0.75rem !important;
+  background-color: var(--orange) !important;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.premium-nav-link:hover::after {
+  width: calc(100% - 1.5rem) !important;
+}
+
+.premium-cart-btn {
+  background-color: var(--white) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--charcoal-dark) !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.premium-cart-btn:hover {
+  border-color: var(--orange) !important;
+  background-color: var(--orange-light) !important;
+  color: var(--orange-dark) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(245, 118, 26, 0.12) !important;
+}
+
+.cart-badge-count {
+  background-color: var(--orange) !important;
+  color: var(--white) !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  padding: 0.18rem 0.5rem !important;
+  border-radius: 20px !important;
+  min-width: 20px !important;
+  display: inline-block !important;
+  text-align: center !important;
+  line-height: 1 !important;
+}
+
+.cart-badge-count.empty {
+  background-color: var(--border) !important;
+  color: var(--gray) !important;
+}
+
+.premium-cart-btn:hover .cart-badge-count {
+  background-color: var(--orange-dark) !important;
+  color: var(--white) !important;
+}

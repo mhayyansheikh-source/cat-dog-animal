@@ -10,7 +10,16 @@ export default function LiveScarcity({ variantId }) {
   useEffect(() => {
     // Generate organic-looking variation
     // Stock is low (4 to 8 units)
-    const seedStock = (variantId ? (variantId % 5) + 4 : 6);
+    let parsedId = 6;
+    if (variantId && typeof variantId === "string") {
+      const match = variantId.match(/\d+/);
+      if (match) {
+        parsedId = parseInt(match[0], 10);
+      }
+    } else if (typeof variantId === "number") {
+      parsedId = variantId;
+    }
+    const seedStock = (parsedId % 5) + 4;
     setStockLevel(seedStock);
 
     // Viewers vary between 11 and 24
@@ -40,7 +49,7 @@ export default function LiveScarcity({ variantId }) {
           <Eye size={14} className="text-muted" />
         </span>
         <span className="small text-muted font-body">
-          <strong className="text-dark">{viewers} pet parents</strong> are viewing this item right now
+          <strong className="text-dark">{viewers} cat owners</strong> are viewing this item right now
         </span>
       </div>
 
@@ -51,7 +60,7 @@ export default function LiveScarcity({ variantId }) {
             <Flame size={16} fill="currentColor" /> LOW INVENTORY ALERT
           </span>
           <span className="small text-muted fw-bold">
-            Only {stockLevel} jars left in US Warehouse
+            Only {stockLevel} units left in US Warehouse
           </span>
         </div>
         <div className="progress" style={{ height: "6px" }}>
@@ -66,7 +75,7 @@ export default function LiveScarcity({ variantId }) {
           />
         </div>
         <p className="small text-muted mt-2 mb-0 font-body" style={{ fontSize: "0.8rem" }}>
-          Due to high social media demand, orders are restricted to a maximum of 6 jars per household.
+          Due to high social media demand, orders are restricted to a maximum of 6 units per household.
         </p>
       </div>
     </div>

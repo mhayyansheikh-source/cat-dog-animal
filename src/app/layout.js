@@ -17,15 +17,15 @@ const playfair = Playfair_Display({
 });
 
 export const metadata = {
-  title: "Peteora - Premium Dog & Cat Supplements Storefront",
-  description: "Experience premium clinical-grade pet supplements at direct-to-consumer prices. Certified natural joint, calming, allergy, and immune support bites for dogs and cats. Fast US tracked delivery.",
-  keywords: "peteora, pet supplements, dog supplements, cat joint support, calming bites, puppy vitamins, allergy immune pet supplements",
+  title: "Peteora - Premium Interactive Cat Scratcher Storefront",
+  description: "Experience the premium shape-shifting magnetic cat scratcher toy. 3-in-1 interactive ball track and cardboard lounge for kittens and cats. Fast US tracked delivery.",
+  keywords: "peteora, kitty kurlz, cat scratcher, cardboard cat toy, interactive cat toy, shape-shifting scratcher, magnetic cat track",
   alternates: {
     canonical: "https://peteora.com",
   },
   openGraph: {
-    title: "Peteora - Premium Pet Wellness Storefront",
-    description: "Veterinarian-recommended clinical supplement bites for cats and dogs. Fast US tracked delivery.",
+    title: "Peteora - Premium Interactive Cat Toys & Scratchers",
+    description: "Keep your feline friend active and entertained with Kitty Kurlz! 3-in-1 interactive shape-shifting toy. Fast US tracked delivery.",
     url: "https://peteora.com",
     siteName: "Peteora",
     locale: "en_US",

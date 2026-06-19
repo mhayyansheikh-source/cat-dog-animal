@@ -91,7 +91,7 @@ export default function ProductDetailsClient({ product }) {
         {/* Right Column: Checkout Config & Details */}
         <div className="col-lg-6 text-start">
           <div className="d-flex align-items-center gap-2 mb-2">
-            <span className="badge bg-forest-green text-white fw-bold">✓ VET RECOMENDED FORMULA</span>
+            <span className="badge bg-forest-green text-white fw-bold">✓ 100% TOXIC-FREE MATERIAL</span>
             <div className="d-flex align-items-center gap-1 text-warning star-rating small">
               ★ ★ ★ ★ ★ <span className="text-muted font-body" style={{ fontSize: "0.75rem" }}>(4.9/5 Rating)</span>
             </div>
@@ -111,7 +111,7 @@ export default function ProductDetailsClient({ product }) {
 
           {/* Description Snippet */}
           <div className="mb-4">
-            <p className="text-muted font-body" dangerouslySetInnerHTML={{ __html: product.body_html }} />
+            <div className="text-muted font-body" dangerouslySetInnerHTML={{ __html: product.body_html }} />
           </div>
 
           {/* Scarcity Widget */}
@@ -143,50 +143,50 @@ export default function ProductDetailsClient({ product }) {
               Choose Bundle Package & Save:
             </span>
             <div className="d-flex flex-column gap-2">
-              {/* Option 1: 1 Jar */}
+              {/* Option 1: 1 Toy */}
               <div
                 onClick={() => setSelectedBulkQty(1)}
                 className={`volume-card d-flex align-items-center justify-content-between ${selectedBulkQty === 1 ? "active" : ""}`}
               >
                 <div>
-                  <strong className="d-block">Buy 1 Supplement Jar</strong>
-                  <span className="small text-muted font-body">Standard supply pack</span>
+                  <strong className="d-block">Buy 1 Kitty Kurlz Toy</strong>
+                  <span className="small text-muted font-body">Perfect for single cat households</span>
                 </div>
                 <div className="text-end">
                   <strong className="fs-5">${basePrice.toFixed(2)}</strong>
-                  <span className="d-block small text-muted">/jar</span>
+                  <span className="d-block small text-muted">/unit</span>
                 </div>
               </div>
 
-              {/* Option 2: 2 Jars (10% Off) */}
+              {/* Option 2: 2 Toys (10% Off) */}
               <div
                 onClick={() => setSelectedBulkQty(2)}
                 className={`volume-card d-flex align-items-center justify-content-between ${selectedBulkQty === 2 ? "active" : ""}`}
               >
-                <span className="discount-badge">★ POPULAR DEAL</span>
+                <span className="discount-badge">★ CONNECT & DUAL-PLAY</span>
                 <div>
-                  <strong className="d-block">Buy 2 Jars (Save 10% Off)</strong>
-                  <span className="small text-success font-body">Recommended for visible changes</span>
+                  <strong className="d-block">Buy 2 Toys (Save 10% Off)</strong>
+                  <span className="small text-success font-body">Recommended - connect 2 for a giant custom track</span>
                 </div>
                 <div className="text-end">
                   <strong className="fs-5 text-success">${getBulkCardPrice(2).toFixed(2)}</strong>
-                  <span className="d-block small text-muted">/jar</span>
+                  <span className="d-block small text-muted">/unit</span>
                 </div>
               </div>
 
-              {/* Option 3: 3 Jars (15% Off) */}
+              {/* Option 3: 3 Toys (15% Off) */}
               <div
                 onClick={() => setSelectedBulkQty(3)}
                 className={`volume-card d-flex align-items-center justify-content-between ${selectedBulkQty === 3 ? "active" : ""}`}
               >
-                <span className="discount-badge bg-success">🏆 BEST VALUE</span>
+                <span className="discount-badge bg-success">🏆 MULTI-CAT PLAYMAZE</span>
                 <div>
-                  <strong className="d-block">Buy 3 Jars (Save 15% Off)</strong>
-                  <span className="small text-success font-body">Annual wellness savings pack</span>
+                  <strong className="d-block">Buy 3 Toys (Save 15% Off)</strong>
+                  <span className="small text-success font-body">Create the ultimate shifting play maze</span>
                 </div>
                 <div className="text-end">
                   <strong className="fs-5 text-success">${getBulkCardPrice(3).toFixed(2)}</strong>
-                  <span className="d-block small text-muted">/jar</span>
+                  <span className="d-block small text-muted">/unit</span>
                 </div>
               </div>
             </div>
@@ -199,7 +199,7 @@ export default function ProductDetailsClient({ product }) {
               className="w-100 rounded-pill-cta btn-zesty-primary py-3 fs-5 d-flex align-items-center justify-content-center gap-2 shadow"
             >
               <ShoppingCart size={22} />
-              CLAIM YOUR PETS WELLNESS PLAN
+              ADD TO CART - ACTIVATE DYNAMIC PLAY
             </button>
           </div>
 
@@ -218,39 +218,39 @@ export default function ProductDetailsClient({ product }) {
                   <tr>
                     <th>Specification</th>
                     <th className="text-success fw-bold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>
-                      Zesty Paws Headless
+                      Kitty Kurlz Shape-Shifter
                     </th>
-                    <th>Generic Brand Fillers</th>
+                    <th>Cheap Generic Cardboard</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td><strong>Active Bio-actives</strong></td>
+                    <td><strong>Cardboard Durability</strong></td>
                     <td className="text-success fw-semibold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>
-                      ✓ Pure clinical-grade trademarked ingredients (DE111, AlaskOmega)
+                      ✓ Premium, heavy-duty double-reinforced corrugated cardboard
                     </td>
-                    <td>Generic powder blends with low biological yield</td>
+                    <td>Thin, low-density cardboard that shreds in days</td>
                   </tr>
                   <tr>
-                    <td><strong>Starch & Fillers</strong></td>
+                    <td><strong>Connector Magnets</strong></td>
                     <td className="text-success fw-semibold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>
-                      ✓ Zero corn, wheat, soy, or artificial colors
+                      ✓ High-strength built-in connection magnetic ends
                     </td>
-                    <td>High cornstarch fillers, artificial flavor binders</td>
+                    <td>No magnets, sliding or messy taping required</td>
                   </tr>
                   <tr>
-                    <td><strong>Safety Certification</strong></td>
+                    <td><strong>Form & Layout</strong></td>
                     <td className="text-success fw-semibold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>
-                      ✓ NASC Independent Audited Member
+                      ✓ Shape-shifting 3-in-1 design (scratch, ball track, lounge)
                     </td>
-                    <td>Unregistered facilities, no third-party quality review</td>
+                    <td>Flat, single-purpose static design that cats lose interest in</td>
                   </tr>
                   <tr>
-                    <td><strong>Happiness Guarantee</strong></td>
+                    <td><strong>Non-Toxic Materials</strong></td>
                     <td className="text-success fw-semibold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>
-                      ✓ 30-Day Money-Back Policy
+                      ✓ 100% natural, odorless, safe cornstarch glue bindings
                     </td>
-                    <td>No refunds once opened</td>
+                    <td>Toxic chemical adhesives with bad chemical smells</td>
                   </tr>
                 </tbody>
               </table>
@@ -263,16 +263,16 @@ export default function ProductDetailsClient({ product }) {
             <div className="border rounded bg-white shadow-sm p-2">
               {[
                 {
-                  q: `Is this formula suitable for puppies or kittens?`,
-                  a: `Yes! Our supplement bites are formulated with safe bio-actives. However, check dosage details on packaging based on your pet's age. For puppies under 12 weeks, we advise consulting your veterinarian first.`
+                  q: `How do you connect multiple units together?`,
+                  a: `Each Kitty Kurlz toy has heavy-duty magnetic endpoints. Simply bring the ends of two or more units together, and they will snap automatically, forming a giant loop or a custom play track!`
                 },
                 {
-                  q: `How long before my dog or cat shows visible changes?`,
-                  a: `Every pet is unique. While some pet parents report noticeable improvements in joints or digestive calmness within 10-14 days, we advise consistent daily feeding for at least 3-4 weeks to allow bio-actives to load fully.`
+                  q: `Does it include the ball?`,
+                  a: `Yes! Every Kitty Kurlz unit comes with a premium rolling bell ball that stays secure inside the track, providing endless clawing and chasing fun.`
                 },
                 {
-                  q: `How does the direct pricing bypass model work?`,
-                  a: `By partnering directly with premium pet supplement makers and shipping tracked direct-from-maker to your household, we bypass retail distributors and markup, reducing supplement cost by 30-40% for you.`
+                  q: `How durable is the cardboard against heavy scratching?`,
+                  a: `Extremely durable! We use premium high-density double-corrugated cardboard that is designed to withstand intense clawing while keeping your furniture safe. The Top Cat Edition features reinforced tracks for active multi-cat homes.`
                 }
               ].map((faq, index) => (
                 <div key={index} className="geo-faq-item">

@@ -5,37 +5,37 @@ import { motion } from "framer-motion";
 
 const concerns = [
   {
-    id: "joint",
-    title: "Joint & Mobility",
-    desc: "Glucosamine and Chondroitin for running, jumping, and flexibility.",
-    emoji: "🦴",
+    id: "claw",
+    title: "Claw & Scratch Health",
+    desc: "Premium double-reinforced corrugated cardboard satisfies scratching instincts safely.",
+    emoji: "🐈",
     color: "#FF7A00",
     bg: "rgba(255, 122, 0, 0.05)",
     svgPath: "M50 20C40 20 30 25 30 35C30 45 40 45 45 45L45 55C40 55 30 55 30 65C30 75 40 80 50 80C60 80 70 75 70 65C70 55 60 55 55 55L55 45C60 45 70 45 70 35C70 25 60 20 50 20Z"
   },
   {
-    id: "calming",
-    title: "Stress & Calmness",
-    desc: "L-Theanine and Ashwagandha to ease hyperactive and anxious behavior.",
-    emoji: "🧘",
+    id: "mental",
+    title: "Mental Stimulation",
+    desc: "Interactive shape-shifting track & rolling bell ball cure kitty boredom and anxiety.",
+    emoji: "🔮",
     color: "#F7BE00",
     bg: "rgba(247, 190, 0, 0.05)",
     svgPath: "M50 15C55 15 60 20 60 25C60 30 55 35 50 35C45 35 40 30 40 25C40 20 45 15 50 15ZM30 50C30 40 40 37 50 37C60 37 70 40 70 50L70 80L30 80L30 50Z"
   },
   {
-    id: "gut",
-    title: "Digestive & Gut",
-    desc: "Clinically studied Probiotics to balance microflora and soothe bloating.",
-    emoji: "🥬",
+    id: "exercise",
+    title: "Physical Exercise",
+    desc: "Connectable modular endpoints keep indoor cats running, stretching, and agile.",
+    emoji: "⚡",
     color: "#00653B",
     bg: "rgba(0, 101, 59, 0.05)",
     svgPath: "M35 30C35 30 40 20 50 20C60 20 65 30 65 30C65 30 70 45 60 60C50 75 50 80 50 80C50 80 50 75 40 60C30 45 35 30 35 30Z"
   },
   {
-    id: "skin",
-    title: "Skin & Seasonal",
-    desc: "Wild Alaskan Omega-3 Salmon Oil for itch relief and shiny coats.",
-    emoji: "🌱",
+    id: "furniture",
+    title: "Furniture Protection",
+    desc: "100% natural materials draw claws away from couches, rugs, and drapes.",
+    emoji: "🛋️",
     color: "#217B37",
     bg: "rgba(33, 123, 55, 0.05)",
     svgPath: "M25 50C25 35 35 25 50 25C65 25 75 35 75 50C75 65 65 75 50 75C35 75 25 65 25 50Z"
@@ -48,13 +48,13 @@ export default function ConcernGrid() {
       <div className="container">
         <div className="text-center mb-5">
           <span className="text-zesty-orange fw-bold text-uppercase small tracking-wider font-body">
-            Targeted Pet Solutions
+            Targeted Cat Solutions
           </span>
           <h2 className="font-heading display-6 fw-bold mt-2">
-            Shop supplements by health concern
+            Designed for Scratching &amp; Play
           </h2>
           <p className="text-muted font-body max-w-lg mx-auto">
-            Each formula features targeted active ingredients clinically backed to solve common puppy and kitten wellness issues.
+            Each Kitty Kurlz layout satisfies your feline's natural clawing, chasing, and nesting instincts.
           </p>
         </div>
 

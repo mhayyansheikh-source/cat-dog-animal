@@ -15,13 +15,13 @@ export async function generateMetadata({ params }) {
   
   return {
     title: `${product.title} - Peteora Storefront`,
-    description: `Buy ${product.title} online. Premium active ingredients (DE111, AlaskOmega), fast US tracked shipping, and 30-day happiness guarantee.`,
+    description: `Buy ${product.title} online. 3-in-1 shape-shifting interactive cardboard cat scratcher toy, fast US tracked shipping, and 30-day satisfaction guarantee.`,
     alternates: {
       canonical: `https://peteora.com/products/${product.handle}`,
     },
     openGraph: {
-      title: `${product.title} - Premium Supplement Bites`,
-      description: `Shop veterinarian-approved ${product.title} with clinical bio-actives. Guaranteed direct savings.`,
+      title: `${product.title} - Premium Cat Scratcher Toy`,
+      description: `Shop the shape-shifting magnetic ${product.title} scratcher. Satisfy scratching instincts and save your furniture.`,
       images: [product.images[0]],
       url: `https://peteora.com/products/${product.handle}`,
     }
