@@ -173,15 +173,10 @@ export default function Footer() {
         </div>
 
         <div className="row align-items-center">
-          <div className="col-md-6 text-center text-md-start">
+          <div className="col-12 text-center">
             <p className="small text-muted mb-0">
               © {new Date().getFullYear()} Peteora. All rights reserved. Target US Market.
             </p>
-          </div>
-          <div className="col-md-6 text-center text-md-end mt-2 mt-md-0">
-            <span className="small text-muted">
-              Developed as a Headless Shopify Front-End Demo
-            </span>
           </div>
         </div>
       </div>

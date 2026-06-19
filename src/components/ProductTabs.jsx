@@ -20,18 +20,21 @@ export default function ProductTabs({ products = [] }) {
       <div className="container" id="shop-dogs">
         {/* Anchor point for cats catalog too */}
         <div id="shop-cats" className="text-center mb-5">
-          <span className="text-forest-green fw-bold text-uppercase small tracking-wider font-body">
+          <span
+            className="fw-bold text-uppercase small font-body d-block mb-2"
+            style={{ color: "var(--orange)", letterSpacing: "0.12em" }}
+          >
             Our Supplements Catalog
           </span>
-          <h2 className="font-heading display-6 fw-bold mt-2">
+          <h2 className="font-heading display-5 fw-bold mt-2" style={{ color: "var(--charcoal)" }}>
             Led by Science, Loved by Pets
           </h2>
-          <p className="text-muted font-body max-w-lg mx-auto">
+          <p className="text-muted font-body max-w-lg mx-auto" style={{ fontSize: "16px" }}>
             Choose the perfect formula to maintain your pet's wellness. Switch below to preview puppy and kitty formulations.
           </p>
 
           {/* Switcher Buttons */}
-          <div className="d-flex justify-content-center gap-2 mt-4">
+          <div className="d-flex justify-content-center gap-2 mt-4 flex-wrap">
             {[
               { id: "all", label: "🌟 Show All" },
               { id: "dog", label: "🐕 Dog Supplements" },
@@ -40,12 +43,23 @@ export default function ProductTabs({ products = [] }) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className="rounded-pill-cta py-2 px-4 border shadow-sm font-body fw-bold"
+                className="rounded-pill-cta py-2.5 px-4 border font-body fw-bold shadow-sm"
                 style={{
-                  backgroundColor: activeTab === tab.id ? "var(--zesty-orange)" : "var(--white)",
-                  color: activeTab === tab.id ? "var(--white)" : "var(--charcoal-dark)",
-                  borderColor: activeTab === tab.id ? "var(--zesty-orange)" : "var(--pale-gray)",
-                  fontSize: "0.95rem"
+                  backgroundColor:
+                    activeTab === tab.id
+                      ? tab.id === "cat"
+                        ? "var(--teal)"
+                        : "var(--orange)"
+                      : "var(--white)",
+                  color: activeTab === tab.id ? "var(--white)" : "var(--gray)",
+                  borderColor:
+                    activeTab === tab.id
+                      ? tab.id === "cat"
+                        ? "var(--teal)"
+                        : "var(--orange)"
+                      : "var(--border)",
+                  fontSize: "0.95rem",
+                  transition: "all 0.2s ease"
                 }}
               >
                 {tab.label}

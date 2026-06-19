@@ -2,36 +2,48 @@
 
 /* Zesty Paws Brand Identity Tokens */
 :root {
-  /* Brand Core Colors */
-  --zesty-orange: #FF7A00;
-  --zesty-orange-rgb: 255, 122, 0;
-  --primary-gold: #F7BE00;
-  --primary-gold-rgb: 247, 190, 0;
+  /* PawsDelight Brand Colors */
+  --orange: #F5761A;
+  --orange-light: #FEF0E6;
+  --orange-dark: #C45A0E;
+  --teal: #1A8C7A;
+  --teal-light: #E0F5F2;
+  --teal-dark: #0F5E52;
+  --cream: #FDFAF5;
+  --charcoal: #2A2A2A;
+  --gray: #6B7280;
+  --border: #E5E7EB;
+
+  /* Brand Core Colors mapping */
+  --zesty-orange: var(--orange);
+  --zesty-orange-rgb: 245, 118, 26;
+  --primary-gold: var(--teal);
+  --primary-gold-rgb: 26, 140, 122;
   
   /* Trust & Compliance Colors */
-  --forest-green: #00653B;
-  --forest-green-rgb: 0, 101, 59;
-  --active-green: #217B37;
-  --active-green-rgb: 33, 123, 55;
+  --forest-green: var(--teal);
+  --forest-green-rgb: 26, 140, 122;
+  --active-green: var(--teal);
+  --active-green-rgb: 26, 140, 122;
   
   /* Text & Surface Elements */
-  --charcoal-dark: #383838;
-  --charcoal-dark-rgb: 56, 56, 56;
-  --soft-sand: #FFFDF9;
-  --pale-gray: #E1E1E1;
-  --pale-gray-darker: #AFAFAF;
+  --charcoal-dark: var(--charcoal);
+  --charcoal-dark-rgb: 42, 42, 42;
+  --soft-sand: var(--cream);
+  --pale-gray: var(--border);
+  --pale-gray-darker: var(--gray);
   --white: #FFFFFF;
   --alert-red: #DE2A2A;
   --low-stock-red: #B2292E;
 
   /* Typography Fallbacks */
-  --font-heading: Georgia, "Times New Roman", serif;
-  --font-body: var(--font-outfit), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-heading: var(--font-playfair), Georgia, "Times New Roman", serif;
+  --font-body: var(--font-nunito), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   /* Card & Button Geometry */
-  --button-border-radius: 30px;
+  --button-border-radius: 100px;
   --card-border-radius: 16px;
-  --badge-border-radius: 8px;
+  --badge-border-radius: 100px;
   
   /* Global Layout Variables */
   --header-height: 80px;

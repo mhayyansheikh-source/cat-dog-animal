@@ -88,8 +88,15 @@ export default function ProductCard({ product }) {
           </Link>
 
           {/* Product Type Label */}
-          <span className="badge bg-light text-muted font-body mb-2" style={{ fontSize: "0.75rem" }}>
-            {product.product_type === "Dog" ? "🐕 For Dogs" : product.product_type === "Cat" ? "🐈 For Cats" : "🐾 Cat & Dog"}
+          <span
+            className="d-inline-block px-2.5 py-1 rounded-pill font-body mb-2 fw-bold"
+            style={{
+              fontSize: "0.75rem",
+              backgroundColor: product.product_type === "Dog" ? "var(--orange-light)" : product.product_type === "Cat" ? "var(--teal-light)" : "var(--gray-light)",
+              color: product.product_type === "Dog" ? "var(--orange-dark)" : product.product_type === "Cat" ? "var(--teal-dark)" : "var(--gray)",
+            }}
+          >
+            {product.product_type === "Dog" ? "🐶 Dog Formula" : product.product_type === "Cat" ? "🐱 Cat Formula" : "🐾 Pet Formula"}
           </span>
         </div>
 
@@ -112,7 +119,9 @@ export default function ProductCard({ product }) {
           {/* Pricing Row & Add button */}
           <div className="d-flex align-items-center justify-content-between mt-3 pt-2 border-top">
             <div className="d-flex align-items-baseline gap-2">
-              <span className="fs-5 fw-bold text-zesty-orange">${selectedVariant.price}</span>
+              <span className="fs-5 fw-bold" style={{ color: "var(--orange)" }}>
+                ${selectedVariant.price}
+              </span>
               {selectedVariant.compare_at_price && (
                 <span className="text-decoration-line-through text-muted small">
                   ${selectedVariant.compare_at_price}
@@ -120,14 +129,26 @@ export default function ProductCard({ product }) {
               )}
             </div>
 
-            {/* Quick Add CTA */}
+            {/* Quick Add CTA plus button */}
             <button
               onClick={() => addToCart(product, selectedVariant)}
-              className="btn btn-zesty-primary rounded-circle p-2 d-flex align-items-center justify-content-center hover-scale"
-              style={{ width: "40px", height: "40px" }}
+              className="btn d-flex align-items-center justify-content-center hover-scale"
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                backgroundColor: "var(--orange)",
+                color: "white",
+                border: "none",
+                fontSize: "20px",
+                fontWeight: "700",
+                lineHeight: "1",
+                cursor: "pointer",
+                padding: "0"
+              }}
               aria-label="Add to cart"
             >
-              <ShoppingCart size={18} />
+              +
             </button>
           </div>
         </div>
