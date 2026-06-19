@@ -2,7 +2,7 @@
 
 import React from "react";
 import { CreditCard } from "lucide-react";
-import { createShopifyCheckout } from "@/utils/shopify";
+import { checkoutAction } from "@/app/actions";
 
 export default function DirectCheckoutBar({ product, activeVariant }) {
   if (!product || !activeVariant) return null;
@@ -14,7 +14,7 @@ export default function DirectCheckoutBar({ product, activeVariant }) {
         quantity: 1
       }];
       
-      const checkoutUrl = await createShopifyCheckout(lineItems);
+      const checkoutUrl = await checkoutAction(lineItems);
       if (checkoutUrl) {
         window.location.href = checkoutUrl;
       } else {

@@ -5,7 +5,7 @@ import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Trash2, Plus, Minus, ShoppingBag, CreditCard, Shield } from "lucide-react";
 import Link from "next/link";
-import { createShopifyCheckout } from "@/utils/shopify";
+import { checkoutAction } from "@/app/actions";
 
 export default function CartDrawer() {
   const {
@@ -83,7 +83,7 @@ export default function CartDrawer() {
       }));
 
       // Trigger mutation
-      const checkoutUrl = await createShopifyCheckout(lineItems);
+      const checkoutUrl = await checkoutAction(lineItems);
       if (checkoutUrl) {
         window.location.href = checkoutUrl;
       } else {
