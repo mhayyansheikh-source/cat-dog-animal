@@ -21,9 +21,9 @@ export default function Footer() {
       <div className="container">
         <div className="row g-4 mb-5">
           {/* Brand & Mission column */}
-          <div className="col-lg-4 col-md-6">
+          <div className="col-lg-3 col-md-6">
             <h5 className="font-heading mb-3" style={{ color: "var(--zesty-orange)" }}>
-              Zesty Paws Headless
+              Peteora
             </h5>
             <p className="small text-muted mb-4">
               Our mission is to keep your pet feeling zesty from head to tail. We partner directly with premium veterinary ingredient suppliers to provide delicious, clinical-grade supplements at direct-to-consumer prices.
@@ -80,14 +80,51 @@ export default function Footer() {
                 <span className="text-dark">Direct Sourcing Slashes Costs</span>
               </li>
               <li className="mb-2">
-                <span className="text-dark">Support: help@zestypaws.com</span>
+                <span className="text-dark">Support: shoppingmaniaglobalstore@gmail.com</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Policies & Legal Column */}
+          <div className="col-lg-2 col-md-6">
+            <h6 className="fw-bold mb-3 text-uppercase small text-muted">Policies &amp; Legal</h6>
+            <ul className="list-unstyled mb-0 small font-body">
+              <li className="mb-2">
+                <Link href="/policies/refund-policy" className="text-dark text-decoration-none hover-scale d-inline-block">
+                  Return and refund policy
+                </Link>
+              </li>
+              <li className="mb-2">
+                <Link href="/policies/privacy-policy" className="text-dark text-decoration-none hover-scale d-inline-block">
+                  Privacy policy
+                </Link>
+              </li>
+              <li className="mb-2">
+                <Link href="/policies/terms-of-service" className="text-dark text-decoration-none hover-scale d-inline-block">
+                  Terms of service
+                </Link>
+              </li>
+              <li className="mb-2">
+                <Link href="/policies/shipping-policy" className="text-dark text-decoration-none hover-scale d-inline-block">
+                  Shipping policy
+                </Link>
+              </li>
+              <li className="mb-2">
+                <Link href="/policies/contact-information" className="text-dark text-decoration-none hover-scale d-inline-block">
+                  Contact information
+                </Link>
+              </li>
+              <li className="mb-2">
+                <Link href="/policies/legal-notice" className="text-dark text-decoration-none hover-scale d-inline-block">
+                  Legal notice
+                </Link>
               </li>
             </ul>
           </div>
 
           {/* Newsletter Column */}
-          <div className="col-lg-4 col-md-6">
-            <h6 className="fw-bold mb-3 text-uppercase small text-muted">Join the Zesty Pack</h6>
+          <div className="col-lg-3 col-md-6">
+            <h6 className="fw-bold mb-3 text-uppercase small text-muted">Join the Peteora Pack</h6>
             <p className="small text-muted mb-3">
               Subscribe to unlock 10% off your first order, access secret flash sales, and get veterinary pet care tips.
             </p>
@@ -138,7 +175,7 @@ export default function Footer() {
         <div className="row align-items-center">
           <div className="col-md-6 text-center text-md-start">
             <p className="small text-muted mb-0">
-              © {new Date().getFullYear()} Zesty Paws Headless. All rights reserved. Target US Market.
+              © {new Date().getFullYear()} Peteora. All rights reserved. Target US Market.
             </p>
           </div>
           <div className="col-md-6 text-center text-md-end mt-2 mt-md-0">

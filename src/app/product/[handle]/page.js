@@ -3,6 +3,8 @@ import ProductDetailsClient from "@/components/ProductDetailsClient";
 import CartDrawer from "@/components/CartDrawer";
 import { notFound } from "next/navigation";
 
+export const runtime = "edge";
+
 // Dynamic metadata generator for search crawler indexing
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
@@ -12,26 +14,18 @@ export async function generateMetadata({ params }) {
   if (!product) return { title: "Product Not Found" };
   
   return {
-    title: `${product.title} - Zesty Paws Headless Storefront`,
+    title: `${product.title} - Peteora Storefront`,
     description: `Buy ${product.title} online. Premium active ingredients (DE111, AlaskOmega), fast US tracked shipping, and 30-day happiness guarantee.`,
     alternates: {
-      canonical: `https://zestypaws.com/products/${product.handle}`,
+      canonical: `https://peteora.com/products/${product.handle}`,
     },
     openGraph: {
       title: `${product.title} - Premium Supplement Bites`,
       description: `Shop veterinarian-approved ${product.title} with clinical bio-actives. Guaranteed direct savings.`,
       images: [product.images[0]],
-      url: `https://zestypaws.com/products/${product.handle}`,
+      url: `https://peteora.com/products/${product.handle}`,
     }
   };
-}
-
-// Static route pre-generation (SSG) for ultra-fast LCP metrics
-export async function generateStaticParams() {
-  const products = await getShopifyProducts();
-  return products.map((p) => ({
-    handle: p.handle,
-  }));
 }
 
 export default async function ProductPage({ params }) {
@@ -53,7 +47,7 @@ export default async function ProductPage({ params }) {
     "sku": product.variants[0]?.sku || "",
     "brand": {
       "@type": "Brand",
-      "name": "Zesty Paws Headless"
+      "name": "Peteora"
     },
     "offers": {
       "@type": "Offer",
@@ -62,7 +56,7 @@ export default async function ProductPage({ params }) {
       "priceValidUntil": "2027-12-31",
       "itemCondition": "https://schema.org/NewCondition",
       "availability": "https://schema.org/InStock",
-      "url": `https://zestypaws.com/products/${product.handle}`
+      "url": `https://peteora.com/products/${product.handle}`
     },
     "aggregateRating": {
       "@type": "AggregateRating",

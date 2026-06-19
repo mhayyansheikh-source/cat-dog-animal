@@ -57,7 +57,7 @@ export default function Hero() {
               style={{ lineHeight: "1.15" }}
             >
               Keep Your Furry Friends <br />
-              <span style={{ color: "var(--zesty-orange)" }}>Zesty & Active</span>
+              <span style={{ color: "var(--zesty-orange)" }}>Peteora &amp; Active</span>
             </motion.h1>
 
             <motion.p

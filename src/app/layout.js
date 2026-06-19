@@ -11,17 +11,17 @@ const outfit = Outfit({
 });
 
 export const metadata = {
-  title: "Zesty Paws Headless Storefront - Premium Dog & Cat Supplements",
+  title: "Peteora - Premium Dog & Cat Supplements Storefront",
   description: "Experience premium clinical-grade pet supplements at direct-to-consumer prices. Certified natural joint, calming, allergy, and immune support bites for dogs and cats. Fast US tracked delivery.",
-  keywords: "zesty paws, dog supplements, cat joint support, calming bites, puppy vitamins, allergy immune pet supplements",
+  keywords: "peteora, pet supplements, dog supplements, cat joint support, calming bites, puppy vitamins, allergy immune pet supplements",
   alternates: {
-    canonical: "https://zestypaws.com",
+    canonical: "https://peteora.com",
   },
   openGraph: {
-    title: "Zesty Paws Headless Storefront - Premium Pet Wellness",
+    title: "Peteora - Premium Pet Wellness Storefront",
     description: "Veterinarian-recommended clinical supplement bites for cats and dogs. Fast US tracked delivery.",
-    url: "https://zestypaws.com",
-    siteName: "Zesty Paws Headless",
+    url: "https://peteora.com",
+    siteName: "Peteora",
     locale: "en_US",
     type: "website",
   },

@@ -46,7 +46,7 @@ export default function Header() {
               />
             </svg>
             <span className="font-heading fs-3 fw-bold tracking-wide" style={{ color: "var(--zesty-orange)" }}>
-              Zesty<span style={{ color: "var(--forest-green)" }}>Paws</span>
+              Pet<span style={{ color: "var(--forest-green)" }}>eora</span>
             </span>
           </Link>
 

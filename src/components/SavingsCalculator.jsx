@@ -5,7 +5,7 @@ import { Sparkles, Calendar, BadgePercent } from "lucide-react";
 
 export default function SavingsCalculator() {
   const [jarsCount, setJarsCount] = useState(1);
-  const averagePrice = 28.50; // Average cost of Zesty Bites
+  const averagePrice = 28.50; // Average cost of Peteora Bites
   const autoshipDiscount = 0.15; // 15% Autoship discount
 
   // Calculation details

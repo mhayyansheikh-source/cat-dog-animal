@@ -1,16 +1,24 @@
 const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
 const token = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
+const privateToken = process.env.SHOPIFY_STOREFRONT_PRIVATE_TOKEN;
 
 async function shopifyFetch({ query, variables = {} }) {
   const url = `https://${domain}/api/2024-01/graphql.json`;
   
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  if (privateToken) {
+    headers["Shopify-Storefront-Private-Token"] = privateToken;
+  } else {
+    headers["X-Shopify-Storefront-Access-Token"] = token;
+  }
+  
   try {
     const response = await fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Shopify-Storefront-Access-Token": token,
-      },
+      headers,
       body: JSON.stringify({ query, variables }),
       next: { revalidate: 300 } // Cache data on Vercel for 5 minutes
     });
