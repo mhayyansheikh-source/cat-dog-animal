@@ -23,43 +23,19 @@ export default function Footer() {
           {/* Brand & Mission column */}
           <div className="col-lg-3 col-md-6">
             <div className="d-flex align-items-center mb-3">
-              <svg
-                className="me-2"
-                width="34"
-                height="34"
-                viewBox="0 0 100 100"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle cx="50" cy="50" r="45" fill="#FF7A00" fillOpacity="0.1" />
-                <path
-                  d="M50 35C45 35 41 39 41 44C41 49 45 53 50 53C55 53 59 49 59 44C59 39 55 35 50 35Z"
-                  fill="#FF7A00"
-                />
-                <circle cx="33" cy="30" r="7" fill="#F7BE00" />
-                <circle cx="67" cy="30" r="7" fill="#F7BE00" />
-                <circle cx="23" cy="45" r="7" fill="#FF7A00" />
-                <circle cx="77" cy="45" r="7" fill="#FF7A00" />
-                <path
-                  d="M30 65C38 75 62 75 70 65C62 60 38 60 30 65Z"
-                  fill="#00653B"
-                />
-              </svg>
-              <span className="font-heading fs-4 fw-bold tracking-wide" style={{ color: "var(--zesty-orange)" }}>
-                Pet<span style={{ color: "var(--white)" }}>eora</span>
-              </span>
+              <img src="/peteora.png" alt="Peteora Logo" style={{ height: "40px", width: "auto", filter: "brightness(0) invert(1)" }} />
             </div>
             <p className="small mb-4 text-white-50" style={{ lineHeight: "1.6" }}>
-              Our mission is to keep your pet active, happy, and feeling zesty. We partner directly with premium suppliers to offer clinical-grade pet care products at direct-to-consumer prices.
+              Our mission is to keep your pet active, happy, and feeling healthy. We partner directly with premium suppliers to offer clinical-grade pet care products at direct-to-consumer prices.
             </p>
             <div className="d-flex align-items-center gap-2 mb-3">
               <ShieldCheck size={20} style={{ color: "var(--orange)" }} />
               <span className="small fw-semibold text-white-50">100% Quality Audited & Approved</span>
             </div>
-            {/* NASC quality badge text simulation */}
+            {/* quality badge text simulation */}
             <div className="p-2 border rounded d-inline-block shadow-sm" style={{ borderStyle: "dashed", borderColor: "rgba(255, 255, 255, 0.15)", backgroundColor: "rgba(255, 255, 255, 0.03)" }}>
-              <span className="font-heading fs-6 text-white me-2">★ NASC</span>
-              <span className="small text-white-50 font-body">Audited Quality Member</span>
+              <span className="font-heading fs-6 text-white me-2">★ Peteora</span>
+              <span className="small text-white-50 font-body font-semibold">Audited Quality Standard</span>
             </div>
           </div>
 
@@ -68,29 +44,29 @@ export default function Footer() {
             <h6 className="fw-bold mb-3 text-uppercase small text-white-50">Shop Categories</h6>
             <ul className="list-unstyled mb-0 small">
               <li className="mb-2">
-                <a href="#catalog-section" className="footer-link">
-                  Cat Supplements
-                </a>
+                <Link href="/collections/dogs" className="footer-link">
+                  For Dogs
+                </Link>
               </li>
               <li className="mb-2">
-                <a href="#catalog-section" className="footer-link">
-                  Standard Edition
-                </a>
+                <Link href="/collections/cats" className="footer-link">
+                  For Cats
+                </Link>
               </li>
               <li className="mb-2">
-                <a href="#catalog-section" className="footer-link">
-                  Top Cat Edition
-                </a>
+                <Link href="/collections/accessories" className="footer-link">
+                  Accessories
+                </Link>
               </li>
               <li className="mb-2">
-                <a href="#catalog-section" className="footer-link">
-                  Cardboard Scratchers
-                </a>
+                <Link href="/collections/bundles" className="footer-link">
+                  Bundles
+                </Link>
               </li>
               <li className="mb-2">
-                <a href="#catalog-section" className="footer-link">
+                <Link href="/collections/replacement-parts" className="footer-link">
                   Replacement Parts
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

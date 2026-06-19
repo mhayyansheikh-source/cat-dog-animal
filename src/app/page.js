@@ -1,9 +1,11 @@
 import React from "react";
 import Hero from "@/components/Hero";
-import ConcernGrid from "@/components/ConcernGrid";
+import FeaturesBand from "@/components/FeaturesBand";
 import ProductTabs from "@/components/ProductTabs";
-import DosageFinder from "@/components/DosageFinder";
-import IngredientsSpotlight from "@/components/IngredientsSpotlight";
+import TrustStats from "@/components/TrustStats";
+import BundlesSection from "@/components/BundlesSection";
+import ReviewsSection from "@/components/ReviewsSection";
+import NewsletterSection from "@/components/NewsletterSection";
 import CartDrawer from "@/components/CartDrawer";
 import { getShopifyProducts } from "@/utils/shopify";
 
@@ -13,26 +15,28 @@ export default async function Home() {
 
   return (
     <>
-      {/* Hero Entrance Banners */}
+      {/* Hero Section */}
       <Hero />
 
-      {/* Target Concern Category Lists */}
-      <div className="container">
-        <ConcernGrid />
-      </div>
+      {/* Features Band Segment */}
+      <FeaturesBand />
 
-      {/* Tabbed Product Catalog grids feeding live data */}
+      {/* Best Sellers Grid Catalog */}
       <ProductTabs products={products} />
 
-      {/* Interactive Dosage finder quiz widgets feeding live data */}
-      <div className="container">
-        <DosageFinder products={products} />
-      </div>
+      {/* Trust Stats Numbers */}
+      <TrustStats />
 
-      {/* Scientific Active Ingredients spotlight columns */}
-      <IngredientsSpotlight />
+      {/* Value Combo Packs */}
+      <BundlesSection />
 
-      {/* Dynamic slide-out Cart Drawer elements */}
+      {/* Customer Testimonials reviews */}
+      <ReviewsSection />
+
+      {/* Footer Newsletter Action banner */}
+      <NewsletterSection />
+
+      {/* Dynamic Slide-out Cart Drawer Overlay */}
       <CartDrawer />
     </>
   );

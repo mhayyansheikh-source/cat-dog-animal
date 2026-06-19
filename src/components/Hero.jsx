@@ -2,169 +2,320 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Sparkles, ShieldCheck } from "lucide-react";
+import Link from "next/link";
+
+const categoryCards = [
+  {
+    emoji: "🐕",
+    title: "For Dogs",
+    desc: "Supplements, food & treats",
+    badge: "35+ Products",
+    href: "/collections/dogs",
+    badgeStyle: { backgroundColor: "var(--orange-light)", color: "var(--orange-dark)" },
+    delay: 0.2,
+    offset: false,
+  },
+  {
+    emoji: "🐈",
+    title: "For Cats",
+    desc: "Health & wellness range",
+    badge: "20+ Products",
+    href: "/collections/cats",
+    badgeStyle: { backgroundColor: "var(--orange-light)", color: "var(--orange-dark)" },
+    delay: 0.3,
+    offset: true,
+  },
+  {
+    emoji: "🎾",
+    title: "Accessories",
+    desc: "Beds, toys & travel gear",
+    badge: "New Arrivals",
+    href: "/collections/accessories",
+    badgeStyle: { backgroundColor: "var(--teal-light)", color: "var(--teal-dark)" },
+    delay: 0.4,
+    offset: false,
+  },
+  {
+    emoji: "🎁",
+    title: "Bundles",
+    desc: "Save up to 30% on combos",
+    badge: "Best Value",
+    href: "/collections/bundles",
+    badgeStyle: { backgroundColor: "var(--teal-light)", color: "var(--teal-dark)" },
+    delay: 0.5,
+    offset: true,
+  },
+];
+
+const stats = [
+  { num: "250K+", label: "Happy Pets" },
+  { num: "4.9★", label: "Avg. Rating" },
+  { num: "60+", label: "Products" },
+];
 
 export default function Hero() {
   return (
     <section
-      className="position-relative overflow-hidden py-5 border-bottom"
       style={{
         background: "linear-gradient(135deg, #FDFAF5 0%, #FEF0E6 50%, #E0F5F2 100%)",
         minHeight: "580px",
         display: "flex",
-        alignItems: "center"
+        alignItems: "center",
+        overflow: "hidden",
+        position: "relative",
       }}
     >
-      <div className="container position-relative py-md-5">
+      {/* Decorative blobs */}
+      <div
+        style={{
+          position: "absolute",
+          top: "-80px",
+          right: "-80px",
+          width: "320px",
+          height: "320px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(245,118,26,0.08) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          bottom: "-60px",
+          left: "-60px",
+          width: "240px",
+          height: "240px",
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(26,140,122,0.08) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }}
+      />
+
+      <div className="container position-relative" style={{ paddingTop: "60px", paddingBottom: "60px" }}>
         <div className="row align-items-center g-5">
-          {/* Left Column: Text Content & CTAs */}
+
+          {/* ── LEFT COLUMN ── */}
           <div className="col-lg-6 text-center text-lg-start">
-            {/* Promo Ribbon */}
+
+            {/* Badge */}
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, y: -16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill mb-4"
+              className="d-inline-flex align-items-center gap-2 rounded-pill mb-4"
               style={{
                 backgroundColor: "var(--orange-light)",
                 color: "var(--orange-dark)",
                 border: "1.5px solid #F5C49A",
                 fontSize: "13px",
-                fontWeight: "800"
+                fontWeight: "800",
+                padding: "6px 16px",
               }}
             >
-              <Sparkles size={14} />
-              <span>SALE ENDS MONDAY: Save 15% on subscriptions!</span>
+              <span>✨</span>
+              <span>Vet-Recommended Formulas</span>
             </motion.div>
 
-            {/* Title */}
+            {/* H1 */}
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="display-4 fw-bold font-heading mb-3"
-              style={{ lineHeight: "1.1", color: "var(--charcoal)" }}
+              className="font-heading fw-bold mb-3"
+              style={{
+                fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+                fontSize: "clamp(38px, 5vw, 56px)",
+                lineHeight: "1.1",
+                color: "var(--charcoal)",
+              }}
             >
-              Keep Your Furry Friends <br />
-              <span style={{ color: "var(--orange)" }}>Peteora &amp; Active</span>
+              Your Pet Deserves the{" "}
+              <span style={{ color: "var(--orange)", fontStyle: "italic" }}>
+                Best of Everything
+              </span>
             </motion.h1>
 
+            {/* Description */}
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="lead text-muted mb-4 font-body"
-              style={{ maxWidth: "480px" }}
+              style={{
+                fontSize: "17px",
+                color: "var(--gray, #6B7280)",
+                marginBottom: "36px",
+                maxWidth: "480px",
+                lineHeight: "1.65",
+              }}
             >
-              Veterinarian-formulated supplement chewable bites that dogs and cats love. Direct-to-consumer sourcing provides premium active ingredients without retail inflation.
+              Premium supplements, treats, food, and accessories for happy, healthy cats and dogs.
+              Science-backed ingredients, loved by pets worldwide.
             </motion.p>
 
-            {/* Dual CTAs */}
+            {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="d-flex flex-wrap justify-content-center justify-content-lg-start gap-3 mb-4"
+              className="d-flex flex-wrap justify-content-center justify-content-lg-start gap-3 mb-5"
             >
-              <a href="#shop-dogs" className="text-decoration-none">
+              <Link href="/collections/dogs" className="text-decoration-none">
                 <button
-                  className="rounded-pill-cta btn-zesty-secondary fs-5 py-3 px-4 shadow-sm hover-scale"
-                  style={{ backgroundColor: "var(--orange)", borderColor: "var(--orange)" }}
+                  style={{
+                    background: "var(--orange)",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "100px",
+                    padding: "12px 26px",
+                    fontWeight: "800",
+                    fontSize: "15px",
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    transition: "all 0.2s",
+                    boxShadow: "0 4px 16px rgba(245,118,26,0.3)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "var(--orange-dark, #C45A0E)";
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "var(--orange)";
+                    e.currentTarget.style.transform = "translateY(0)";
+                  }}
                 >
-                  🐕 Shop for Dogs
+                  Shop for Dogs 🐶
                 </button>
-              </a>
-              <a href="#shop-cats" className="text-decoration-none">
+              </Link>
+
+              <Link href="/collections/cats" className="text-decoration-none">
                 <button
-                  className="rounded-pill-cta btn-zesty-primary fs-5 py-3 px-4 shadow-sm hover-scale"
-                  style={{ backgroundColor: "var(--teal)", borderColor: "var(--teal)" }}
+                  style={{
+                    background: "transparent",
+                    color: "var(--orange)",
+                    border: "2px solid var(--orange)",
+                    borderRadius: "100px",
+                    padding: "12px 26px",
+                    fontWeight: "800",
+                    fontSize: "15px",
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    transition: "all 0.2s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "var(--orange)";
+                    e.currentTarget.style.color = "white";
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "transparent";
+                    e.currentTarget.style.color = "var(--orange)";
+                    e.currentTarget.style.transform = "translateY(0)";
+                  }}
                 >
-                  🐈 Shop for Cats
+                  Shop for Cats 🐱
                 </button>
-              </a>
+              </Link>
             </motion.div>
 
-            {/* Micro Trust points */}
+            {/* Stats Row */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="d-flex flex-wrap justify-content-center justify-content-lg-start gap-3 text-muted small"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.45 }}
+              className="d-flex justify-content-center justify-content-lg-start gap-4"
+              style={{
+                paddingTop: "28px",
+                borderTop: "1px solid #E5E7EB",
+                flexWrap: "wrap",
+              }}
             >
-              <span className="d-flex align-items-center gap-1">
-                <ShieldCheck size={16} style={{ color: "var(--teal)" }} /> 100% NASC Audited Safety
-              </span>
-              <span>•</span>
-              <span>🇺🇸 Free US Shipping Over $35</span>
-              <span>•</span>
-              <span>📦 Tracked 5-12 Day USPS Delivery</span>
+              {stats.map((s, i) => (
+                <div key={i}>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+                      fontSize: "28px",
+                      fontWeight: "700",
+                      color: "var(--orange)",
+                      lineHeight: "1.2",
+                    }}
+                  >
+                    {s.num}
+                  </div>
+                  <div style={{ fontSize: "13px", color: "var(--gray, #6B7280)", fontWeight: "600" }}>
+                    {s.label}
+                  </div>
+                </div>
+              ))}
             </motion.div>
           </div>
 
-          {/* Right Column: Collection Category Cards */}
+          {/* ── RIGHT COLUMN: 2×2 Category Cards ── */}
           <div className="col-lg-6">
-            <div className="row g-4 align-items-center">
-              <div className="col-sm-6">
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  whileHover={{ y: -6, boxShadow: "var(--shadow-hover)" }}
-                  className="bg-white p-4 text-center rounded-card border shadow-sm cursor-pointer"
-                  style={{ borderRadius: "var(--radius)" }}
-                >
-                  <span className="display-3 d-block mb-3">🐶</span>
-                  <h3 className="h5 fw-bold font-heading mb-2">Dog Supplements</h3>
-                  <p className="small text-muted font-body mb-4" style={{ minHeight: "40px" }}>
-                    Premium formulas for joints, skin &amp; digestion
-                  </p>
-                  <a href="#shop-dogs" className="text-decoration-none">
-                    <span
-                      className="d-inline-block px-3 py-2 rounded-pill fw-bold small transition-all"
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "16px",
+              }}
+            >
+              {categoryCards.map((card, i) => (
+                <Link key={i} href={card.href} className="text-decoration-none">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.55, delay: card.delay }}
+                    whileHover={{ y: -6, boxShadow: "0 8px 40px rgba(0,0,0,0.14)" }}
+                    style={{
+                      background: "white",
+                      borderRadius: "16px",
+                      padding: "28px 20px",
+                      textAlign: "center",
+                      boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+                      cursor: "pointer",
+                      transition: "transform 0.25s, box-shadow 0.25s",
+                      marginTop: card.offset ? "24px" : "0",
+                    }}
+                  >
+                    <span style={{ fontSize: "52px", display: "block", marginBottom: "12px", lineHeight: "1" }}>
+                      {card.emoji}
+                    </span>
+                    <h3
                       style={{
-                        backgroundColor: "var(--orange-light)",
-                        color: "var(--orange-dark)",
-                        fontSize: "12px",
-                        fontWeight: "800"
+                        fontSize: "16px",
+                        fontWeight: "800",
+                        color: "var(--charcoal, #2A2A2A)",
+                        marginBottom: "4px",
+                        fontFamily: "var(--font-nunito), 'Nunito', sans-serif",
                       }}
                     >
-                      Shop Dogs
-                    </span>
-                  </a>
-                </motion.div>
-              </div>
-
-              <div className="col-sm-6 mt-sm-5">
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                  whileHover={{ y: -6, boxShadow: "var(--shadow-hover)" }}
-                  className="bg-white p-4 text-center rounded-card border shadow-sm cursor-pointer"
-                  style={{ borderRadius: "var(--radius)" }}
-                >
-                  <span className="display-3 d-block mb-3">🐱</span>
-                  <h3 className="h5 fw-bold font-heading mb-2">Cat Supplements</h3>
-                  <p className="small text-muted font-body mb-4" style={{ minHeight: "40px" }}>
-                    Veterinarian-formulated daily support chewables
-                  </p>
-                  <a href="#shop-cats" className="text-decoration-none">
+                      {card.title}
+                    </h3>
+                    <p style={{ fontSize: "13px", color: "var(--gray, #6B7280)", marginBottom: "12px" }}>
+                      {card.desc}
+                    </p>
                     <span
-                      className="d-inline-block px-3 py-2 rounded-pill fw-bold small transition-all"
                       style={{
-                        backgroundColor: "var(--teal-light)",
-                        color: "var(--teal-dark)",
+                        display: "inline-block",
+                        borderRadius: "100px",
+                        padding: "3px 14px",
                         fontSize: "12px",
-                        fontWeight: "800"
+                        fontWeight: "700",
+                        ...card.badgeStyle,
                       }}
                     >
-                      Shop Cats
+                      {card.badge}
                     </span>
-                  </a>
-                </motion.div>
-              </div>
+                  </motion.div>
+                </Link>
+              ))}
             </div>
           </div>
+
         </div>
       </div>
     </section>

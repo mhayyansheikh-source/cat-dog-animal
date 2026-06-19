@@ -40,35 +40,50 @@ export default function ProductCard({ product }) {
         )}
 
         {/* Product Image Wrapper */}
-        <Link href={`/product/${product.handle}`} className="d-block overflow-hidden position-relative" style={{ height: "240px", backgroundColor: "#f9f9f9" }}>
-          {/* Default Packaging Image */}
-          <img
-            src={defaultImage}
-            alt={product.title}
-            className="w-100 h-100 object-fit-contain p-3 transition-all duration-500"
-            style={{
-              opacity: isHovered ? 0 : 1,
-              transform: isHovered ? "scale(0.95)" : "scale(1)",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              transition: "all 0.4s ease-in-out"
-            }}
-          />
-          {/* Lifestyle/Features Hover Image */}
-          <img
-            src={hoverImage}
-            alt={`${product.title} lifestyle`}
-            className="w-100 h-100 object-fit-contain p-3 transition-all duration-500"
-            style={{
-              opacity: isHovered ? 1 : 0,
-              transform: isHovered ? "scale(1)" : "scale(1.05)",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              transition: "all 0.4s ease-in-out"
-            }}
-          />
+        <Link href={`/product/${product.handle || product.id}`} className="d-block overflow-hidden position-relative" style={{ height: "240px", backgroundColor: "#f9f9f9" }}>
+          {(!defaultImage || (!defaultImage.startsWith("http") && !defaultImage.startsWith("/"))) ? (
+            <div 
+              className="w-100 h-100 d-flex align-items-center justify-content-center transition-all"
+              style={{ 
+                fontSize: "80px",
+                transform: isHovered ? "scale(1.1)" : "scale(1)",
+                transition: "transform 0.3s ease" 
+              }}
+            >
+              {defaultImage || "🐾"}
+            </div>
+          ) : (
+            <>
+              {/* Default Packaging Image */}
+              <img
+                src={defaultImage}
+                alt={product.title}
+                className="w-100 h-100 object-fit-contain p-3 transition-all duration-500"
+                style={{
+                  opacity: isHovered ? 0 : 1,
+                  transform: isHovered ? "scale(0.95)" : "scale(1)",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  transition: "all 0.4s ease-in-out"
+                }}
+              />
+              {/* Lifestyle/Features Hover Image */}
+              <img
+                src={hoverImage}
+                alt={`${product.title} lifestyle`}
+                className="w-100 h-100 object-fit-contain p-3 transition-all duration-500"
+                style={{
+                  opacity: isHovered ? 1 : 0,
+                  transform: isHovered ? "scale(1)" : "scale(1.05)",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  transition: "all 0.4s ease-in-out"
+                }}
+              />
+            </>
+          )}
         </Link>
       </div>
 

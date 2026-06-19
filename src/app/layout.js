@@ -17,15 +17,15 @@ const playfair = Playfair_Display({
 });
 
 export const metadata = {
-  title: "Peteora - Premium Interactive Cat Scratcher Storefront",
-  description: "Experience the premium shape-shifting magnetic cat scratcher toy. 3-in-1 interactive ball track and cardboard lounge for kittens and cats. Fast US tracked delivery.",
-  keywords: "peteora, kitty kurlz, cat scratcher, cardboard cat toy, interactive cat toy, shape-shifting scratcher, magnetic cat track",
+  title: "Peteora - Premium Pet Products for Dogs & Cats",
+  description: "Premium supplements, treats, food, and accessories for happy, healthy cats and dogs. Science-backed ingredients, loved by pets worldwide.",
+  keywords: "peteora, dog supplements, cat supplements, cat scratcher, pet accessories, interactive toys",
   alternates: {
     canonical: "https://peteora.com",
   },
   openGraph: {
-    title: "Peteora - Premium Interactive Cat Toys & Scratchers",
-    description: "Keep your feline friend active and entertained with Kitty Kurlz! 3-in-1 interactive shape-shifting toy. Fast US tracked delivery.",
+    title: "Peteora - Premium Pet Health, Wellness & Play",
+    description: "Premium supplements, treats, food, and accessories for happy, healthy cats and dogs. Science-backed ingredients.",
     url: "https://peteora.com",
     siteName: "Peteora",
     locale: "en_US",
@@ -34,6 +34,11 @@ export const metadata = {
   robots: {
     index: true,
     follow: true,
+  },
+  icons: {
+    icon: "/peteora.png",
+    shortcut: "/peteora.png",
+    apple: "/peteora.png",
   }
 };
 

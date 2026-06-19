@@ -3,64 +3,57 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
-import { ShoppingCart, Search, Menu, X, Star } from "lucide-react";
+import { ShoppingCart, Search, Menu, X } from "lucide-react";
 
 export default function Header() {
   const { setIsCartOpen, cartCount } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <header className="premium-header">
-      {/* Dropshipping-Urgency Announcement Bar */}
-      <div className="premium-announcement-bar d-flex justify-content-center align-items-center py-2 px-3 gap-2">
-        <span className="badge bg-warning text-dark font-weight-bold" style={{ borderRadius: "100px", padding: "0.25rem 0.6rem" }}>⚡ EXCLUSIVE USA DEAL</span>
-        <span className="small text-white">Free Tracked 5-12 Day Shipping to the United States on all orders over $35!</span>
+    <header className="premium-header border-bottom">
+      {/* Peteora Announcement Bar */}
+      <div 
+        className="d-flex justify-content-center align-items-center py-2 px-3 gap-2" 
+        style={{ 
+          backgroundColor: "var(--orange)", 
+          color: "white",
+          fontSize: "14px",
+          fontWeight: "700"
+        }}
+      >
+        <span>🐾 Free Shipping on Orders Over $50 · Subscribe & Save 20% · </span>
+        <Link href="/collections/cats" className="text-white text-decoration-underline ms-1">
+          Shop Now
+        </Link>
       </div>
 
-      <nav className="navbar navbar-expand-lg navbar-light py-3">
+      <nav className="navbar navbar-expand-lg navbar-light py-3 bg-white">
         <div className="container">
           {/* Logo Brand Signature */}
           <Link href="/" className="navbar-brand d-flex align-items-center text-decoration-none">
-            {/* SVG Custom Logo (Animated Paw + Wordmark) */}
-            <svg
-              className="me-2"
-              width="40"
-              height="40"
-              viewBox="0 0 100 100"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="50" cy="50" r="45" fill="#FF7A00" fillOpacity="0.1" />
-              <path
-                d="M50 35C45 35 41 39 41 44C41 49 45 53 50 53C55 53 59 49 59 44C59 39 55 35 50 35Z"
-                fill="#FF7A00"
-              />
-              <circle cx="33" cy="30" r="7" fill="#F7BE00" />
-              <circle cx="67" cy="30" r="7" fill="#F7BE00" />
-              <circle cx="23" cy="45" r="7" fill="#FF7A00" />
-              <circle cx="77" cy="45" r="7" fill="#FF7A00" />
-              <path
-                d="M30 65C38 75 62 75 70 65C62 60 38 60 30 65Z"
-                fill="#00653B"
-              />
-            </svg>
-            <span className="font-heading fs-3 fw-bold tracking-wide" style={{ color: "var(--zesty-orange)" }}>
-              Pet<span style={{ color: "var(--forest-green)" }}>eora</span>
-            </span>
+            <img src="/peteora.png" alt="Peteora Logo" style={{ height: "45px", width: "auto" }} />
           </Link>
 
           {/* Toggle buttons for mobile */}
           <div className="d-flex align-items-center gap-2 d-lg-none">
             <button
               onClick={() => setIsCartOpen(true)}
-              className="btn premium-cart-btn d-flex align-items-center justify-content-center p-2 rounded-circle hover-scale"
-              style={{ width: "40px", height: "40px", position: "relative" }}
+              className="btn p-2 border-0 position-relative"
               aria-label="Open cart"
             >
-              <ShoppingCart size={20} />
+              <span style={{ fontSize: "22px" }}>🛒</span>
               {cartCount > 0 && (
-                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ fontSize: "0.65rem", padding: "0.25em 0.5em" }}>
+                <span 
+                  className="position-absolute top-0 start-100 translate-middle badge rounded-circle d-flex align-items-center justify-content-center text-white" 
+                  style={{ 
+                    fontSize: "0.625rem", 
+                    width: "18px", 
+                    height: "18px", 
+                    backgroundColor: "var(--orange)",
+                    marginTop: "8px",
+                    marginLeft: "-6px"
+                  }}
+                >
                   {cartCount}
                 </span>
               )}
@@ -83,48 +76,54 @@ export default function Header() {
                 </Link>
               </li>
               <li className="nav-item px-2">
-                <a href="#catalog-section" className="nav-link premium-nav-link">
-                  Cat Supplements
-                </a>
+                <Link href="/collections/dogs" className="nav-link premium-nav-link">
+                  🐶 Dogs
+                </Link>
               </li>
               <li className="nav-item px-2">
-                <a href="#catalog-section" className="nav-link premium-nav-link">
-                  Standard Edition
-                </a>
+                <Link href="/collections/cats" className="nav-link premium-nav-link">
+                  🐱 Cats
+                </Link>
               </li>
               <li className="nav-item px-2">
-                <a href="#catalog-section" className="nav-link premium-nav-link">
-                  Top Cat Edition
-                </a>
+                <Link href="/collections/accessories" className="nav-link premium-nav-link">
+                  Accessories
+                </Link>
               </li>
               <li className="nav-item px-2">
-                <a href="#science" className="nav-link premium-nav-link">
-                  Science & Safety
-                </a>
-              </li>
-              <li className="nav-item px-2">
-                <a href="#dosage-finder" className="nav-link premium-nav-link fw-bold text-zesty-orange">
-                  Dosage Quiz
-                </a>
+                <Link href="/collections/bundles" className="nav-link premium-nav-link">
+                  Bundles
+                </Link>
               </li>
             </ul>
 
-            {/* Right Side Tools */}
-            <div className="d-none d-lg-flex align-items-center gap-3">
-              {/* Cart Button */}
-              <button
+            {/* Right Side Tools matched to design */}
+            <div className="d-none d-lg-flex align-items-center gap-4 text-dark fs-5">
+              <span className="cursor-pointer hover-scale" style={{ cursor: "pointer" }} title="Search">🔍</span>
+              <span className="cursor-pointer hover-scale" style={{ cursor: "pointer" }} title="Account">👤</span>
+              <span 
+                className="cursor-pointer hover-scale position-relative" 
                 onClick={() => setIsCartOpen(true)}
-                className="btn premium-cart-btn d-flex align-items-center gap-2 px-3 py-2 rounded-pill shadow-sm"
-                aria-label="Open shopping cart"
+                title="Cart"
+                style={{ userSelect: "none", cursor: "pointer" }}
               >
-                <ShoppingCart size={18} />
-                <span className="fw-bold small">Cart</span>
-                {cartCount > 0 ? (
-                  <span className="cart-badge-count">{cartCount}</span>
-                ) : (
-                  <span className="cart-badge-count empty">0</span>
+                🛒
+                {cartCount > 0 && (
+                  <span 
+                    className="position-absolute top-0 start-100 translate-middle badge rounded-circle d-flex align-items-center justify-content-center text-white" 
+                    style={{ 
+                      fontSize: "0.625rem", 
+                      width: "18px", 
+                      height: "18px", 
+                      backgroundColor: "var(--orange)",
+                      marginTop: "-2px",
+                      marginLeft: "-2px"
+                    }}
+                  >
+                    {cartCount}
+                  </span>
                 )}
-              </button>
+              </span>
             </div>
           </div>
         </div>

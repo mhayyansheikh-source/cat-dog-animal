@@ -8,54 +8,7 @@ import { notFound } from "next/navigation";
 
 export const runtime = "edge";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// REAL PRODUCTS — sourced from shopify_products_import.csv (Peteora store)
-// ─────────────────────────────────────────────────────────────────────────────
 
-// Product 1: Kitty Kurlz Standard Edition
-// Handle: kitty-kurlz-the-interactive-mental-physical-exercise-for-cats
-// Price: $29.99 | Was: $59.99 | Vendor: Peteora | Type: Cat Supplements
-// Tags: cat, toy, interactive, scratcher, mental-exercise, standard
-const PRODUCT_KITTY_KURLZ_STANDARD = {
-  id: "kitty-kurlz-standard",
-  title: "Kitty Kurlz - The Interactive Mental & Physical Exercise for Cats",
-  product_type: "Cat Supplements",
-  price: "29.99",
-  compare_at_price: "59.99",
-  images: ["https://marlenespetshop.com/cdn/shop/files/kitty-kurlz.jpg"],
-  tags: ["cat", "toy", "interactive", "scratcher", "mental-exercise", "standard"],
-  body_html: "<p>Keep your feline friend active and entertained with Kitty Kurlz! This 3-in-1 interactive shape-shifting toy serves as a cat scratcher, ball track, and lounge area. Made from premium, non-toxic double-corrugated cardboard with a magnetic design, it allows you to connect multiple units together to create a larger custom play track. Perfect for physical exercise, mental stimulation, and protecting your home furniture.</p>",
-  rating: 4.9,
-  reviews: 3200,
-  handle: "kitty-kurlz-the-interactive-mental-physical-exercise-for-cats",
-  vendor: "Peteora",
-  variants: [{ id: "SKU-kitty-kurlz-standard", title: "Default Title", price: "29.99" }],
-  inventory: 100,
-};
-
-// Product 2: Kitty Kurlz Top Cat Edition
-// Handle: kitty-kurlz-the-interactive-mental-physical-exercise-for-cats-top-cat
-// Price: $39.99 | Was: $79.99 | Vendor: Peteora | Type: Cat Supplements
-// Tags: cat, toy, interactive, scratcher, mental-exercise, top-cat
-const PRODUCT_KITTY_KURLZ_TOPCAT = {
-  id: "kitty-kurlz-top-cat",
-  title: "Kitty Kurlz - Top Cat Edition",
-  product_type: "Cat Supplements",
-  price: "39.99",
-  compare_at_price: "79.99",
-  images: ["https://marlenespetshop.com/cdn/shop/files/kitty-kurlz-top-cat.jpg"],
-  tags: ["cat", "toy", "interactive", "scratcher", "mental-exercise", "top-cat"],
-  body_html: "<p>The Top Cat edition of the ultimate interactive shape-shifting scratcher toy. Designed with double-reinforced cardboard tracks and an upgraded heavier bell ball, this edition is built specifically for larger cat breeds or active multi-cat households to support deep scratching and intense play sessions.</p>",
-  rating: 4.8,
-  reviews: 1875,
-  handle: "kitty-kurlz-the-interactive-mental-physical-exercise-for-cats-top-cat",
-  vendor: "Peteora",
-  variants: [{ id: "SKU-kitty-kurlz-topcat", title: "Default Title", price: "39.99" }],
-  inventory: 100,
-};
-
-// All real Peteora products from CSV
-const REAL_PRODUCTS = [PRODUCT_KITTY_KURLZ_STANDARD, PRODUCT_KITTY_KURLZ_TOPCAT];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // NOTE: Dogs and Accessories data are fetched dynamically via Shopify API
@@ -91,11 +44,9 @@ const COLLECTION_CONFIGS = {
     gradient: "linear-gradient(135deg, #E0F5F2, #FDFAF5)",
     badgeBg: "var(--teal-light)",
     badgeColor: "var(--teal-dark)",
-    // Real products from CSV: Kitty Kurlz Standard + Top Cat Edition
+    // Filter live products for Cat products
     getProducts: async (liveProducts) => {
-      const csvProducts = REAL_PRODUCTS;
-      const allProducts = [...csvProducts, ...liveProducts.filter(p => !csvProducts.find(r => r.handle === p.handle))];
-      return allProducts;
+      return liveProducts.filter(p => p.tags?.some(t => t.toLowerCase() === "cat") || p.product_type === "Cat" || p.product_type === "Cat Supplements");
     },
     sidebar: {
       categories: [
@@ -157,11 +108,9 @@ const COLLECTION_CONFIGS = {
     gradient: "linear-gradient(135deg, var(--teal-light), var(--cream))",
     badgeBg: "var(--teal-light)",
     badgeColor: "var(--teal-dark)",
-    // Real products from CSV: both Kitty Kurlz products (Peteora store type: Cat Supplements)
+    // Filter live products for Cat Supplements
     getProducts: async (liveProducts) => {
-      const csvProducts = REAL_PRODUCTS;
-      const allProducts = [...csvProducts, ...liveProducts.filter(p => !csvProducts.find(r => r.handle === p.handle))];
-      return allProducts;
+      return liveProducts.filter(p => p.tags?.some(t => t.toLowerCase() === "cat-supplement") || p.product_type === "Cat Supplements");
     },
     sidebar: {
       categories: [
@@ -181,8 +130,8 @@ const COLLECTION_CONFIGS = {
     gradient: "linear-gradient(135deg, var(--orange-light), var(--cream))",
     badgeBg: "var(--orange-light)",
     badgeColor: "var(--orange-dark)",
-    // Real product from CSV: Kitty Kurlz Standard Edition
-    getProducts: async () => [PRODUCT_KITTY_KURLZ_STANDARD],
+    // Live products matching standard edition
+    getProducts: async (liveProducts) => liveProducts.filter(p => p.tags?.some(t => t.toLowerCase() === "standard") || p.handle.includes("standard")),
     sidebar: {
       categories: [{ label: "All Products", count: 1 }, { label: "Standard Edition", count: 1 }],
       benefits: ["Mental Exercise & Play", "Scratching", "Interactive", "Furniture Protection"],
@@ -195,8 +144,8 @@ const COLLECTION_CONFIGS = {
     gradient: "linear-gradient(135deg, var(--teal-light), var(--cream))",
     badgeBg: "var(--teal-light)",
     badgeColor: "var(--teal-dark)",
-    // Real product from CSV: Kitty Kurlz Top Cat Edition
-    getProducts: async () => [PRODUCT_KITTY_KURLZ_TOPCAT],
+    // Live products matching top-cat edition
+    getProducts: async (liveProducts) => liveProducts.filter(p => p.tags?.some(t => t.toLowerCase() === "top-cat") || p.handle.includes("top-cat")),
     sidebar: {
       categories: [{ label: "All Products", count: 1 }, { label: "Top Cat Edition", count: 1 }],
       benefits: ["Mental Exercise & Play", "Deep Scratching", "Durable", "Multi-Cat"],

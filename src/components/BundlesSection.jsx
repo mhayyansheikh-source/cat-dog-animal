@@ -1,0 +1,241 @@
+"use client";
+
+import React from "react";
+import { useCart } from "@/context/CartContext";
+import Link from "next/link";
+
+const DOG_BUNDLE = {
+  emoji: "🐕",
+  label: "Dog Starter Bundle",
+  bg: "var(--orange-light)",
+  tag: "Save 25%",
+  tagStyle: { backgroundColor: "var(--teal-light)", color: "var(--teal-dark)" },
+  title: "Puppy Wellness Kit",
+  desc: "Everything your dog needs to thrive — from joint health to shiny coat support.",
+  items: [
+    "Hip & Joint Chews (60ct)",
+    "Omega-3 Fish Oil (8oz)",
+    "Probiotic Bites (90ct)",
+    "Multivitamin Chews (60ct)",
+  ],
+  newPrice: "$59.99",
+  oldPrice: "$79.99",
+  href: "/collections/dogs",
+  btnStyle: { backgroundColor: "var(--orange)", color: "white" },
+  btnHover: "#C45A0E",
+};
+
+const CAT_BUNDLE = {
+  emoji: "🐈",
+  label: "Cat Starter Bundle",
+  bg: "var(--teal-light)",
+  tag: "Save 20%",
+  tagStyle: { backgroundColor: "var(--orange-light)", color: "var(--orange-dark)" },
+  title: "Kitty Health Pack",
+  desc: "A complete routine for your cat's immunity, gut, and skin health in one bundle.",
+  items: [
+    "Immune Support Chews (60ct)",
+    "Digestive Mousse (Pack of 6)",
+    "Salmon Oil Drops (4oz)",
+    "Calming Diffuser Starter Kit",
+  ],
+  newPrice: "$49.99",
+  oldPrice: "$64.99",
+  href: "/collections/cats",
+  btnStyle: { backgroundColor: "var(--teal)", color: "white" },
+  btnHover: "#0F5E52",
+};
+
+function BundleCard({ bundle }) {
+  return (
+    <div
+      style={{
+        background: "white",
+        border: "1px solid #E5E7EB",
+        borderRadius: "16px",
+        overflow: "hidden",
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+        transition: "box-shadow 0.25s",
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 8px 40px rgba(0,0,0,0.14)")}
+      onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 4px 24px rgba(0,0,0,0.08)")}
+    >
+      {/* Visual Side */}
+      <div
+        style={{
+          background: bundle.bg,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center",
+          padding: "40px 20px",
+          minHeight: "260px",
+          gap: "10px",
+        }}
+      >
+        <span style={{ fontSize: "72px", lineHeight: "1" }}>{bundle.emoji}</span>
+        <span
+          style={{
+            fontSize: "13px",
+            fontWeight: "700",
+            color: bundle.btnStyle.backgroundColor,
+          }}
+        >
+          {bundle.label}
+        </span>
+      </div>
+
+      {/* Content Side */}
+      <div
+        style={{
+          padding: "32px 28px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
+        <div>
+          <span
+            style={{
+              display: "inline-block",
+              borderRadius: "100px",
+              padding: "4px 14px",
+              fontSize: "12px",
+              fontWeight: "800",
+              marginBottom: "14px",
+              ...bundle.tagStyle,
+            }}
+          >
+            {bundle.tag}
+          </span>
+          <h3
+            style={{
+              fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+              fontSize: "22px",
+              fontWeight: "700",
+              marginBottom: "10px",
+              color: "var(--charcoal, #2A2A2A)",
+            }}
+          >
+            {bundle.title}
+          </h3>
+          <p style={{ fontSize: "14px", color: "#6B7280", marginBottom: "18px", lineHeight: "1.55" }}>
+            {bundle.desc}
+          </p>
+          <ul style={{ listStyle: "none", padding: 0, marginBottom: "22px" }}>
+            {bundle.items.map((item, i) => (
+              <li
+                key={i}
+                style={{
+                  fontSize: "14px",
+                  color: "var(--charcoal, #2A2A2A)",
+                  padding: "4px 0",
+                  display: "flex",
+                  gap: "8px",
+                  alignItems: "flex-start",
+                }}
+              >
+                <span style={{ color: "var(--teal, #1A8C7A)", fontWeight: "800", flexShrink: 0 }}>✓</span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: "10px", marginBottom: "18px" }}>
+            <span
+              style={{
+                fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+                fontSize: "30px",
+                fontWeight: "700",
+                color: "var(--orange)",
+              }}
+            >
+              {bundle.newPrice}
+            </span>
+            <span style={{ fontSize: "16px", color: "#6B7280", textDecoration: "line-through" }}>
+              {bundle.oldPrice}
+            </span>
+          </div>
+
+          <Link href={bundle.href} className="text-decoration-none d-block">
+            <button
+              style={{
+                width: "100%",
+                border: "none",
+                borderRadius: "100px",
+                padding: "13px 20px",
+                fontWeight: "800",
+                fontSize: "14px",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                ...bundle.btnStyle,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = bundle.btnHover;
+                e.currentTarget.style.transform = "translateY(-1px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = bundle.btnStyle.backgroundColor;
+                e.currentTarget.style.transform = "translateY(0)";
+              }}
+            >
+              Add Bundle to Cart
+            </button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function BundlesSection() {
+  return (
+    <section className="py-5 bg-white">
+      <div className="container">
+        {/* Section Header */}
+        <div className="text-center mb-5">
+          <span
+            className="fw-bold text-uppercase small font-body d-block mb-2"
+            style={{ color: "var(--orange)", letterSpacing: "0.12em" }}
+          >
+            Save More
+          </span>
+          <h2
+            className="font-heading fw-bold mt-2"
+            style={{
+              fontFamily: "var(--font-playfair), 'Playfair Display', serif",
+              fontSize: "clamp(28px, 4vw, 40px)",
+              color: "var(--charcoal, #2A2A2A)",
+              marginBottom: "14px",
+            }}
+          >
+            Value Bundle Packs
+          </h2>
+          <p
+            className="mx-auto"
+            style={{ fontSize: "17px", color: "#6B7280", maxWidth: "560px" }}
+          >
+            Complete wellness kits for your pet — curated by our vets and bundled for savings.
+          </p>
+        </div>
+
+        {/* Bundle Grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 480px), 1fr))",
+            gap: "24px",
+          }}
+        >
+          <BundleCard bundle={DOG_BUNDLE} />
+          <BundleCard bundle={CAT_BUNDLE} />
+        </div>
+      </div>
+    </section>
+  );
+}

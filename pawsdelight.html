@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PawsDelight – Premium Pet Products for Dogs & Cats</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange: #F5761A;
+  --orange-light: #FEF0E6;
+  --orange-dark: #C45A0E;
+  --teal: #1A8C7A;
+  --teal-light: #E0F5F2;
+  --teal-dark: #0F5E52;
+  --cream: #FDFAF5;
+  --charcoal: #2A2A2A;
+  --gray: #6B7280;
+  --gray-light: #F3F4F6;
+  --border: #E5E7EB;
+  --white: #FFFFFF;
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  --shadow-hover: 0 8px 40px rgba(0,0,0,0.14);
+  --radius: 16px;
+  --radius-sm: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Nunito', sans-serif; background: var(--white); color: var(--charcoal); line-height: 1.6; }
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; }
+
+/* ---- ANNOUNCEMENT BAR ---- */
+.announcement {
+  background: var(--orange);
+  color: white;
+  text-align: center;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.announcement a { color: white; text-decoration: underline; }
+
+/* ---- NAVBAR ---- */
+.navbar {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--orange);
+}
+.logo-icon { font-size: 32px; }
+.logo span { color: var(--teal); }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links li a {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--charcoal);
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links li a:hover { color: var(--orange); }
+.nav-links li a.active { color: var(--orange); }
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 100px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+.btn-primary { background: var(--orange); color: white; }
+.btn-primary:hover { background: var(--orange-dark); transform: translateY(-1px); }
+.btn-outline { background: transparent; color: var(--orange); border: 2px solid var(--orange); }
+.btn-outline:hover { background: var(--orange); color: white; }
+.btn-teal { background: var(--teal); color: white; }
+.btn-teal:hover { background: var(--teal-dark); transform: translateY(-1px); }
+.nav-icon { font-size: 22px; cursor: pointer; color: var(--charcoal); position: relative; }
+.cart-badge {
+  position: absolute;
+  top: -6px; right: -8px;
+  background: var(--orange);
+  color: white;
+  border-radius: 50%;
+  width: 18px; height: 18px;
+  font-size: 10px;
+  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ---- HERO ---- */
+.hero {
+  background: linear-gradient(135deg, #FDFAF5 0%, #FEF0E6 50%, #E0F5F2 100%);
+  min-height: 580px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 60px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--orange-light);
+  color: var(--orange-dark);
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  border: 1.5px solid #F5C49A;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  color: var(--charcoal);
+}
+.hero h1 .accent { color: var(--orange); }
+.hero p {
+  font-size: 18px;
+  color: var(--gray);
+  margin-bottom: 36px;
+  max-width: 480px;
+}
+.hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+.hero-stats {
+  display: flex;
+  gap: 32px;
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+.hero-stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--orange);
+}
+.hero-stat-label { font-size: 13px; color: var(--gray); font-weight: 600; }
+.hero-visual {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.hero-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  transition: transform 0.25s, box-shadow 0.25s;
+  cursor: pointer;
+}
+.hero-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+.hero-card:nth-child(2) { margin-top: 24px; }
+.hero-card-emoji { font-size: 52px; margin-bottom: 12px; display: block; }
+.hero-card h3 { font-size: 16px; font-weight: 800; color: var(--charcoal); margin-bottom: 4px; }
+.hero-card p { font-size: 13px; color: var(--gray); }
+.hero-card-badge {
+  display: inline-block;
+  background: var(--orange-light);
+  color: var(--orange-dark);
+  border-radius: 100px;
+  padding: 3px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+/* ---- SECTION BASE ---- */
+.section { padding: 80px 24px; }
+.section-inner { max-width: 1280px; margin: 0 auto; }
+.section-header { text-align: center; margin-bottom: 48px; }
+.section-header .eyebrow {
+  color: var(--orange);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: block;
+}
+.section-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 14px;
+}
+.section-header p { font-size: 17px; color: var(--gray); max-width: 560px; margin: 0 auto; }
+
+/* ---- CATEGORY TABS ---- */
+.tabs {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+.tab {
+  padding: 10px 28px;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  border: 2px solid var(--border);
+  background: white;
+  color: var(--gray);
+  transition: all 0.2s;
+}
+.tab.active, .tab:hover {
+  background: var(--orange);
+  color: white;
+  border-color: var(--orange);
+}
+.tab.teal.active, .tab.teal:hover {
+  background: var(--teal);
+  border-color: var(--teal);
+}
+
+/* ---- PRODUCT GRID ---- */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+.product-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: box-shadow 0.25s, transform 0.25s;
+  cursor: pointer;
+}
+.product-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-4px); }
+.product-img {
+  aspect-ratio: 1;
+  background: var(--gray-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 80px;
+  position: relative;
+  overflow: hidden;
+}
+.product-label {
+  position: absolute;
+  top: 12px; left: 12px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+.label-new { background: var(--teal); color: white; }
+.label-sale { background: var(--orange); color: white; }
+.label-best { background: #7C3AED; color: white; }
+.product-body { padding: 20px; }
+.product-category {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+.product-name { font-weight: 800; font-size: 16px; color: var(--charcoal); margin-bottom: 6px; }
+.product-desc { font-size: 13px; color: var(--gray); margin-bottom: 14px; line-height: 1.5; }
+.product-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.product-price { font-weight: 900; font-size: 20px; color: var(--charcoal); }
+.product-price .original { font-size: 14px; color: var(--gray); text-decoration: line-through; margin-left: 6px; font-weight: 600; }
+.add-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: white;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, transform 0.15s;
+  font-weight: 700;
+}
+.add-btn:hover { background: var(--orange-dark); transform: scale(1.1); }
+.stars { color: #F59E0B; font-size: 13px; margin-bottom: 6px; }
+.stars span { color: var(--gray); margin-left: 4px; font-size: 12px; }
+
+/* ---- FEATURES BAND ---- */
+.features-band {
+  background: var(--charcoal);
+  padding: 48px 24px;
+}
+.features-band-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 32px;
+}
+.feature-item { text-align: center; }
+.feature-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+  display: block;
+}
+.feature-title { font-weight: 800; font-size: 15px; color: white; margin-bottom: 4px; }
+.feature-desc { font-size: 13px; color: #9CA3AF; }
+
+/* ---- BRANDS / TRUST SECTION ---- */
+.trust-section {
+  background: var(--cream);
+  padding: 60px 24px;
+}
+.trust-inner { max-width: 1280px; margin: 0 auto; }
+.trust-header { text-align: center; margin-bottom: 40px; }
+.trust-header p { font-size: 15px; color: var(--gray); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+}
+.trust-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+.trust-card .num {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+.trust-card .lbl { font-size: 14px; color: var(--gray); font-weight: 600; }
+
+/* ---- BUNDLES SECTION ---- */
+.bundle-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.25s;
+}
+.bundle-card:hover { box-shadow: var(--shadow-hover); }
+.bundle-visual {
+  background: var(--orange-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 80px;
+  min-height: 240px;
+  flex-direction: column;
+  gap: 8px;
+}
+.bundle-body { padding: 32px 28px; }
+.bundle-tag {
+  display: inline-block;
+  background: var(--teal-light);
+  color: var(--teal-dark);
+  padding: 4px 14px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+.bundle-body h3 { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; margin-bottom: 10px; }
+.bundle-body p { font-size: 14px; color: var(--gray); margin-bottom: 20px; }
+.bundle-items { list-style: none; margin-bottom: 24px; }
+.bundle-items li { font-size: 14px; color: var(--charcoal); padding: 4px 0; }
+.bundle-items li::before { content: "✓ "; color: var(--teal); font-weight: 800; }
+.bundle-price { display: flex; align-items: baseline; gap: 10px; margin-bottom: 20px; }
+.bundle-price .new { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--orange); }
+.bundle-price .old { font-size: 16px; color: var(--gray); text-decoration: line-through; }
+.bundle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+/* ---- NEWSLETTER ---- */
+.newsletter {
+  background: linear-gradient(135deg, var(--orange) 0%, #F59E0B 100%);
+  padding: 80px 24px;
+}
+.newsletter-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+.newsletter h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 38px;
+  color: white;
+  margin-bottom: 14px;
+}
+.newsletter p { font-size: 17px; color: rgba(255,255,255,0.88); margin-bottom: 32px; }
+.email-form { display: flex; gap: 12px; max-width: 480px; margin: 0 auto; }
+.email-form input {
+  flex: 1;
+  padding: 14px 20px;
+  border-radius: 100px;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  outline: none;
+}
+.email-form button {
+  padding: 14px 28px;
+  background: var(--charcoal);
+  color: white;
+  border: none;
+  border-radius: 100px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.email-form button:hover { background: #111; }
+
+/* ---- REVIEWS ---- */
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+.review-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+}
+.review-stars { color: #F59E0B; font-size: 16px; margin-bottom: 14px; }
+.review-text { font-size: 15px; color: var(--charcoal); line-height: 1.65; margin-bottom: 20px; font-style: italic; }
+.reviewer { display: flex; align-items: center; gap: 12px; }
+.reviewer-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--orange-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.reviewer-name { font-weight: 800; font-size: 14px; }
+.reviewer-pet { font-size: 12px; color: var(--gray); }
+
+/* ---- FOOTER ---- */
+footer {
+  background: var(--charcoal);
+  color: white;
+  padding: 64px 24px 32px;
+}
+.footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+.footer-brand .logo { color: white; margin-bottom: 16px; }
+.footer-brand .logo span { color: #F59E0B; }
+.footer-brand p { font-size: 14px; color: #9CA3AF; line-height: 1.7; max-width: 280px; }
+.footer-col h4 { font-weight: 800; font-size: 14px; margin-bottom: 20px; color: white; letter-spacing: 0.06em; text-transform: uppercase; }
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 10px; }
+.footer-col ul li a { font-size: 14px; color: #9CA3AF; transition: color 0.2s; }
+.footer-col ul li a:hover { color: var(--orange); }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-bottom p { font-size: 13px; color: #6B7280; }
+
+/* ---- PAGE VIEWS ---- */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ---- PRODUCT PAGE ---- */
+.product-detail {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 60px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+.product-detail-img {
+  background: var(--gray-light);
+  border-radius: var(--radius);
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 140px;
+  position: sticky;
+  top: 96px;
+}
+.breadcrumb { font-size: 14px; color: var(--gray); margin-bottom: 16px; }
+.breadcrumb a { color: var(--orange); }
+.product-detail-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 38px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.product-detail-price {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  color: var(--orange);
+  margin-bottom: 24px;
+}
+.product-detail-desc { font-size: 16px; color: var(--gray); line-height: 1.75; margin-bottom: 28px; }
+.size-options { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+.size-btn {
+  padding: 8px 20px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+}
+.size-btn.active { border-color: var(--orange); background: var(--orange-light); color: var(--orange-dark); }
+.qty-add { display: flex; gap: 16px; align-items: center; margin-bottom: 24px; }
+.qty-ctrl {
+  display: flex;
+  align-items: center;
+  border: 2px solid var(--border);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.qty-ctrl button {
+  width: 44px; height: 44px;
+  border: none;
+  background: none;
+  font-size: 20px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background 0.2s;
+}
+.qty-ctrl button:hover { background: var(--gray-light); }
+.qty-ctrl span { min-width: 36px; text-align: center; font-weight: 800; font-size: 16px; }
+.benefit-list { list-style: none; margin-bottom: 28px; }
+.benefit-list li {
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: 15px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--charcoal);
+}
+.benefit-list li:last-child { border-bottom: none; }
+.check { color: var(--teal); font-weight: 800; }
+
+/* ---- CATALOG PAGE ---- */
+.catalog-header {
+  background: var(--cream);
+  padding: 60px 24px 40px;
+}
+.catalog-header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.catalog-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 44px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.catalog-header p { font-size: 17px; color: var(--gray); }
+.catalog-body {
+  max-width: 1280px;
+  margin: 40px auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 40px;
+  align-items: start;
+}
+.sidebar h3 { font-weight: 800; font-size: 15px; margin-bottom: 14px; margin-top: 24px; }
+.sidebar h3:first-child { margin-top: 0; }
+.filter-list { list-style: none; }
+.filter-list li {
+  padding: 6px 0;
+  font-size: 14px;
+  color: var(--gray);
+  cursor: pointer;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.filter-list li:hover, .filter-list li.active { color: var(--orange); }
+.filter-list li input { accent-color: var(--orange); }
+.filter-badge {
+  margin-left: auto;
+  background: var(--gray-light);
+  padding: 1px 8px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 38px; }
+  .hero-visual { display: none; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  .bundle-card { grid-template-columns: 1fr; }
+  .bundle-grid { grid-template-columns: 1fr; }
+  .catalog-body { grid-template-columns: 1fr; }
+  .product-detail { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ANNOUNCEMENT BAR -->
+<div class="announcement">
+  🐾 Free Shipping on Orders Over $50 · Subscribe & Save 20% · <a href="#">Shop Now</a>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="#" class="logo" onclick="showPage('home')">
+      <span class="logo-icon">🐾</span>
+      Paws<span>Delight</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#" onclick="showPage('home')" class="active" id="nav-home">Home</a></li>
+      <li><a href="#" onclick="showPage('dogs')" id="nav-dogs">🐶 Dogs</a></li>
+      <li><a href="#" onclick="showPage('cats')" id="nav-cats">🐱 Cats</a></li>
+      <li><a href="#" onclick="showPage('accessories')" id="nav-acc">Accessories</a></li>
+      <li><a href="#" onclick="showPage('bundles')" id="nav-bundles">Bundles</a></li>
+    </ul>
+    <div class="nav-actions">
+      <span class="nav-icon" title="Search">🔍</span>
+      <span class="nav-icon" title="Account">👤</span>
+      <span class="nav-icon" style="position:relative;" title="Cart">
+        🛒<span class="cart-badge" id="cart-count">0</span>
+      </span>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HOME PAGE ============ -->
+<div id="page-home" class="page active">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge">✨ Vet-Recommended Formulas</div>
+        <h1>Your Pet Deserves the <span class="accent">Best of Everything</span></h1>
+        <p>Premium supplements, treats, food, and accessories for happy, healthy cats and dogs. Science-backed ingredients, loved by pets worldwide.</p>
+        <div class="hero-actions">
+          <a href="#" class="btn btn-primary" onclick="showPage('dogs')">Shop for Dogs 🐶</a>
+          <a href="#" class="btn btn-outline" onclick="showPage('cats')">Shop for Cats 🐱</a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-num">250K+</div>
+            <div class="hero-stat-label">Happy Pets</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">4.9★</div>
+            <div class="hero-stat-label">Avg. Rating</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">60+</div>
+            <div class="hero-stat-label">Products</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-card" onclick="showPage('dogs')">
+          <span class="hero-card-emoji">🐕</span>
+          <h3>For Dogs</h3>
+          <p>Supplements, food & treats</p>
+          <span class="hero-card-badge">35+ Products</span>
+        </div>
+        <div class="hero-card" onclick="showPage('cats')">
+          <span class="hero-card-emoji">🐈</span>
+          <h3>For Cats</h3>
+          <p>Health & wellness range</p>
+          <span class="hero-card-badge">20+ Products</span>
+        </div>
+        <div class="hero-card" onclick="showPage('accessories')">
+          <span class="hero-card-emoji">🎾</span>
+          <h3>Accessories</h3>
+          <p>Beds, toys & travel gear</p>
+          <span class="hero-card-badge">New Arrivals</span>
+        </div>
+        <div class="hero-card" onclick="showPage('bundles')">
+          <span class="hero-card-emoji">🎁</span>
+          <h3>Bundles</h3>
+          <p>Save up to 30% on combos</p>
+          <span class="hero-card-badge">Best Value</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES BAND -->
+  <div class="features-band">
+    <div class="features-band-inner">
+      <div class="feature-item">
+        <span class="feature-icon">🔬</span>
+        <div class="feature-title">Science-Backed</div>
+        <div class="feature-desc">Vet-formulated with clinical ingredients</div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🌿</span>
+        <div class="feature-title">Natural Ingredients</div>
+        <div class="feature-desc">No fillers, no artificial preservatives</div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🚀</span>
+        <div class="feature-title">Free Shipping</div>
+        <div class="feature-desc">On all orders over $50</div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">💯</span>
+        <div class="feature-title">Satisfaction Guarantee</div>
+        <div class="feature-desc">30-day no-questions refund</div>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">♻️</span>
+        <div class="feature-title">Eco Packaging</div>
+        <div class="feature-desc">Sustainably sourced & recyclable</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEST SELLERS -->
+  <section class="section" style="background: var(--cream);">
+    <div class="section-inner">
+      <div class="section-header">
+        <span class="eyebrow">Top Picks</span>
+        <h2>Best Sellers This Week</h2>
+        <p>The products your fellow pet parents can't stop ordering.</p>
+      </div>
+      <div class="tabs">
+        <div class="tab active" onclick="filterHome('all', this)">All</div>
+        <div class="tab" onclick="filterHome('dog', this)">🐶 Dogs</div>
+        <div class="tab" onclick="filterHome('cat', this)">🐱 Cats</div>
+      </div>
+      <div class="product-grid" id="home-products"></div>
+      <div style="text-align:center; margin-top:40px;">
+        <a href="#" class="btn btn-primary" onclick="showPage('dogs')">View All Products →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST STATS -->
+  <section class="trust-section">
+    <div class="trust-inner">
+      <div class="trust-header">
+        <p>Trusted by pet parents everywhere</p>
+      </div>
+      <div class="trust-grid">
+        <div class="trust-card"><div class="num">250K+</div><div class="lbl">Happy Pets Fed</div></div>
+        <div class="trust-card"><div class="num">4.9★</div><div class="lbl">Average Rating</div></div>
+        <div class="trust-card"><div class="num">98%</div><div class="lbl">Would Recommend</div></div>
+        <div class="trust-card"><div class="num">60+</div><div class="lbl">Premium Products</div></div>
+        <div class="trust-card"><div class="num">12+</div><div class="lbl">Years of Expertise</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUNDLES PREVIEW -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-header">
+        <span class="eyebrow">Save More</span>
+        <h2>Value Bundle Packs</h2>
+        <p>Complete wellness kits for your pet — curated by our vets and bundled for savings.</p>
+      </div>
+      <div class="bundle-grid">
+        <div class="bundle-card" style="cursor:pointer;" onclick="showPage('bundles')">
+          <div class="bundle-visual" style="background: var(--orange-light);">🐕<span style="font-size:14px;font-weight:700;color:var(--orange);">Dog Starter Bundle</span></div>
+          <div class="bundle-body">
+            <span class="bundle-tag">Save 25%</span>
+            <h3>Puppy Wellness Kit</h3>
+            <p>Everything your dog needs to thrive — from joint health to shiny coat support.</p>
+            <ul class="bundle-items">
+              <li>Hip & Joint Chews (60ct)</li>
+              <li>Omega-3 Fish Oil (8oz)</li>
+              <li>Probiotic Bites (90ct)</li>
+              <li>Multivitamin Chews (60ct)</li>
+            </ul>
+            <div class="bundle-price">
+              <span class="new">$59.99</span>
+              <span class="old">$79.99</span>
+            </div>
+            <a href="#" class="btn btn-primary">Add Bundle to Cart</a>
+          </div>
+        </div>
+        <div class="bundle-card" style="cursor:pointer;" onclick="showPage('bundles')">
+          <div class="bundle-visual" style="background: var(--teal-light);">🐈<span style="font-size:14px;font-weight:700;color:var(--teal);">Cat Starter Bundle</span></div>
+          <div class="bundle-body">
+            <span class="bundle-tag" style="background:var(--orange-light);color:var(--orange-dark);">Save 20%</span>
+            <h3>Kitty Health Pack</h3>
+            <p>A complete routine for your cat's immunity, gut, and skin health in one bundle.</p>
+            <ul class="bundle-items">
+              <li>Immune Support Chews (60ct)</li>
+              <li>Digestive Mousse (Pack of 6)</li>
+              <li>Salmon Oil Drops (4oz)</li>
+              <li>Calming Diffuser Starter Kit</li>
+            </ul>
+            <div class="bundle-price">
+              <span class="new">$49.99</span>
+              <span class="old">$64.99</span>
+            </div>
+            <a href="#" class="btn btn-teal">Add Bundle to Cart</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="section" style="background: var(--cream);">
+    <div class="section-inner">
+      <div class="section-header">
+        <span class="eyebrow">Reviews</span>
+        <h2>Pet Parents Love PawsDelight</h2>
+        <p>Real stories from real pet families around the world.</p>
+      </div>
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"My golden retriever had terrible joint pain. After 3 weeks on the Hip & Joint chews, he's back to running around like a puppy! I can't believe the difference."</p>
+          <div class="reviewer">
+            <div class="reviewer-avatar">👩</div>
+            <div>
+              <div class="reviewer-name">Sarah M.</div>
+              <div class="reviewer-pet">Dog mom to Max, 9 years old</div>
+            </div>
+          </div>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"My cats are incredibly picky, but they absolutely love the salmon mousse. Their coats have never looked shinier and one of them actually stopped scratching so much."</p>
+          <div class="reviewer">
+            <div class="reviewer-avatar">👨</div>
+            <div>
+              <div class="reviewer-name">David K.</div>
+              <div class="reviewer-pet">Cat dad to Mochi & Chai</div>
+            </div>
+          </div>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"The calming diffuser has been a game-changer. Our anxious tabby used to hide during thunderstorms — now he just sleeps through them. Completely transformed our home."</p>
+          <div class="reviewer">
+            <div class="reviewer-avatar">👩</div>
+            <div>
+              <div class="reviewer-name">Priya L.</div>
+              <div class="reviewer-pet">Cat mom to Biscuit, 4 years old</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter">
+    <div class="newsletter-inner">
+      <h2>Get 15% Off Your First Order 🐾</h2>
+      <p>Join 50,000+ pet parents who get expert tips, new product launches, and exclusive deals delivered to their inbox.</p>
+      <div class="email-form">
+        <input type="email" placeholder="Enter your email address…">
+        <button>Subscribe</button>
+      </div>
+    </div>
+  </section>
+
+</div><!-- end home page -->
+
+<!-- ============ DOGS PAGE ============ -->
+<div id="page-dogs" class="page">
+  <div class="catalog-header">
+    <div class="catalog-header-inner">
+      <div class="hero-badge" style="display:inline-flex;margin-bottom:16px;">🐶 For Your Dog</div>
+      <h1>Premium Dog Products</h1>
+      <p>Science-backed supplements, nutritious treats, gourmet food, and enriching accessories for your best friend.</p>
+    </div>
+  </div>
+  <div class="catalog-body">
+    <aside class="sidebar">
+      <h3>Category</h3>
+      <ul class="filter-list">
+        <li class="active" onclick="filterDogs('all', this)"><input type="radio" name="dcat" checked> All Products <span class="filter-badge">20</span></li>
+        <li onclick="filterDogs('supplement', this)"><input type="radio" name="dcat"> Supplements <span class="filter-badge">8</span></li>
+        <li onclick="filterDogs('treat', this)"><input type="radio" name="dcat"> Treats & Chews <span class="filter-badge">6</span></li>
+        <li onclick="filterDogs('food', this)"><input type="radio" name="dcat"> Food <span class="filter-badge">3</span></li>
+        <li onclick="filterDogs('accessory', this)"><input type="radio" name="dcat"> Accessories <span class="filter-badge">3</span></li>
+      </ul>
+      <h3>Health Benefit</h3>
+      <ul class="filter-list">
+        <li onclick="filterDogs('joint', this)"><input type="checkbox"> Hip & Joint</li>
+        <li onclick="filterDogs('skin', this)"><input type="checkbox"> Skin & Coat</li>
+        <li onclick="filterDogs('gut', this)"><input type="checkbox"> Gut Health</li>
+        <li onclick="filterDogs('immune', this)"><input type="checkbox"> Immune Health</li>
+        <li onclick="filterDogs('behavior', this)"><input type="checkbox"> Calming & Behavior</li>
+      </ul>
+      <h3>Price</h3>
+      <ul class="filter-list">
+        <li><input type="checkbox"> Under $20</li>
+        <li><input type="checkbox"> $20–$40</li>
+        <li><input type="checkbox"> $40–$60</li>
+        <li><input type="checkbox"> Over $60</li>
+      </ul>
+    </aside>
+    <div>
+      <div class="product-grid" id="dog-products"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CATS PAGE ============ -->
+<div id="page-cats" class="page">
+  <div class="catalog-header" style="background: linear-gradient(135deg, #E0F5F2, #FDFAF5);">
+    <div class="catalog-header-inner">
+      <div class="hero-badge" style="display:inline-flex;margin-bottom:16px;background:var(--teal-light);color:var(--teal-dark);border-color:#7DD9C8;">🐱 For Your Cat</div>
+      <h1>Premium Cat Products</h1>
+      <p>Vet-formulated supplements, irresistible treats, premium food, and thoughtfully designed accessories for your independent companion.</p>
+    </div>
+  </div>
+  <div class="catalog-body">
+    <aside class="sidebar">
+      <h3>Category</h3>
+      <ul class="filter-list">
+        <li class="active" onclick="filterCats('all', this)"><input type="radio" name="ccat" checked> All Products <span class="filter-badge">16</span></li>
+        <li onclick="filterCats('supplement', this)"><input type="radio" name="ccat"> Supplements <span class="filter-badge">6</span></li>
+        <li onclick="filterCats('treat', this)"><input type="radio" name="ccat"> Treats & Chews <span class="filter-badge">5</span></li>
+        <li onclick="filterCats('food', this)"><input type="radio" name="ccat"> Food <span class="filter-badge">2</span></li>
+        <li onclick="filterCats('accessory', this)"><input type="radio" name="ccat"> Accessories <span class="filter-badge">3</span></li>
+      </ul>
+      <h3>Health Benefit</h3>
+      <ul class="filter-list">
+        <li><input type="checkbox"> Gut Health</li>
+        <li><input type="checkbox"> Skin & Coat</li>
+        <li><input type="checkbox"> Immune Health</li>
+        <li><input type="checkbox"> Hip & Joint</li>
+        <li><input type="checkbox"> Calming & Behavior</li>
+      </ul>
+    </aside>
+    <div>
+      <div class="product-grid" id="cat-products"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ACCESSORIES PAGE ============ -->
+<div id="page-accessories" class="page">
+  <div class="catalog-header" style="background: linear-gradient(135deg, #F3F4F6, #FDFAF5);">
+    <div class="catalog-header-inner">
+      <div class="hero-badge" style="display:inline-flex;margin-bottom:16px;background:#EDE9FE;color:#5B21B6;border-color:#C4B5FD;">🎾 Accessories</div>
+      <h1>Pet Accessories & Gear</h1>
+      <p>Beds, toys, carriers, collars, and everything that makes your pet's life more comfortable and fun.</p>
+    </div>
+  </div>
+  <div style="max-width:1280px;margin:40px auto;padding:0 24px;">
+    <div class="tabs">
+      <div class="tab active" onclick="filterAcc('all', this)">All</div>
+      <div class="tab" onclick="filterAcc('dog', this)">🐶 Dog</div>
+      <div class="tab" onclick="filterAcc('cat', this)">🐱 Cat</div>
+      <div class="tab" onclick="filterAcc('both', this)">🐾 Both</div>
+    </div>
+    <div class="product-grid" id="acc-products"></div>
+  </div>
+</div>
+
+<!-- ============ BUNDLES PAGE ============ -->
+<div id="page-bundles" class="page">
+  <div class="catalog-header" style="background:linear-gradient(135deg, #FFFBEB, #FEF0E6);">
+    <div class="catalog-header-inner">
+      <div class="hero-badge" style="display:inline-flex;margin-bottom:16px;">🎁 Save More</div>
+      <h1>Value Bundle Packs</h1>
+      <p>Vet-curated bundles designed to give your pet a complete wellness routine — at prices that make sense.</p>
+    </div>
+  </div>
+  <div style="max-width:1280px;margin:48px auto;padding:0 24px;">
+    <div class="bundle-grid" id="bundles-list"></div>
+  </div>
+</div>
+
+<!-- ============ PRODUCT DETAIL PAGE ============ -->
+<div id="page-product" class="page">
+  <div id="product-detail-content"></div>
+</div>
+
+<!-- FOOTER (always visible) -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo" style="margin-bottom:14px;">🐾 Paws<span>Delight</span></div>
+        <p>Premium health and wellness products for the pets who make your life complete. Vet-formulated, pet-approved.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="#" onclick="showPage('dogs')">For Dogs</a></li>
+          <li><a href="#" onclick="showPage('cats')">For Cats</a></li>
+          <li><a href="#" onclick="showPage('accessories')">Accessories</a></li>
+          <li><a href="#" onclick="showPage('bundles')">Bundles</a></li>
+          <li><a href="#">New Arrivals</a></li>
+          <li><a href="#">Best Sellers</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Help</h4>
+        <ul>
+          <li><a href="#">Shipping Policy</a></li>
+          <li><a href="#">Returns</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Track Order</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Our Ingredients</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Vet Partners</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 PawsDelight. All rights reserved.</p>
+      <p style="color:#6B7280;">Privacy Policy · Terms of Use · Accessibility</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ============ PRODUCT DATA ============
+const dogs = [
+  { id:'d1', name:'Hip & Joint Chews', category:'supplement', benefit:'joint', price:34.99, oldPrice:null, emoji:'💊', desc:'Advanced glucosamine formula with chondroitin and MSM for mobility support.', rating:4.9, reviews:2847, label:'best', labelText:'Best Seller', size:['60ct','90ct','120ct'] },
+  { id:'d2', name:'Wild Alaskan Fish Oil', category:'supplement', benefit:'skin', price:24.99, oldPrice:29.99, emoji:'🐟', desc:'Omega-3 rich pollock and salmon oil for shiny coat and healthy skin.', rating:4.8, reviews:1923, label:'sale', labelText:'Sale', size:['4oz','8oz','16oz'] },
+  { id:'d3', name:'Probiotic Bites', category:'supplement', benefit:'gut', price:29.99, oldPrice:null, emoji:'🦠', desc:'6-strain probiotic blend with prebiotics to support digestive health.', rating:4.8, reviews:1540, label:'new', labelText:'New', size:['90ct','180ct'] },
+  { id:'d4', name:'Calming Chews', category:'supplement', benefit:'behavior', price:27.99, oldPrice:null, emoji:'😌', desc:'L-Theanine, chamomile & valerian root blend to ease anxiety and stress.', rating:4.7, reviews:987, label:null, labelText:null, size:['60ct','120ct'] },
+  { id:'d5', name:'Immune Chews', category:'supplement', benefit:'immune', price:31.99, oldPrice:null, emoji:'🛡️', desc:'Elderberry, echinacea & zinc to strengthen your dog\'s natural defenses.', rating:4.8, reviews:743, label:null, labelText:null, size:['60ct','90ct'] },
+  { id:'d6', name:'Peanut Butter Biscuits', category:'treat', benefit:'treat', price:12.99, oldPrice:null, emoji:'🥜', desc:'Grain-free baked biscuits with real peanut butter and sweet potato.', rating:4.9, reviews:3201, label:'best', labelText:'Best Seller', size:['12oz','24oz'] },
+  { id:'d7', name:'Freeze-Dried Chicken Strips', category:'treat', benefit:'treat', price:18.99, oldPrice:22.99, emoji:'🍗', desc:'Single-ingredient freeze-dried chicken — nothing artificial, ever.', rating:4.9, reviews:2100, label:'sale', labelText:'Sale', size:['4oz','8oz'] },
+  { id:'d8', name:'Grain-Free Salmon Kibble', category:'food', benefit:'food', price:54.99, oldPrice:null, emoji:'🐠', desc:'High-protein grain-free formula with wild-caught salmon, sweet potato & peas.', rating:4.8, reviews:892, label:'new', labelText:'New', size:['5lb','15lb','30lb'] },
+  { id:'d9', name:'Orthopedic Dog Bed', category:'accessory', benefit:'acc', price:89.99, oldPrice:119.99, emoji:'🛏️', desc:'Memory foam base with waterproof cover — perfect for senior dogs with joint pain.', rating:4.7, reviews:512, label:'sale', labelText:'Sale', size:['Medium','Large','XLarge'] },
+  { id:'d10', name:'Interactive Puzzle Toy', category:'accessory', benefit:'acc', price:22.99, oldPrice:null, emoji:'🧩', desc:'Level 3 challenge toy to keep your dog mentally stimulated and busy.', rating:4.6, reviews:348, label:null, labelText:null, size:['One Size'] },
+  { id:'d11', name:'Multivitamin Chews', category:'supplement', benefit:'immune', price:36.99, oldPrice:null, emoji:'⭐', desc:'All-in-one daily chew covering 8 key areas of canine health.', rating:4.9, reviews:4210, label:'best', labelText:'Best Seller', size:['60ct','120ct'] },
+  { id:'d12', name:'Dental Chews', category:'treat', benefit:'treat', price:19.99, oldPrice:null, emoji:'🦷', desc:'Enzyme-infused chews to reduce tartar buildup and freshen breath.', rating:4.7, reviews:1120, label:null, labelText:null, size:['20ct','40ct'] },
+];
+
+const cats = [
+  { id:'c1', name:'Salmon Mousse', category:'treat', benefit:'skin', price:14.99, oldPrice:null, emoji:'🍣', desc:'Irresistible lickable mousse with real salmon and skin-supporting omega-3s.', rating:4.9, reviews:1850, label:'best', labelText:'Best Seller', size:['6-pack','12-pack'] },
+  { id:'c2', name:'Calming Diffuser Kit', category:'supplement', benefit:'behavior', price:39.99, oldPrice:49.99, emoji:'💨', desc:'Pheromone-mimicking diffuser for stress-free homes — 30 day supply.', rating:4.7, reviews:620, label:'sale', labelText:'Sale', size:['30 Day','60 Day'] },
+  { id:'c3', name:'Cat Immune Chews', category:'supplement', benefit:'immune', price:26.99, oldPrice:null, emoji:'🛡️', desc:'Elderberry, zinc & vitamin C bites to support your cat\'s immune system.', rating:4.8, reviews:432, label:'new', labelText:'New', size:['60ct','90ct'] },
+  { id:'c4', name:'Gut Health Probiotic', category:'supplement', benefit:'gut', price:28.99, oldPrice:null, emoji:'💚', desc:'5-strain probiotic + prebiotic formula in an easy soft chew format.', rating:4.8, reviews:714, label:null, labelText:null, size:['60ct','120ct'] },
+  { id:'c5', name:'Hip & Joint Drops', category:'supplement', benefit:'joint', price:22.99, oldPrice:null, emoji:'💧', desc:'Liquid glucosamine formula that mixes into food — easy for picky cats.', rating:4.7, reviews:291, label:null, labelText:null, size:['2oz','4oz'] },
+  { id:'c6', name:'Tuna Crunch Treats', category:'treat', benefit:'treat', price:11.99, oldPrice:null, emoji:'🐟', desc:'Air-dried real tuna bites — high protein, low carb, intensely delicious.', rating:4.9, reviews:2340, label:'best', labelText:'Best Seller', size:['3oz','6oz'] },
+  { id:'c7', name:'Chicken & Sweet Potato Food', category:'food', benefit:'food', price:44.99, oldPrice:null, emoji:'🍗', desc:'Grain-free wet food with real chicken, sweet potato, and added taurine.', rating:4.8, reviews:980, label:'new', labelText:'New', size:['12-pack','24-pack'] },
+  { id:'c8', name:'Feather Wand Toy', category:'accessory', benefit:'acc', price:16.99, oldPrice:null, emoji:'🪶', desc:'Durable telescoping wand with rotating feather attachment. Hours of play.', rating:4.8, reviews:1470, label:null, labelText:null, size:['One Size'] },
+  { id:'c9', name:'Cave Cat Bed', category:'accessory', benefit:'acc', price:54.99, oldPrice:69.99, emoji:'🏠', desc:'Cozy enclosed bed with faux-fur lining — perfect for anxious or cold cats.', rating:4.8, reviews:821, label:'sale', labelText:'Sale', size:['Small','Large'] },
+  { id:'c10', name:'Skin & Coat Salmon Oil', category:'supplement', benefit:'skin', price:19.99, oldPrice:null, emoji:'✨', desc:'Wild salmon oil pump bottle to add omega-3s directly to your cat\'s meal.', rating:4.7, reviews:543, label:null, labelText:null, size:['4oz','8oz'] },
+  { id:'c11', name:'Chicken Mousse Variety Pack', category:'treat', benefit:'treat', price:17.99, oldPrice:null, emoji:'🍱', desc:'6 flavors of lickable mousse — chicken, tuna, shrimp, beef, duck & turkey.', rating:4.9, reviews:1620, label:'new', labelText:'New', size:['6-pack','12-pack'] },
+  { id:'c12', name:'Scratching Post Tower', category:'accessory', benefit:'acc', price:49.99, oldPrice:59.99, emoji:'🗼', desc:'Sisal-wrapped 3-tier tower with dangling toys and a cozy top perch.', rating:4.6, reviews:389, label:'sale', labelText:'Sale', size:['Standard'] },
+];
+
+const accessories = [
+  { id:'a1', name:'Orthopedic Dog Bed', for:'dog', price:89.99, oldPrice:119.99, emoji:'🛏️', desc:'Memory foam for senior dogs. Waterproof removable cover. Three sizes.', rating:4.7, reviews:512, label:'sale', labelText:'Sale' },
+  { id:'a2', name:'Cave Cat Bed', for:'cat', price:54.99, oldPrice:69.99, emoji:'🏠', desc:'Cozy enclosed felt bed with faux-fur lining. Cats absolutely love it.', rating:4.8, reviews:821, label:'sale', labelText:'Sale' },
+  { id:'a3', name:'Pet Travel Carrier', for:'both', price:64.99, oldPrice:null, emoji:'🧳', desc:'Airline-approved carrier with ventilated mesh panels. Fits dogs up to 15lb.', rating:4.7, reviews:447, label:'new', labelText:'New' },
+  { id:'a4', name:'Retractable Leash', for:'dog', price:28.99, oldPrice:null, emoji:'🪢', desc:'16ft heavy-duty retractable leash with ergonomic anti-slip grip.', rating:4.6, reviews:932, label:null, labelText:null },
+  { id:'a5', name:'Interactive Puzzle Toy', for:'dog', price:22.99, oldPrice:null, emoji:'🧩', desc:'Level 3 challenge toy to stimulate your dog\'s mind and reduce boredom.', rating:4.6, reviews:348, label:null, labelText:null },
+  { id:'a6', name:'Feather Wand Toy', for:'cat', price:16.99, oldPrice:null, emoji:'🪶', desc:'Telescoping wand with rotating feathers. Satisfies natural hunt instinct.', rating:4.8, reviews:1470, label:'best', labelText:'Best Seller' },
+  { id:'a7', name:'Scratching Post Tower', for:'cat', price:49.99, oldPrice:59.99, emoji:'🗼', desc:'3-tier sisal tower with dangling toys and a cozy perch for napping.', rating:4.6, reviews:389, label:'sale', labelText:'Sale' },
+  { id:'a8', name:'Stainless Steel Bowl Set', for:'both', price:24.99, oldPrice:null, emoji:'🥣', desc:'Non-tip, dishwasher-safe double bowl set in premium brushed stainless.', rating:4.8, reviews:1830, label:'best', labelText:'Best Seller' },
+  { id:'a9', name:'Waterproof Car Seat Cover', for:'dog', price:44.99, oldPrice:54.99, emoji:'🚗', desc:'Heavy-duty quilted hammock cover protects your back seat completely.', rating:4.8, reviews:2140, label:'sale', labelText:'Sale' },
+  { id:'a10', name:'Self-Cleaning Litter Box', for:'cat', price:74.99, oldPrice:null, emoji:'📦', desc:'Automatic sifting system with odor-lock lid. Fits all cat sizes.', rating:4.5, reviews:621, label:'new', labelText:'New' },
+  { id:'a11', name:'Adjustable Harness', for:'dog', price:32.99, oldPrice:null, emoji:'🦺', desc:'No-pull padded harness with reflective stitching for night walks.', rating:4.7, reviews:1205, label:null, labelText:null },
+  { id:'a12', name:'Calming Dog Jacket', for:'dog', price:38.99, oldPrice:null, emoji:'🧥', desc:'Snug-wrap design to ease anxiety during storms, fireworks, and travel.', rating:4.6, reviews:874, label:null, labelText:null },
+];
+
+const bundles = [
+  {
+    emoji: '🐕💪',
+    bg: 'var(--orange-light)',
+    tagBg: 'var(--teal-light)',
+    tagColor: 'var(--teal-dark)',
+    tag: 'Save 25%',
+    title: 'Dog Complete Wellness Kit',
+    desc: 'A vet-curated bundle covering every aspect of your dog\'s daily health.',
+    items: ['Hip & Joint Chews (90ct)', 'Wild Alaskan Fish Oil (8oz)', 'Probiotic Bites (90ct)', 'Multivitamin Chews (60ct)'],
+    newPrice: '$89.99',
+    oldPrice: '$119.99',
+    btn: 'btn-primary'
+  },
+  {
+    emoji: '🐈🌿',
+    bg: 'var(--teal-light)',
+    tagBg: 'var(--orange-light)',
+    tagColor: 'var(--orange-dark)',
+    tag: 'Save 20%',
+    title: 'Cat Immunity & Calm Pack',
+    desc: 'Everything your cat needs to feel calm, healthy, and happy every day.',
+    items: ['Cat Immune Chews (60ct)', 'Calming Diffuser Kit', 'Salmon Mousse (6-pack)', 'Skin & Coat Salmon Oil (4oz)'],
+    newPrice: '$79.99',
+    oldPrice: '$99.99',
+    btn: 'btn-teal'
+  },
+  {
+    emoji: '🐕🐈',
+    bg: '#EDE9FE',
+    tagBg: '#EDE9FE',
+    tagColor: '#5B21B6',
+    tag: 'Save 30% — Best Value',
+    title: 'Ultimate Multi-Pet Bundle',
+    desc: 'One bundle to spoil both your dog and cat simultaneously.',
+    items: ['Dog Hip & Joint (60ct)', 'Cat Immune Chews (60ct)', 'Dog Probiotic Bites (90ct)', 'Cat Calming Diffuser Kit', 'Dog Fish Oil (8oz)', 'Cat Salmon Mousse (6-pack)'],
+    newPrice: '$139.99',
+    oldPrice: '$199.99',
+    btn: 'btn-primary'
+  },
+  {
+    emoji: '🐶🎁',
+    bg: '#FEF3C7',
+    tagBg: '#FEF3C7',
+    tagColor: '#92400E',
+    tag: 'Save 22%',
+    title: 'Puppy Starter Kit',
+    desc: 'Everything a new puppy owner needs to set their pup up for a healthy life.',
+    items: ['Puppy Multivitamin Chews (60ct)', 'Probiotic Bites (90ct)', 'Calming Chews (60ct)', 'Peanut Butter Biscuits (12oz)'],
+    newPrice: '$64.99',
+    oldPrice: '$83.99',
+    btn: 'btn-primary'
+  },
+];
+
+// ============ RENDER FUNCTIONS ============
+let cartCount = 0;
+
+function renderProducts(containerId, items, extra) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = items.map(p => `
+    <div class="product-card" onclick="showProduct('${p.id}')">
+      <div class="product-img">
+        ${p.label ? `<span class="product-label label-${p.label}">${p.labelText}</span>` : ''}
+        ${p.emoji}
+      </div>
+      <div class="product-body">
+        <div class="product-category">${extra || (p.category ? p.category.charAt(0).toUpperCase()+p.category.slice(1) : '')}</div>
+        <div class="stars">${'★'.repeat(Math.round(p.rating))} <span>(${p.reviews?.toLocaleString()})</span></div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-footer">
+          <div class="product-price">$${p.price}<span class="original">${p.oldPrice ? '$'+p.oldPrice : ''}</span></div>
+          <button class="add-btn" onclick="addToCart(event)">+</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderBundles() {
+  const el = document.getElementById('bundles-list');
+  if (!el) return;
+  el.innerHTML = bundles.map(b => `
+    <div class="bundle-card">
+      <div class="bundle-visual" style="background:${b.bg}">${b.emoji}</div>
+      <div class="bundle-body">
+        <span class="bundle-tag" style="background:${b.tagBg};color:${b.tagColor}">${b.tag}</span>
+        <h3>${b.title}</h3>
+        <p>${b.desc}</p>
+        <ul class="bundle-items">${b.items.map(i=>`<li>${i}</li>`).join('')}</ul>
+        <div class="bundle-price"><span class="new">${b.newPrice}</span><span class="old">${b.oldPrice}</span></div>
+        <button class="btn ${b.btn}" onclick="addToCart(event)">Add Bundle to Cart</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addToCart(e) {
+  e.stopPropagation();
+  cartCount++;
+  document.getElementById('cart-count').textContent = cartCount;
+  const btn = e.currentTarget;
+  const orig = btn.textContent;
+  btn.textContent = '✓';
+  btn.style.background = 'var(--teal)';
+  setTimeout(() => { btn.textContent = orig; btn.style.background = 'var(--orange)'; }, 800);
+}
+
+function allProducts(type) {
+  const p = type === 'dog' ? dogs : cats;
+  return p;
+}
+
+let homeFilter = 'all';
+function filterHome(type, el) {
+  homeFilter = type;
+  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  let items;
+  if (type === 'all') items = [...dogs.slice(0,6), ...cats.slice(0,6)];
+  else if (type === 'dog') items = dogs.slice(0,8);
+  else items = cats.slice(0,8);
+  renderProducts('home-products', items);
+}
+
+let dogFilter = 'all';
+function filterDogs(type, el) {
+  document.querySelectorAll('#page-dogs .filter-list li').forEach(l => l.classList.remove('active'));
+  el.classList.add('active');
+  dogFilter = type;
+  let items = type === 'all' ? dogs : dogs.filter(d => d.category === type || d.benefit === type);
+  renderProducts('dog-products', items);
+}
+
+let catFilter = 'all';
+function filterCats(type, el) {
+  document.querySelectorAll('#page-cats .filter-list li').forEach(l => l.classList.remove('active'));
+  el.classList.add('active');
+  catFilter = type;
+  let items = type === 'all' ? cats : cats.filter(c => c.category === type || c.benefit === type);
+  renderProducts('cat-products', items);
+}
+
+let accFilter = 'all';
+function filterAcc(type, el) {
+  document.querySelectorAll('#page-accessories .tabs .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  accFilter = type;
+  let items = type === 'all' ? accessories : accessories.filter(a => a.for === type || a.for === 'both');
+  renderAccProducts(items);
+}
+
+function renderAccProducts(items) {
+  const el = document.getElementById('acc-products');
+  el.innerHTML = items.map(p => `
+    <div class="product-card" onclick="showAccProduct('${p.id}')">
+      <div class="product-img">
+        ${p.label ? `<span class="product-label label-${p.label}">${p.labelText}</span>` : ''}
+        ${p.emoji}
+      </div>
+      <div class="product-body">
+        <div class="product-category">${p.for === 'both' ? 'Dog & Cat' : p.for === 'dog' ? 'Dog' : 'Cat'}</div>
+        <div class="stars">${'★'.repeat(Math.round(p.rating))} <span>(${p.reviews?.toLocaleString()})</span></div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-footer">
+          <div class="product-price">$${p.price}<span class="original">${p.oldPrice ? '$'+p.oldPrice : ''}</span></div>
+          <button class="add-btn" onclick="addToCart(event)">+</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+let selectedSize = {};
+
+function showProduct(id) {
+  const allProds = [...dogs, ...cats, ...accessories];
+  const p = allProds.find(x => x.id === id);
+  if (!p) return;
+  selectedSize[id] = p.size ? p.size[0] : 'One Size';
+  let sizes = p.size ? p.size.map((s,i) => `<button class="size-btn${i===0?' active':''}" onclick="selectSize(this,'${id}','${s}')">${s}</button>`).join('') : '';
+  const html = `
+    <div class="product-detail">
+      <div class="product-detail-img">${p.emoji}</div>
+      <div>
+        <div class="breadcrumb"><a href="#" onclick="showPage('home')">Home</a> › <a href="#">${p.category || p.for || 'Products'}</a> › ${p.name}</div>
+        <div class="stars" style="font-size:16px;">${'★'.repeat(Math.round(p.rating))} <span style="color:var(--gray);font-size:14px;">${p.reviews?.toLocaleString()} reviews</span></div>
+        <h1 class="product-detail-name">${p.name}</h1>
+        <div class="product-detail-price">$${p.price} ${p.oldPrice?`<span style="font-size:20px;color:var(--gray);text-decoration:line-through;font-family:Nunito,sans-serif;">$${p.oldPrice}</span>`:''}</div>
+        <p class="product-detail-desc">${p.desc} Formulated by veterinary nutritionists to deliver real, measurable results for your pet's health and wellbeing.</p>
+        ${sizes ? `<div style="margin-bottom:10px;font-weight:700;font-size:14px;">Select Size</div><div class="size-options">${sizes}</div>` : ''}
+        <div class="qty-add">
+          <div class="qty-ctrl">
+            <button onclick="changeQty(-1)">−</button>
+            <span id="qty-display">1</span>
+            <button onclick="changeQty(1)">+</button>
+          </div>
+          <button class="btn btn-primary" style="flex:1;" onclick="addToCart(event)">Add to Cart — $${p.price}</button>
+        </div>
+        <ul class="benefit-list">
+          <li><span class="check">✓</span> Vet-formulated with premium ingredients</li>
+          <li><span class="check">✓</span> No artificial preservatives or fillers</li>
+          <li><span class="check">✓</span> Made in an FDA-registered facility</li>
+          <li><span class="check">✓</span> 30-day satisfaction guarantee</li>
+          <li><span class="check">✓</span> Free shipping on orders over $50</li>
+        </ul>
+      </div>
+    </div>
+  `;
+  document.getElementById('product-detail-content').innerHTML = html;
+  showPage('product');
+}
+
+function showAccProduct(id) { showProduct(id); }
+
+let qty = 1;
+function changeQty(dir) {
+  qty = Math.max(1, qty + dir);
+  const el = document.getElementById('qty-display');
+  if (el) el.textContent = qty;
+}
+
+function selectSize(btn, id, size) {
+  selectedSize[id] = size;
+  btn.closest('.size-options').querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ============ PAGE NAVIGATION ============
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + page);
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  qty = 1;
+}
+
+// ============ INIT ============
+window.addEventListener('DOMContentLoaded', () => {
+  renderProducts('home-products', [...dogs.slice(0,4), ...cats.slice(0,4)]);
+  renderProducts('dog-products', dogs);
+  renderProducts('cat-products', cats);
+  renderAccProducts(accessories);
+  renderBundles();
+});
+</script>
+</body>
+</html>

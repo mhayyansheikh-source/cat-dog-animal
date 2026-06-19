@@ -14,7 +14,7 @@ export async function generateMetadata({ params }) {
   if (!product) return { title: "Product Not Found" };
   
   return {
-    title: `${product.title} - Peteora Storefront`,
+    title: `${product.title} - Peteora`,
     description: `Buy ${product.title} online. 3-in-1 shape-shifting interactive cardboard cat scratcher toy, fast US tracked shipping, and 30-day satisfaction guarantee.`,
     alternates: {
       canonical: `https://peteora.com/products/${product.handle}`,
