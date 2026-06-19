@@ -125,7 +125,7 @@ export default function CartDrawer() {
             {/* Drawer Header */}
             <div className="p-3 border-bottom d-flex align-items-center justify-content-between">
               <div className="d-flex align-items-center gap-2">
-                <ShoppingBag style={{ color: "var(--zesty-orange)" }} />
+                <img src="/peteora.png" alt="Peteora Logo" style={{ height: "24px", width: "auto" }} />
                 <h5 className="mb-0 fw-bold font-heading">Your Pet Pack</h5>
                 <span className="badge bg-secondary rounded-pill">{cartCount}</span>
               </div>
@@ -190,8 +190,8 @@ export default function CartDrawer() {
             <div className="flex-grow-1 overflow-auto p-3">
               {cartItems.length === 0 ? (
                 <div className="text-center py-5 d-flex flex-column align-items-center justify-content-center h-100">
-                  <div className="p-4 bg-light rounded-circle mb-3">
-                    <ShoppingBag size={48} className="text-muted" />
+                  <div className="mb-4">
+                    <img src="/peteora.png" alt="Peteora Logo" style={{ height: "60px", width: "auto", opacity: 0.8 }} />
                   </div>
                   <h5 className="font-heading fw-bold">Your cart is empty</h5>
                   <p className="text-muted small max-w-sm mb-4">
