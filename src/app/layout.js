@@ -3,6 +3,7 @@ import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PageTransition from "@/components/PageTransition";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -36,20 +37,42 @@ export const metadata = {
     follow: true,
   },
   icons: {
-    icon: "/peteora.png",
-    shortcut: "/peteora.png",
-    apple: "/peteora.png",
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
   }
 };
 
 export default function RootLayout({ children }) {
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Peteora",
+    "url": "https://peteora.com",
+    "logo": "https://peteora.com/icon.png",
+    "description": "Premium supplements, treats, food, and accessories for happy, healthy cats and dogs.",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "shoppingmaniaglobalstore@gmail.com",
+      "contactType": "customer service"
+    }
+  };
+
   return (
     <html lang="en" className={`${nunito.variable} ${playfair.variable} h-full antialiased`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+      </head>
       <body className="min-h-full d-flex flex-column bg-white text-charcoal-dark">
         <CartProvider>
           <Header />
           <main className="flex-grow-1">
-            {children}
+            <PageTransition>
+              {children}
+            </PageTransition>
           </main>
           <Footer />
         </CartProvider>

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { ShoppingCart, Heart, ShieldCheck } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function ProductCard({ product }) {
   const { addToCart } = useCart();
@@ -22,7 +23,11 @@ export default function ProductCard({ product }) {
   };
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
       className="card rounded-card h-100 shadow-sm border hover-scale"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -145,9 +150,11 @@ export default function ProductCard({ product }) {
             </div>
 
             {/* Quick Add CTA plus button */}
-            <button
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={() => addToCart(product, selectedVariant)}
-              className="btn d-flex align-items-center justify-content-center hover-scale"
+              className="btn d-flex align-items-center justify-content-center"
               style={{
                 width: "40px",
                 height: "40px",
@@ -164,10 +171,10 @@ export default function ProductCard({ product }) {
               aria-label="Add to cart"
             >
               +
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

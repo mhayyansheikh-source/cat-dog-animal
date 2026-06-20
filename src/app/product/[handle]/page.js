@@ -38,7 +38,7 @@ export default async function ProductPage({ params }) {
   }
 
   // Structured JSON-LD Schema (GEO & AEO search optimization)
-  const jsonLd = {
+  const productSchema = {
     "@context": "https://schema.org/",
     "@type": "Product",
     "name": product.title,
@@ -65,12 +65,47 @@ export default async function ProductPage({ params }) {
     }
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How fast is shipping?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We process all orders within 24-48 hours. Standard US delivery typically takes 5-8 business days, and all orders include tracking information."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you offer a guarantee?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! We are so confident your pet will love our products that we offer a 30-day money back guarantee. If you're not satisfied, just reach out to our support team."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are your products safe for my pet?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. Pet safety is our #1 priority. All our products are vetted, tested, and made from high-quality materials and ingredients to ensure the well-being of your companion."
+        }
+      }
+    ]
+  };
+
   return (
     <div className="container py-4">
       {/* Schema Injection for Generative Search Crawlers */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       
       {/* Interactive PDP Client section */}

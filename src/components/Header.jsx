@@ -4,18 +4,39 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { ShoppingCart, Search, Menu, X } from "lucide-react";
+import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 
 export default function Header() {
   const { setIsCartOpen, cartCount } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious();
+    if (latest > previous && latest > 150) {
+      setHidden(true);
+    } else {
+      setHidden(false);
+    }
+  });
 
   return (
-    <header className="premium-header border-bottom">
+    <motion.header 
+      variants={{
+        visible: { y: 0 },
+        hidden: { y: "-100%" }
+      }}
+      animate={hidden ? "hidden" : "visible"}
+      transition={{ duration: 0.35, ease: "easeInOut" }}
+      className="premium-header border-bottom position-sticky top-0 z-3"
+      style={{ background: "rgba(255, 255, 255, 0.95)", backdropFilter: "blur(10px)" }}
+    >
       {/* Peteora Announcement Bar */}
       <div 
         className="d-flex justify-content-center align-items-center py-2 px-3 gap-2" 
         style={{ 
-          backgroundColor: "var(--orange)", 
+          backgroundColor: "var(--zesty-orange, #F5761A)", 
           color: "white",
           fontSize: "14px",
           fontWeight: "700"
@@ -27,7 +48,7 @@ export default function Header() {
         </Link>
       </div>
 
-      <nav className="navbar navbar-expand-lg navbar-light py-3 bg-white">
+      <nav className="navbar navbar-expand-lg navbar-light py-3">
         <div className="container">
           {/* Logo Brand Signature */}
           <Link href="/" className="navbar-brand d-flex align-items-center text-decoration-none">
@@ -49,7 +70,7 @@ export default function Header() {
                     fontSize: "0.625rem", 
                     width: "18px", 
                     height: "18px", 
-                    backgroundColor: "var(--orange)",
+                    backgroundColor: "var(--zesty-orange, #F5761A)",
                     marginTop: "8px",
                     marginLeft: "-6px"
                   }}
@@ -60,45 +81,25 @@ export default function Header() {
             </button>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="btn p-2 border-0"
+              className="btn p-2 border-0 z-3"
               aria-label="Toggle navigation menu"
             >
               {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
             </button>
           </div>
 
-          {/* Navigation Links & Search */}
-          <div className={`collapse navbar-collapse ${isMenuOpen ? "show" : ""}`} id="navbarNav">
+          {/* Desktop Navigation Links */}
+          <div className="collapse navbar-collapse d-none d-lg-block" id="navbarNav">
             <ul className="navbar-nav mx-auto mb-3 mb-lg-0 fw-semibold">
-              <li className="nav-item px-2">
-                <Link href="/" className="nav-link premium-nav-link">
-                  Home
-                </Link>
-              </li>
-              <li className="nav-item px-2">
-                <Link href="/collections/dogs" className="nav-link premium-nav-link">
-                  🐶 Dogs
-                </Link>
-              </li>
-              <li className="nav-item px-2">
-                <Link href="/collections/cats" className="nav-link premium-nav-link">
-                  🐱 Cats
-                </Link>
-              </li>
-              <li className="nav-item px-2">
-                <Link href="/collections/accessories" className="nav-link premium-nav-link">
-                  Accessories
-                </Link>
-              </li>
-              <li className="nav-item px-2">
-                <Link href="/collections/bundles" className="nav-link premium-nav-link">
-                  Bundles
-                </Link>
-              </li>
+              <li className="nav-item px-2"><Link href="/" className="nav-link premium-nav-link">Home</Link></li>
+              <li className="nav-item px-2"><Link href="/collections/dogs" className="nav-link premium-nav-link">🐶 Dogs</Link></li>
+              <li className="nav-item px-2"><Link href="/collections/cats" className="nav-link premium-nav-link">🐱 Cats</Link></li>
+              <li className="nav-item px-2"><Link href="/collections/accessories" className="nav-link premium-nav-link">Accessories</Link></li>
+              <li className="nav-item px-2"><Link href="/collections/bundles" className="nav-link premium-nav-link">Bundles</Link></li>
             </ul>
 
             {/* Right Side Tools matched to design */}
-            <div className="d-none d-lg-flex align-items-center gap-4 text-dark fs-5">
+            <div className="d-flex align-items-center gap-4 text-dark fs-5">
               <span className="cursor-pointer hover-scale" style={{ cursor: "pointer" }} title="Search">🔍</span>
               <span className="cursor-pointer hover-scale" style={{ cursor: "pointer" }} title="Account">👤</span>
               <span 
@@ -112,12 +113,8 @@ export default function Header() {
                   <span 
                     className="position-absolute top-0 start-100 translate-middle badge rounded-circle d-flex align-items-center justify-content-center text-white" 
                     style={{ 
-                      fontSize: "0.625rem", 
-                      width: "18px", 
-                      height: "18px", 
-                      backgroundColor: "var(--orange)",
-                      marginTop: "-2px",
-                      marginLeft: "-2px"
+                      fontSize: "0.625rem", width: "18px", height: "18px", 
+                      backgroundColor: "var(--zesty-orange, #F5761A)", marginTop: "-2px", marginLeft: "-2px"
                     }}
                   >
                     {cartCount}
@@ -128,6 +125,43 @@ export default function Header() {
           </div>
         </div>
       </nav>
-    </header>
+
+      {/* Mobile Drawer Navigation */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{ type: "tween", duration: 0.3 }}
+            className="position-fixed top-0 start-0 h-100 bg-white shadow-lg z-2"
+            style={{ width: "80%", maxWidth: "300px", paddingTop: "80px" }}
+          >
+            <ul className="list-unstyled p-4 fs-5 fw-semibold d-flex flex-column gap-3">
+              <li><Link href="/" onClick={() => setIsMenuOpen(false)} className="text-dark text-decoration-none d-block">Home</Link></li>
+              <li><Link href="/collections/dogs" onClick={() => setIsMenuOpen(false)} className="text-dark text-decoration-none d-block">🐶 Dogs</Link></li>
+              <li><Link href="/collections/cats" onClick={() => setIsMenuOpen(false)} className="text-dark text-decoration-none d-block">🐱 Cats</Link></li>
+              <li><Link href="/collections/accessories" onClick={() => setIsMenuOpen(false)} className="text-dark text-decoration-none d-block">Accessories</Link></li>
+              <li><Link href="/collections/bundles" onClick={() => setIsMenuOpen(false)} className="text-dark text-decoration-none d-block">Bundles</Link></li>
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      {/* Mobile Menu Backdrop */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.5 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMenuOpen(false)}
+            className="position-fixed top-0 start-0 w-100 h-100 bg-dark z-1"
+            style={{ pointerEvents: "auto" }}
+          />
+        )}
+      </AnimatePresence>
+
+    </motion.header>
   );
 }

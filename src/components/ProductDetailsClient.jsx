@@ -7,6 +7,7 @@ import LiveScarcity from "@/components/LiveScarcity";
 import TrustBadges from "@/components/TrustBadges";
 import DirectCheckoutBar from "@/components/DirectCheckoutBar";
 import { ShoppingCart, Star, Sparkles, Check, ChevronDown, ChevronUp } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ProductDetailsClient({ product }) {
   const { addToCart } = useCart();
@@ -47,18 +48,25 @@ export default function ProductDetailsClient({ product }) {
   };
 
   return (
-    <div className="py-4 py-md-5">
+    <article className="py-4 py-md-5">
       <div className="row g-5">
         {/* Left Column: Image Gallery */}
         <div className="col-lg-6">
           <div className="sticky-top" style={{ top: "100px", zIndex: 1 }}>
             {/* Main Showcase Image */}
-            <div className="rounded-card p-4 mb-3 d-flex align-items-center justify-content-center bg-white" style={{ height: "450px" }}>
-              <img
-                src={activeImage}
-                alt={product.title}
-                className="img-fluid h-100 object-fit-contain"
-              />
+            <div className="rounded-card p-4 mb-3 d-flex align-items-center justify-content-center bg-white position-relative" style={{ height: "450px", overflow: "hidden" }}>
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={activeImage}
+                  src={activeImage}
+                  alt={product.title}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                  className="img-fluid h-100 object-fit-contain position-absolute"
+                />
+              </AnimatePresence>
             </div>
 
             {/* Thumbnail Carousel */}
@@ -73,6 +81,7 @@ export default function ProductDetailsClient({ product }) {
                       width: "80px",
                       height: "80px",
                       border: activeImage === img ? "2px solid var(--zesty-orange)" : "1px solid var(--pale-gray)",
+                      transition: "border 0.3s ease"
                     }}
                     aria-label={`View image thumbnail ${idx + 1}`}
                   >
@@ -110,12 +119,14 @@ export default function ProductDetailsClient({ product }) {
           </div>
 
           {/* Description Snippet */}
-          <div className="mb-4">
+          <section className="mb-4">
             <div className="text-muted font-body" dangerouslySetInnerHTML={{ __html: product.body_html }} />
-          </div>
+          </section>
 
           {/* Scarcity Widget */}
-          <LiveScarcity variantId={activeVariant.id} />
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
+            <LiveScarcity variantId={activeVariant.id} />
+          </motion.div>
 
           {/* Variant Selector Swatches */}
           {product.variants.length > 1 && (
@@ -144,9 +155,12 @@ export default function ProductDetailsClient({ product }) {
             </span>
             <div className="d-flex flex-column gap-2">
               {/* Option 1: 1 Item */}
-              <div
+              <motion.div
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
                 onClick={() => setSelectedBulkQty(1)}
-                className={`volume-card d-flex align-items-center justify-content-between ${selectedBulkQty === 1 ? "active" : ""}`}
+                className={`volume-card d-flex align-items-center justify-content-between cursor-pointer ${selectedBulkQty === 1 ? "active" : ""}`}
+                style={{ cursor: "pointer" }}
               >
                 <div>
                   <strong className="d-block">Buy 1 Item</strong>
@@ -156,12 +170,15 @@ export default function ProductDetailsClient({ product }) {
                   <strong className="fs-5">${basePrice.toFixed(2)}</strong>
                   <span className="d-block small text-muted">/unit</span>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Option 2: 2 Items (10% Off) */}
-              <div
+              <motion.div
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
                 onClick={() => setSelectedBulkQty(2)}
-                className={`volume-card d-flex align-items-center justify-content-between ${selectedBulkQty === 2 ? "active" : ""}`}
+                className={`volume-card d-flex align-items-center justify-content-between cursor-pointer ${selectedBulkQty === 2 ? "active" : ""}`}
+                style={{ cursor: "pointer" }}
               >
                 <span className="discount-badge">★ STOCK UP</span>
                 <div>
@@ -172,14 +189,24 @@ export default function ProductDetailsClient({ product }) {
                   <strong className="fs-5 text-success">${getBulkCardPrice(2).toFixed(2)}</strong>
                   <span className="d-block small text-muted">/unit</span>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Option 3: 3 Items (15% Off) */}
-              <div
+              <motion.div
+                animate={{ boxShadow: selectedBulkQty === 3 ? "0 0 15px rgba(245,118,26,0.3)" : "none" }}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
                 onClick={() => setSelectedBulkQty(3)}
-                className={`volume-card d-flex align-items-center justify-content-between ${selectedBulkQty === 3 ? "active" : ""}`}
+                className={`volume-card d-flex align-items-center justify-content-between cursor-pointer ${selectedBulkQty === 3 ? "active" : ""}`}
+                style={{ cursor: "pointer" }}
               >
-                <span className="discount-badge bg-success">🏆 BEST VALUE</span>
+                <motion.span 
+                  animate={{ scale: [1, 1.05, 1] }} 
+                  transition={{ duration: 2, repeat: Infinity }} 
+                  className="discount-badge bg-success"
+                >
+                  🏆 BEST VALUE
+                </motion.span>
                 <div>
                   <strong className="d-block">Buy 3 Items (Save 15% Off)</strong>
                   <span className="small text-success font-body">Maximum savings for your pet</span>
@@ -188,29 +215,33 @@ export default function ProductDetailsClient({ product }) {
                   <strong className="fs-5 text-success">${getBulkCardPrice(3).toFixed(2)}</strong>
                   <span className="d-block small text-muted">/unit</span>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
 
           {/* Add to Cart Actions */}
           <div className="mb-4">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleAddToCart}
               className="w-100 rounded-pill-cta btn-zesty-primary py-3 fs-5 d-flex align-items-center justify-content-center gap-2 shadow"
             >
               <ShoppingCart size={22} />
               ADD TO CART
-            </button>
+            </motion.button>
           </div>
 
           {/* Shipping Cutoff details */}
           <ShippingTimer />
 
           {/* Objection Trust Badges */}
-          <TrustBadges />
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+            <TrustBadges />
+          </motion.div>
 
           {/* Scraper-Friendly Comparison Table (GEO/AEO Optimization) */}
-          <div className="mt-5 text-start">
+          <section className="mt-5 text-start">
             <h4 className="font-heading mb-3 fw-bold">How We Measure Up Against Generic Brands</h4>
             <div className="table-responsive">
               <table className="table border align-middle font-body small bg-white">
@@ -248,10 +279,10 @@ export default function ProductDetailsClient({ product }) {
                 </tbody>
               </table>
             </div>
-          </div>
+          </section>
 
           {/* Dynamic Factual FAQ (AEO/GEO Optimization) */}
-          <div className="mt-5 text-start mb-5">
+          <section className="mt-5 text-start mb-5">
             <h4 className="font-heading mb-3 fw-bold">Frequently Asked Questions</h4>
             <div className="border rounded bg-white shadow-sm p-2">
               {[
@@ -269,24 +300,36 @@ export default function ProductDetailsClient({ product }) {
                 }
               ].map((faq, index) => (
                 <div key={index} className="geo-faq-item">
-                  <div className="geo-faq-question font-body" onClick={() => toggleFaq(index)}>
+                  <div className="geo-faq-question font-body cursor-pointer" onClick={() => toggleFaq(index)} style={{ cursor: "pointer" }}>
                     <span>{faq.q}</span>
-                    {openFaq === index ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                    <motion.div animate={{ rotate: openFaq === index ? 180 : 0 }}>
+                      <ChevronDown size={16} />
+                    </motion.div>
                   </div>
-                  {openFaq === index && (
-                    <div className="geo-faq-answer font-body">
-                      {faq.a}
-                    </div>
-                  )}
+                  <AnimatePresence initial={false}>
+                    {openFaq === index && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        style={{ overflow: "hidden" }}
+                      >
+                        <div className="geo-faq-answer font-body pt-2 pb-2">
+                          {faq.a}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         </div>
       </div>
 
       {/* Floating Bottom checkout bar for mobile views */}
       <DirectCheckoutBar product={product} activeVariant={activeVariant} />
-    </div>
+    </article>
   );
 }

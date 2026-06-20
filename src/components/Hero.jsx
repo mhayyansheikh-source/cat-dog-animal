@@ -117,10 +117,16 @@ export default function Hero() {
             </motion.div>
 
             {/* H1 */}
-            <motion.h1
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.1, delayChildren: 0.1 }
+                }
+              }}
               className="font-heading fw-bold mb-3"
               style={{
                 fontFamily: "var(--font-playfair), 'Playfair Display', serif",
@@ -129,11 +135,29 @@ export default function Hero() {
                 color: "var(--charcoal)",
               }}
             >
-              Your Pet Deserves the{" "}
-              <span style={{ color: "var(--orange)", fontStyle: "italic" }}>
+              {"Your Pet Deserves the ".split(" ").map((word, i) => (
+                <motion.span
+                  key={i}
+                  style={{ display: "inline-block", marginRight: "8px" }}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+                  }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+              <br className="d-none d-md-block" />
+              <motion.span 
+                style={{ color: "var(--orange)", fontStyle: "italic", display: "inline-block" }}
+                variants={{
+                  hidden: { opacity: 0, scale: 0.8 },
+                  visible: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 200, damping: 20 } }
+                }}
+              >
                 Best of Everything
-              </span>
-            </motion.h1>
+              </motion.span>
+            </motion.div>
 
             {/* Description */}
             <motion.p
@@ -160,7 +184,11 @@ export default function Hero() {
               className="d-flex flex-wrap justify-content-center justify-content-lg-start gap-3 mb-5"
             >
               <Link href="/collections/dogs" className="text-decoration-none">
-                <button
+                <motion.button
+                  animate={{ y: [0, -5, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   style={{
                     background: "var(--orange)",
                     color: "white",
@@ -173,24 +201,19 @@ export default function Hero() {
                     display: "inline-flex",
                     alignItems: "center",
                     gap: "8px",
-                    transition: "all 0.2s",
                     boxShadow: "0 4px 16px rgba(245,118,26,0.3)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "var(--orange-dark, #C45A0E)";
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "var(--orange)";
-                    e.currentTarget.style.transform = "translateY(0)";
                   }}
                 >
                   Shop for Dogs 🐶
-                </button>
+                </motion.button>
               </Link>
 
               <Link href="/collections/cats" className="text-decoration-none">
-                <button
+                <motion.button
+                  animate={{ y: [0, -5, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+                  whileHover={{ scale: 1.05, backgroundColor: "var(--orange)", color: "white" }}
+                  whileTap={{ scale: 0.95 }}
                   style={{
                     background: "transparent",
                     color: "var(--orange)",
@@ -203,21 +226,10 @@ export default function Hero() {
                     display: "inline-flex",
                     alignItems: "center",
                     gap: "8px",
-                    transition: "all 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "var(--orange)";
-                    e.currentTarget.style.color = "white";
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "transparent";
-                    e.currentTarget.style.color = "var(--orange)";
-                    e.currentTarget.style.transform = "translateY(0)";
                   }}
                 >
                   Shop for Cats 🐱
-                </button>
+                </motion.button>
               </Link>
             </motion.div>
 

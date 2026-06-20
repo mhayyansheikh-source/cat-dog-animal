@@ -1,45 +1,102 @@
 "use client";
 
 import React from "react";
-
-const reviews = [
-  {
-    stars: "★★★★★",
-    text: "My golden retriever had terrible joint pain. After 3 weeks on the Hip & Joint chews, he's back to running around like a puppy! I can't believe the difference.",
-    avatar: "👩",
-    name: "Sarah M.",
-    pet: "Dog mom to Max, 9 years old",
-  },
-  {
-    stars: "★★★★★",
-    text: "My cats are incredibly picky, but they absolutely love the salmon mousse. Their coats have never looked shinier and one of them actually stopped scratching so much.",
-    avatar: "👨",
-    name: "David K.",
-    pet: "Cat dad to Mochi & Chai",
-  },
-  {
-    stars: "★★★★★",
-    text: "The calming diffuser has been a game-changer. Our anxious tabby used to hide during thunderstorms — now he just sleeps through them. Completely transformed our home.",
-    avatar: "👩",
-    name: "Priya L.",
-    pet: "Cat mom to Biscuit, 4 years old",
-  },
-];
+import { motion } from "framer-motion";
+import { testimonials } from "@/data/testimonials";
 
 export default function ReviewsSection() {
+  // Split 100 testimonials into 2 rows of 50 for the marquee
+  const row1 = testimonials.slice(0, 50);
+  const row2 = testimonials.slice(50, 100);
+
+  const MarqueeRow = ({ items, reverse = false }) => (
+    <div style={{ display: "flex", overflow: "hidden", position: "relative", width: "100%", paddingBottom: "24px" }}>
+      <motion.div
+        animate={{ x: reverse ? ["-50%", "0%"] : ["0%", "-50%"] }}
+        transition={{ duration: 100, ease: "linear", repeat: Infinity }}
+        style={{ display: "flex", gap: "24px", minWidth: "max-content", paddingLeft: "24px" }}
+      >
+        {/* We duplicate the items array so the loop is seamless */}
+        {[...items, ...items].map((r, idx) => (
+          <motion.div
+            key={idx}
+            whileHover={{ scale: 1.02 }}
+            style={{
+              background: "white",
+              border: "1px solid #E5E7EB",
+              borderRadius: "16px",
+              padding: "24px",
+              width: "350px", // Fixed width for marquee items
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.03)",
+              cursor: "pointer"
+            }}
+          >
+            {/* Stars */}
+            <div style={{ color: "#F59E0B", fontSize: "16px", marginBottom: "12px" }}>
+              {r.stars}
+            </div>
+
+            {/* Review Text */}
+            <p
+              style={{
+                fontSize: "14px",
+                color: "var(--charcoal, #2A2A2A)",
+                lineHeight: "1.6",
+                fontStyle: "italic",
+                marginBottom: "20px",
+                flexGrow: 1,
+              }}
+            >
+              "{r.text}"
+            </p>
+
+            {/* Reviewer Info */}
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <div
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  backgroundColor: "var(--orange-light, #FEF0E6)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "18px",
+                  flexShrink: 0,
+                }}
+              >
+                {r.avatar}
+              </div>
+              <div>
+                <div style={{ fontWeight: "800", fontSize: "13px", color: "var(--charcoal, #2A2A2A)" }}>
+                  {r.name}
+                </div>
+                <div style={{ fontSize: "11px", color: "#6B7280" }}>{r.pet}</div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
+  );
+
   return (
     <section
       className="py-5"
-      style={{ backgroundColor: "var(--cream, #FDFAF5)", borderTop: "1px solid #E5E7EB", borderBottom: "1px solid #E5E7EB" }}
+      style={{ backgroundColor: "var(--cream, #FDFAF5)", borderTop: "1px solid #E5E7EB", borderBottom: "1px solid #E5E7EB", overflow: "hidden" }}
     >
-      <div className="container font-body text-start">
+      <div className="font-body text-start">
         {/* Section Header */}
-        <div className="text-center mb-5">
+        <div className="container text-center mb-5">
           <span
             className="fw-bold text-uppercase small d-block mb-2"
             style={{ color: "var(--orange)", letterSpacing: "0.12em" }}
           >
-            Reviews
+            Real Reviews from the Peteora Pack
           </span>
           <h2
             className="font-heading fw-bold mt-2"
@@ -50,87 +107,32 @@ export default function ReviewsSection() {
               marginBottom: "14px",
             }}
           >
-            Pet Parents Love Peteora
+            Loved by 100,000+ Pets Across the USA
           </h2>
           <p
             className="mx-auto"
-            style={{ fontSize: "17px", color: "#6B7280", maxWidth: "560px" }}
+            style={{ fontSize: "17px", color: "#6B7280", maxWidth: "600px" }}
           >
-            Real stories from real pet families around the world.
+            Don't just take our word for it. Here is what real pet parents from Austin to Boston are saying about their results.
           </p>
         </div>
 
-        {/* Review Cards */}
-        <div className="row g-4 justify-content-center">
-          {reviews.map((r, idx) => (
-            <div key={idx} className="col-lg-4 col-md-6">
-              <div
-                style={{
-                  background: "white",
-                  border: "1px solid #E5E7EB",
-                  borderRadius: "16px",
-                  padding: "28px 24px",
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  transition: "box-shadow 0.25s, transform 0.25s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = "0 8px 40px rgba(0,0,0,0.1)";
-                  e.currentTarget.style.transform = "translateY(-4px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = "none";
-                  e.currentTarget.style.transform = "translateY(0)";
-                }}
-              >
-                {/* Stars */}
-                <div style={{ color: "#F59E0B", fontSize: "18px", marginBottom: "14px" }}>
-                  {r.stars}
-                </div>
+        {/* Marquee Rows */}
+        <div style={{ position: "relative" }}>
+          {/* Edge fade gradients for seamless marquee illusion */}
+          <div style={{
+            position: "absolute", left: 0, top: 0, bottom: 0, width: "100px", zIndex: 2,
+            background: "linear-gradient(to right, var(--cream, #FDFAF5) 0%, transparent 100%)",
+            pointerEvents: "none"
+          }}></div>
+          <div style={{
+            position: "absolute", right: 0, top: 0, bottom: 0, width: "100px", zIndex: 2,
+            background: "linear-gradient(to left, var(--cream, #FDFAF5) 0%, transparent 100%)",
+            pointerEvents: "none"
+          }}></div>
 
-                {/* Review Text */}
-                <p
-                  style={{
-                    fontSize: "15px",
-                    color: "var(--charcoal, #2A2A2A)",
-                    lineHeight: "1.65",
-                    fontStyle: "italic",
-                    marginBottom: "20px",
-                    flexGrow: 1,
-                  }}
-                >
-                  "{r.text}"
-                </p>
-
-                {/* Reviewer Info */}
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <div
-                    style={{
-                      width: "44px",
-                      height: "44px",
-                      borderRadius: "50%",
-                      backgroundColor: "var(--orange-light, #FEF0E6)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "20px",
-                      flexShrink: 0,
-                    }}
-                  >
-                    {r.avatar}
-                  </div>
-                  <div>
-                    <div style={{ fontWeight: "800", fontSize: "14px", color: "var(--charcoal, #2A2A2A)" }}>
-                      {r.name}
-                    </div>
-                    <div style={{ fontSize: "12px", color: "#6B7280" }}>{r.pet}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+          <MarqueeRow items={row1} />
+          <MarqueeRow items={row2} reverse={true} />
         </div>
       </div>
     </section>

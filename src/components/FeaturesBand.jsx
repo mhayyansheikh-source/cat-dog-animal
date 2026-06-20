@@ -57,7 +57,7 @@ export default function FeaturesBand() {
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.45, delay: i * 0.08 }}
+              transition={{ type: "spring", stiffness: 200, damping: 20, delay: i * 0.1 }}
               style={{
                 display: "flex",
                 flexDirection: "column",

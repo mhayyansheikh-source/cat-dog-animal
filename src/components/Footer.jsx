@@ -19,155 +19,97 @@ export default function Footer() {
   return (
     <footer className="premium-footer pt-5 pb-4 mt-auto">
       <div className="container">
-        <div className="row g-4 mb-5">
-          {/* Brand & Mission column */}
-          <div className="col-lg-3 col-md-6">
-            <div className="d-flex align-items-center mb-3">
-              <img src="/peteora.png" alt="Peteora Logo" style={{ height: "40px", width: "auto", filter: "brightness(0) invert(1)" }} />
-            </div>
-            <p className="small mb-4 text-white-50" style={{ lineHeight: "1.6" }}>
-              Our mission is to keep your pet active, happy, and feeling healthy. We partner directly with premium suppliers to offer clinical-grade pet care products at direct-to-consumer prices.
-            </p>
-            <div className="d-flex align-items-center gap-2 mb-3">
-              <ShieldCheck size={20} style={{ color: "var(--orange)" }} />
-              <span className="small fw-semibold text-white-50">100% Quality Audited & Approved</span>
-            </div>
-            {/* quality badge text simulation */}
-            <div className="p-2 border rounded d-inline-block shadow-sm" style={{ borderStyle: "dashed", borderColor: "rgba(255, 255, 255, 0.15)", backgroundColor: "rgba(255, 255, 255, 0.03)" }}>
-              <span className="font-heading fs-6 text-white me-2">★ Peteora</span>
-              <span className="small text-white-50 font-body font-semibold">Audited Quality Standard</span>
-            </div>
-          </div>
-
-          {/* Useful Links Column */}
-          <div className="col-lg-2 col-md-6">
-            <h6 className="fw-bold mb-3 text-uppercase small text-white-50">Shop Categories</h6>
-            <ul className="list-unstyled mb-0 small">
-              <li className="mb-2">
-                <Link href="/collections/dogs" className="footer-link">
+        <div className="row g-4 mb-5 justify-content-between">
+          {/* SHOP CATEGORIES Column */}
+          <div className="col-lg-4 col-md-4">
+            <h6 className="fw-bold mb-4 text-uppercase text-white letter-spacing-wide">Shop Categories</h6>
+            <ul className="list-unstyled mb-0 font-body fs-6">
+              <li className="mb-3">
+                <Link href="/collections/dogs" className="footer-link text-white-50">
                   For Dogs
                 </Link>
               </li>
-              <li className="mb-2">
-                <Link href="/collections/cats" className="footer-link">
+              <li className="mb-3">
+                <Link href="/collections/cats" className="footer-link text-white-50">
                   For Cats
                 </Link>
               </li>
-              <li className="mb-2">
-                <Link href="/collections/accessories" className="footer-link">
+              <li className="mb-3">
+                <Link href="/collections/accessories" className="footer-link text-white-50">
                   Accessories
                 </Link>
               </li>
-              <li className="mb-2">
-                <Link href="/collections/bundles" className="footer-link">
+              <li className="mb-3">
+                <Link href="/collections/bundles" className="footer-link text-white-50">
                   Bundles
                 </Link>
               </li>
-              <li className="mb-2">
-                <Link href="/collections/replacement-parts" className="footer-link">
+              <li className="mb-3">
+                <Link href="/collections/replacement-parts" className="footer-link text-white-50">
                   Replacement Parts
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Quick links support Column */}
-          <div className="col-lg-2 col-md-6">
-            <h6 className="fw-bold mb-3 text-uppercase small text-white-50">Customer Care</h6>
-            <ul className="list-unstyled mb-0 small text-white-50">
-              <li className="mb-2 d-flex align-items-start gap-2">
-                <span style={{ color: "var(--orange)", fontSize: "0.8rem", marginTop: "3px" }}>➔</span>
+          {/* CUSTOMER CARE Column */}
+          <div className="col-lg-4 col-md-4">
+            <h6 className="fw-bold mb-4 text-uppercase text-white letter-spacing-wide">Customer Care</h6>
+            <ul className="list-unstyled mb-0 font-body fs-6 text-white-50">
+              <li className="mb-3 d-flex align-items-start gap-2">
+                <span style={{ color: "var(--zesty-orange, #F5761A)", fontWeight: "bold" }}>→</span>
                 <span>US Tracked Delivery (5-12 Days)</span>
               </li>
-              <li className="mb-2 d-flex align-items-start gap-2">
-                <span style={{ color: "var(--orange)", fontSize: "0.8rem", marginTop: "3px" }}>➔</span>
+              <li className="mb-3 d-flex align-items-start gap-2">
+                <span style={{ color: "var(--zesty-orange, #F5761A)", fontWeight: "bold" }}>→</span>
                 <span>30-Day Happiness Guarantee</span>
               </li>
-              <li className="mb-2 d-flex align-items-start gap-2">
-                <span style={{ color: "var(--orange)", fontSize: "0.8rem", marginTop: "3px" }}>➔</span>
+              <li className="mb-3 d-flex align-items-start gap-2">
+                <span style={{ color: "var(--zesty-orange, #F5761A)", fontWeight: "bold" }}>→</span>
                 <span>Direct Sourcing Slashes Costs</span>
               </li>
-              <li className="mb-2 d-flex align-items-start gap-2">
-                <span style={{ color: "var(--orange)", fontSize: "0.8rem", marginTop: "3px" }}>➔</span>
-                <span>Support: shoppingmaniaglobalstore@gmail.com</span>
+              <li className="mb-3 d-flex align-items-start gap-2">
+                <span style={{ color: "var(--zesty-orange, #F5761A)", fontWeight: "bold" }}>→</span>
+                <span>Support:<br/>shoppingmaniaglobalstore@gmail.com</span>
               </li>
             </ul>
           </div>
 
-          {/* Policies & Legal Column */}
-          <div className="col-lg-2 col-md-6">
-            <h6 className="fw-bold mb-3 text-uppercase small text-white-50">Policies &amp; Legal</h6>
-            <ul className="list-unstyled mb-0 small font-body">
-              <li className="mb-2">
-                <Link href="/policies/refund-policy" className="footer-link">
+          {/* POLICIES & LEGAL Column */}
+          <div className="col-lg-4 col-md-4">
+            <h6 className="fw-bold mb-4 text-uppercase text-white letter-spacing-wide">Policies &amp; Legal</h6>
+            <ul className="list-unstyled mb-0 font-body fs-6">
+              <li className="mb-3">
+                <Link href="/policies/refund-policy" className="footer-link text-white-50">
                   Return and refund policy
                 </Link>
               </li>
-              <li className="mb-2">
-                <Link href="/policies/privacy-policy" className="footer-link">
+              <li className="mb-3">
+                <Link href="/policies/privacy-policy" className="footer-link text-white-50">
                   Privacy policy
                 </Link>
               </li>
-              <li className="mb-2">
-                <Link href="/policies/terms-of-service" className="footer-link">
+              <li className="mb-3">
+                <Link href="/policies/terms-of-service" className="footer-link text-white-50">
                   Terms of service
                 </Link>
               </li>
-              <li className="mb-2">
-                <Link href="/policies/shipping-policy" className="footer-link">
+              <li className="mb-3">
+                <Link href="/policies/shipping-policy" className="footer-link text-white-50">
                   Shipping policy
                 </Link>
               </li>
-              <li className="mb-2">
-                <Link href="/policies/contact-information" className="footer-link">
+              <li className="mb-3">
+                <Link href="/policies/contact-information" className="footer-link text-white-50">
                   Contact information
                 </Link>
               </li>
-              <li className="mb-2">
-                <Link href="/policies/legal-notice" className="footer-link">
+              <li className="mb-3">
+                <Link href="/policies/legal-notice" className="footer-link text-white-50">
                   Legal notice
                 </Link>
               </li>
             </ul>
-          </div>
-
-          {/* Newsletter Column */}
-          <div className="col-lg-3 col-md-6">
-            <h6 className="fw-bold mb-3 text-uppercase small text-white-50">Join the Peteora Pack</h6>
-            <p className="small text-white-50 mb-3" style={{ lineHeight: "1.5" }}>
-              Subscribe to unlock 10% off your first order, access secret flash sales, and get veterinary pet care tips.
-            </p>
-            {subscribed ? (
-              <div className="alert alert-success py-2 small" role="alert">
-                ✓ Welcome to the pack! Check your inbox for 10% off!
-              </div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="input-group mb-3">
-                <input
-                  type="email"
-                  className="form-control footer-input"
-                  placeholder="Your pet's email address..."
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  aria-label="Email subscription list"
-                />
-                <button className="btn footer-btn" type="submit">
-                  Join
-                </button>
-              </form>
-            )}
-            
-            {/* Payment Trust Marks column */}
-            <div className="mt-4">
-              <p className="small text-white-50 mb-2">100% Secure Checkout Guaranteed</p>
-              <div className="d-flex gap-2 flex-wrap fs-4">
-                <span className="payment-badge">💳 Visa</span>
-                <span className="payment-badge">💳 Mastercard</span>
-                <span className="payment-badge">💳 ShopPay</span>
-                <span className="payment-badge">💳 PayPal</span>
-              </div>
-            </div>
           </div>
         </div>
 
