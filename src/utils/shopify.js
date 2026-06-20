@@ -588,17 +588,23 @@ export async function getShopifyCollectionsWithProducts(limit = 10, productsPerC
                   vendor
                   productType
                   tags
-                  images(first: 1) {
+                  descriptionHtml
+                  options {
+                    name
+                    values
+                  }
+                  images(first: 10) {
                     edges {
                       node {
                         url
                       }
                     }
                   }
-                  variants(first: 1) {
+                  variants(first: 20) {
                     edges {
                       node {
                         id
+                        title
                         price {
                           amount
                         }
@@ -606,6 +612,7 @@ export async function getShopifyCollectionsWithProducts(limit = 10, productsPerC
                           amount
                         }
                         availableForSale
+                        sku
                       }
                     }
                   }
