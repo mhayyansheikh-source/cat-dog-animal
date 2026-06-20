@@ -2,6 +2,8 @@ import { getCustomerProfile } from '@/utils/customerAccount';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
+export const runtime = 'edge';
+
 export default async function AccountPage() {
   const customer = await getCustomerProfile();
 
