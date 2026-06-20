@@ -1,0 +1,19 @@
+
+> headless-shopify@0.1.0 dev
+> next dev
+
+⚠ Port 3000 is in use by process 4097, using available port 3003 instead.
+▲ Next.js 16.2.9 (Turbopack)
+- Local:         http://localhost:3003
+- Network:       http://192.168.1.4:3003
+- Environments: .env.local
+✓ Ready in 395ms
+⨯ Another next dev server is already running.
+
+- Local:        http://localhost:3002
+- PID:          42752
+- Dir:          /Users/pc/headless-shopify
+- Log:          .next/dev/logs/next-development.log
+
+Run kill 42752 to stop it.
+[?25h

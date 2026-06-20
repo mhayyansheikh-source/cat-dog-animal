@@ -15,13 +15,21 @@ async function shopifyFetch({ query, variables = {} }) {
     headers["X-Shopify-Storefront-Access-Token"] = token;
   }
   
+  const fetchOptions = {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ query, variables }),
+  };
+
+  // Do not cache mutations or cart requests
+  if (query.includes("mutation") || query.includes("cart(")) {
+    fetchOptions.cache = "no-store";
+  } else {
+    fetchOptions.next = { revalidate: 30 };
+  }
+
   try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({ query, variables }),
-      next: { revalidate: 30 } // Cache data on Vercel for 30 seconds
-    });
+    const response = await fetch(url, fetchOptions);
 
     if (!response.ok) {
       const errorText = await response.text();
