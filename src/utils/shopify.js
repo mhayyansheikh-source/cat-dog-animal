@@ -640,7 +640,7 @@ export async function getShopifyCollectionsWithProducts(limit = 10, productsPerC
     
     return data.collections.edges.map(edge => {
       const col = edge.node;
-      col.products = col.products.edges.map(normalizeProduct);
+      col.products = col.products.edges.map(e => normalizeProduct(e.node));
       return col;
     });
   } catch (error) {
