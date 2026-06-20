@@ -115,7 +115,7 @@ export function CartProvider({ children }) {
     },
     title: edge.node.merchandise.product.title,
     handle: edge.node.merchandise.product.handle,
-    image: edge.node.merchandise.image?.url || "",
+    image: edge.node.merchandise.image?.url || edge.node.merchandise.product?.images?.edges?.[0]?.node?.url || "",
     quantity: edge.node.quantity,
   })) || [];
 

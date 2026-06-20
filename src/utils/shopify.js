@@ -358,41 +358,48 @@ export async function getPredictiveSearch(queryStr) {
 // Native Dynamic Cart API Methods
 // -----------------------------------------
 
-export async function createCart() {
-  const query = `
-    mutation cartCreate {
-      cartCreate {
-        cart {
+const cartFragment = `
+  fragment cartDetails on Cart {
+    id
+    checkoutUrl
+    cost {
+      totalAmount {
+        amount
+      }
+      subtotalAmount {
+        amount
+      }
+    }
+    lines(first: 50) {
+      edges {
+        node {
           id
-          checkoutUrl
+          quantity
           cost {
             totalAmount {
               amount
             }
-            subtotalAmount {
-              amount
-            }
           }
-          lines(first: 10) {
-            edges {
-              node {
-                id
-                quantity
-                cost {
-                  totalAmount {
-                    amount
-                  }
-                }
-                merchandise {
-                  ... on ProductVariant {
-                    id
-                    title
-                    price {
-                      amount
-                    }
-                    product {
-                      title
-                      handle
+          merchandise {
+            ... on ProductVariant {
+              id
+              title
+              price {
+                amount
+              }
+              compareAtPrice {
+                amount
+              }
+              image {
+                url
+              }
+              product {
+                title
+                handle
+                images(first: 1) {
+                  edges {
+                    node {
+                      url
                     }
                   }
                 }
@@ -402,6 +409,19 @@ export async function createCart() {
         }
       }
     }
+  }
+`;
+
+export async function createCart() {
+  const query = `
+    mutation cartCreate {
+      cartCreate {
+        cart {
+          ...cartDetails
+        }
+      }
+    }
+    ${cartFragment}
   `;
   const data = await shopifyFetch({ query });
   return data?.cartCreate?.cart;
@@ -411,50 +431,10 @@ export async function getCart(cartId) {
   const query = `
     query getCart($id: ID!) {
       cart(id: $id) {
-        id
-        checkoutUrl
-        cost {
-          totalAmount {
-            amount
-          }
-          subtotalAmount {
-            amount
-          }
-        }
-        lines(first: 50) {
-          edges {
-            node {
-              id
-              quantity
-              cost {
-                totalAmount {
-                  amount
-                }
-              }
-              merchandise {
-                ... on ProductVariant {
-                  id
-                  title
-                  price {
-                    amount
-                  }
-                  compareAtPrice {
-                    amount
-                  }
-                  image {
-                    url
-                  }
-                  product {
-                    title
-                    handle
-                  }
-                }
-              }
-            }
-          }
-        }
+        ...cartDetails
       }
     }
+    ${cartFragment}
   `;
   const data = await shopifyFetch({ query, variables: { id: cartId } });
   return data?.cart;
@@ -465,7 +445,7 @@ export async function addCartLines(cartId, lines) {
     mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
       cartLinesAdd(cartId: $cartId, lines: $lines) {
         cart {
-          id
+          ...cartDetails
         }
         userErrors {
           field
@@ -473,6 +453,7 @@ export async function addCartLines(cartId, lines) {
         }
       }
     }
+    ${cartFragment}
   `;
   const data = await shopifyFetch({ query, variables: { cartId, lines } });
   return data?.cartLinesAdd;
@@ -483,7 +464,7 @@ export async function updateCartLines(cartId, lines) {
     mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
       cartLinesUpdate(cartId: $cartId, lines: $lines) {
         cart {
-          id
+          ...cartDetails
         }
         userErrors {
           field
@@ -491,6 +472,7 @@ export async function updateCartLines(cartId, lines) {
         }
       }
     }
+    ${cartFragment}
   `;
   const data = await shopifyFetch({ query, variables: { cartId, lines } });
   return data?.cartLinesUpdate;
@@ -501,7 +483,7 @@ export async function removeCartLines(cartId, lineIds) {
     mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
       cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
         cart {
-          id
+          ...cartDetails
         }
         userErrors {
           field
@@ -509,6 +491,7 @@ export async function removeCartLines(cartId, lineIds) {
         }
       }
     }
+    ${cartFragment}
   `;
   const data = await shopifyFetch({ query, variables: { cartId, lineIds } });
   return data?.cartLinesRemove;
