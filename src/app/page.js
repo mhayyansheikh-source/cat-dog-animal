@@ -15,6 +15,8 @@ const BundlesSection = dynamic(() => import("@/components/BundlesSection"));
 const ReviewsSection = dynamic(() => import("@/components/ReviewsSection"));
 const NewsletterSection = dynamic(() => import("@/components/NewsletterSection"));
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   // Fetch live products from Shopify
   const products = await getShopifyProducts();

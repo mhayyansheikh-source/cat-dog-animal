@@ -178,17 +178,23 @@ export async function getShopifyCollectionByHandle(handle, filter = [], sortKey 
               vendor
               productType
               tags
-              images(first: 1) {
+              descriptionHtml
+              options {
+                name
+                values
+              }
+              images(first: 10) {
                 edges {
                   node {
                     url
                   }
                 }
               }
-              variants(first: 1) {
+              variants(first: 20) {
                 edges {
                   node {
                     id
+                    title
                     price {
                       amount
                     }
@@ -196,6 +202,7 @@ export async function getShopifyCollectionByHandle(handle, filter = [], sortKey 
                       amount
                     }
                     availableForSale
+                    sku
                   }
                 }
               }
@@ -537,27 +544,34 @@ export async function getShopifyProductRecommendations(productId) {
         vendor
         productType
         tags
-        images(first: 1) {
-          edges {
-            node {
-              url
-            }
-          }
-        }
-        variants(first: 1) {
-          edges {
-            node {
-              id
-              price {
-                amount
-              }
-              compareAtPrice {
-                amount
-              }
-              availableForSale
-            }
-          }
-        }
+                  descriptionHtml
+                  options {
+                    name
+                    values
+                  }
+                  images(first: 10) {
+                    edges {
+                      node {
+                        url
+                      }
+                    }
+                  }
+                  variants(first: 20) {
+                    edges {
+                      node {
+                        id
+                        title
+                        price {
+                          amount
+                        }
+                        compareAtPrice {
+                          amount
+                        }
+                        availableForSale
+                        sku
+                      }
+                    }
+                  }
       }
     }
   `;
