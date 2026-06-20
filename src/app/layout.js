@@ -2,8 +2,10 @@ import { Nunito, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import dynamic from "next/dynamic";
 import PageTransition from "@/components/PageTransition";
+
+const Footer = dynamic(() => import("@/components/Footer"), { ssr: true });
 
 const nunito = Nunito({
   variable: "--font-nunito",

@@ -1,13 +1,17 @@
 import React from "react";
+import dynamic from "next/dynamic";
 import Hero from "@/components/Hero";
 import FeaturesBand from "@/components/FeaturesBand";
-import ProductTabs from "@/components/ProductTabs";
 import TrustStats from "@/components/TrustStats";
-import BundlesSection from "@/components/BundlesSection";
-import ReviewsSection from "@/components/ReviewsSection";
-import NewsletterSection from "@/components/NewsletterSection";
-import CartDrawer from "@/components/CartDrawer";
 import { getShopifyProducts } from "@/utils/shopify";
+
+// Lazy-load heavy or below-the-fold components
+const ProductTabs = dynamic(() => import("@/components/ProductTabs"), { ssr: true });
+const BundlesSection = dynamic(() => import("@/components/BundlesSection"), { ssr: true });
+const ReviewsSection = dynamic(() => import("@/components/ReviewsSection"), { ssr: true });
+const NewsletterSection = dynamic(() => import("@/components/NewsletterSection"), { ssr: false });
+const CartDrawer = dynamic(() => import("@/components/CartDrawer"), { ssr: false });
+
 
 export default async function Home() {
   // Fetch live products from Shopify

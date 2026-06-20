@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import ShippingTimer from "@/components/ShippingTimer";
 import LiveScarcity from "@/components/LiveScarcity";
@@ -34,66 +35,118 @@ export default function ProductDetailsClient({ product }) {
   };
 
   const handleAddToCart = () => {
-    // Add to cart with quantity based on selectedBulkQty
     addToCart(product, activeVariant, selectedBulkQty);
   };
 
-  // Dynamic pricing for bulk discount options cards
   const basePrice = parseFloat(activeVariant.price);
   const getBulkCardPrice = (qty) => {
     let rate = 1.0;
-    if (qty === 2) rate = 0.90; // 10% off
-    if (qty >= 3) rate = 0.85; // 15% off
+    if (qty === 2) rate = 0.90;
+    if (qty >= 3) rate = 0.85;
     return basePrice * rate;
   };
 
   return (
-    <article className="py-4 py-md-5">
-      <div className="row g-5">
+    <article className="py-3 py-md-5">
+      <div className="row g-4 g-md-5">
         {/* Left Column: Image Gallery */}
         <div className="col-lg-6">
           <div className="sticky-top" style={{ top: "100px", zIndex: 1 }}>
-            {/* Main Showcase Image */}
-            <div className="rounded-card p-4 mb-3 d-flex align-items-center justify-content-center bg-white position-relative" style={{ height: "450px", overflow: "hidden" }}>
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={activeImage}
-                  src={activeImage}
-                  alt={product.title}
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
-                  className="img-fluid h-100 object-fit-contain position-absolute"
-                />
-              </AnimatePresence>
+            
+            {/* Desktop Gallery Viewer (Hidden on mobile) */}
+            <div className="d-none d-md-block">
+              <div className="rounded-card p-4 mb-3 bg-white position-relative" style={{ height: "450px", overflow: "hidden" }}>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeImage}
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.02 }}
+                    transition={{ duration: 0.3 }}
+                    className="position-absolute w-100 h-100 top-0 start-0"
+                  >
+                    <Image
+                      src={activeImage}
+                      alt={product.title}
+                      fill
+                      priority={true}
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      style={{ objectFit: "contain", padding: "1.5rem" }}
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Desktop Thumbnail Carousel */}
+              {product.images.length > 1 && (
+                <div className="d-flex gap-2 overflow-auto pb-2">
+                  {product.images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveImage(img)}
+                      className="btn p-0 border rounded overflow-hidden flex-shrink-0 bg-white position-relative"
+                      style={{
+                        width: "80px",
+                        height: "80px",
+                        border: activeImage === img ? "2px solid var(--zesty-orange)" : "1px solid var(--pale-gray)",
+                        transition: "border 0.3s ease"
+                      }}
+                      aria-label={`View image thumbnail ${idx + 1}`}
+                    >
+                      <Image
+                        src={img}
+                        alt={`Thumbnail ${idx + 1}`}
+                        fill
+                        sizes="80px"
+                        style={{ objectFit: "contain", padding: "4px" }}
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Thumbnail Carousel */}
-            {product.images.length > 1 && (
-              <div className="d-flex gap-2 overflow-auto pb-2">
+            {/* Mobile Swipeable Gallery (Hidden on desktop) */}
+            <div className="d-block d-md-none">
+              <div 
+                className="d-flex overflow-auto" 
+                style={{ 
+                  scrollSnapType: "x mandatory", 
+                  gap: "10px", 
+                  paddingBottom: "15px",
+                  msOverflowStyle: "none", 
+                  scrollbarWidth: "none" 
+                }}
+              >
                 {product.images.map((img, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActiveImage(img)}
-                    className="btn p-0 border rounded overflow-hidden flex-shrink-0 bg-white"
-                    style={{
-                      width: "80px",
-                      height: "80px",
-                      border: activeImage === img ? "2px solid var(--zesty-orange)" : "1px solid var(--pale-gray)",
-                      transition: "border 0.3s ease"
+                  <div 
+                    key={idx} 
+                    className="rounded bg-white position-relative flex-shrink-0" 
+                    style={{ 
+                      scrollSnapAlign: "center", 
+                      width: "100%", 
+                      height: "350px",
+                      border: "1px solid #E5E7EB"
                     }}
-                    aria-label={`View image thumbnail ${idx + 1}`}
                   >
-                    <img
+                    <Image
                       src={img}
-                      alt={`Thumbnail ${idx + 1}`}
-                      className="w-100 h-100 object-fit-contain p-1"
+                      alt={`${product.title} view ${idx + 1}`}
+                      fill
+                      priority={idx === 0}
+                      sizes="100vw"
+                      style={{ objectFit: "contain", padding: "1rem" }}
                     />
-                  </button>
+                  </div>
                 ))}
               </div>
-            )}
+              {product.images.length > 1 && (
+                <div className="text-center small text-muted mb-3 font-body">
+                  <span style={{ fontSize: "20px" }}>↔</span> Swipe to see more
+                </div>
+              )}
+            </div>
+
           </div>
         </div>
 
@@ -106,7 +159,7 @@ export default function ProductDetailsClient({ product }) {
             </div>
           </div>
 
-          <h1 className="font-heading fw-bold mb-2 display-6">{product.title}</h1>
+          <h1 className="font-heading fw-bold mb-2 display-6" style={{ fontSize: "clamp(24px, 5vw, 40px)" }}>{product.title}</h1>
           
           <div className="d-flex align-items-baseline gap-2 mb-4">
             <span className="fs-3 fw-bold text-zesty-orange">${activeVariant.price}</span>
@@ -140,6 +193,7 @@ export default function ProductDetailsClient({ product }) {
                     key={v.id}
                     onClick={() => handleVariantSelect(v)}
                     className={`variant-swatch py-2 px-3 ${activeVariant.id === v.id ? "active" : ""}`}
+                    style={{ minHeight: "48px" }}
                   >
                     {v.title}
                   </button>
@@ -154,13 +208,12 @@ export default function ProductDetailsClient({ product }) {
               Choose Bundle Package & Save:
             </span>
             <div className="d-flex flex-column gap-2">
-              {/* Option 1: 1 Item */}
               <motion.div
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
                 onClick={() => setSelectedBulkQty(1)}
                 className={`volume-card d-flex align-items-center justify-content-between cursor-pointer ${selectedBulkQty === 1 ? "active" : ""}`}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", minHeight: "72px" }}
               >
                 <div>
                   <strong className="d-block">Buy 1 Item</strong>
@@ -172,13 +225,12 @@ export default function ProductDetailsClient({ product }) {
                 </div>
               </motion.div>
 
-              {/* Option 2: 2 Items (10% Off) */}
               <motion.div
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
                 onClick={() => setSelectedBulkQty(2)}
                 className={`volume-card d-flex align-items-center justify-content-between cursor-pointer ${selectedBulkQty === 2 ? "active" : ""}`}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", minHeight: "72px" }}
               >
                 <span className="discount-badge">★ STOCK UP</span>
                 <div>
@@ -191,14 +243,13 @@ export default function ProductDetailsClient({ product }) {
                 </div>
               </motion.div>
 
-              {/* Option 3: 3 Items (15% Off) */}
               <motion.div
                 animate={{ boxShadow: selectedBulkQty === 3 ? "0 0 15px rgba(245,118,26,0.3)" : "none" }}
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
                 onClick={() => setSelectedBulkQty(3)}
                 className={`volume-card d-flex align-items-center justify-content-between cursor-pointer ${selectedBulkQty === 3 ? "active" : ""}`}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", minHeight: "72px" }}
               >
                 <motion.span 
                   animate={{ scale: [1, 1.05, 1] }} 
@@ -225,55 +276,46 @@ export default function ProductDetailsClient({ product }) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleAddToCart}
-              className="w-100 rounded-pill-cta btn-zesty-primary py-3 fs-5 d-flex align-items-center justify-content-center gap-2 shadow"
+              className="w-100 rounded-pill-cta btn-zesty-primary fs-5 d-flex align-items-center justify-content-center gap-2 shadow"
+              style={{ minHeight: "56px" }}
             >
               <ShoppingCart size={22} />
               ADD TO CART
             </motion.button>
           </div>
 
-          {/* Shipping Cutoff details */}
           <ShippingTimer />
 
-          {/* Objection Trust Badges */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
             <TrustBadges />
           </motion.div>
 
-          {/* Scraper-Friendly Comparison Table (GEO/AEO Optimization) */}
+          {/* Scraper-Friendly Comparison Table */}
           <section className="mt-5 text-start">
-            <h4 className="font-heading mb-3 fw-bold">How We Measure Up Against Generic Brands</h4>
+            <h4 className="font-heading mb-3 fw-bold" style={{ fontSize: "clamp(20px, 4vw, 24px)" }}>How We Measure Up Against Generic Brands</h4>
             <div className="table-responsive">
               <table className="table border align-middle font-body small bg-white">
                 <thead className="table-light text-center">
                   <tr>
                     <th>Feature</th>
-                    <th className="text-success fw-bold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>
-                      Peteora Standard
-                    </th>
+                    <th className="text-success fw-bold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>Peteora Standard</th>
                     <th>Generic Brands</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td><strong>Quality & Materials</strong></td>
-                    <td className="text-success fw-semibold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>
-                      ✓ Premium, durable materials and clean ingredients
-                    </td>
+                    <td className="text-success fw-semibold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>✓ Premium, durable materials and clean ingredients</td>
                     <td>Cheap fillers, flimsy plastics, or low-grade materials</td>
                   </tr>
                   <tr>
                     <td><strong>Safety Standards</strong></td>
-                    <td className="text-success fw-semibold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>
-                      ✓ Rigorously tested for pet safety and wellness
-                    </td>
+                    <td className="text-success fw-semibold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>✓ Rigorously tested for pet safety and wellness</td>
                     <td>Unknown origins with questionable safety records</td>
                   </tr>
                   <tr>
                     <td><strong>Effectiveness</strong></td>
-                    <td className="text-success fw-semibold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>
-                      ✓ Loved by pets, formulated for results
-                    </td>
+                    <td className="text-success fw-semibold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>✓ Loved by pets, formulated for results</td>
                     <td>Hit or miss performance</td>
                   </tr>
                 </tbody>
@@ -281,9 +323,9 @@ export default function ProductDetailsClient({ product }) {
             </div>
           </section>
 
-          {/* Dynamic Factual FAQ (AEO/GEO Optimization) */}
+          {/* Dynamic Factual FAQ */}
           <section className="mt-5 text-start mb-5">
-            <h4 className="font-heading mb-3 fw-bold">Frequently Asked Questions</h4>
+            <h4 className="font-heading mb-3 fw-bold" style={{ fontSize: "clamp(20px, 4vw, 24px)" }}>Frequently Asked Questions</h4>
             <div className="border rounded bg-white shadow-sm p-2">
               {[
                 {
@@ -300,7 +342,11 @@ export default function ProductDetailsClient({ product }) {
                 }
               ].map((faq, index) => (
                 <div key={index} className="geo-faq-item">
-                  <div className="geo-faq-question font-body cursor-pointer" onClick={() => toggleFaq(index)} style={{ cursor: "pointer" }}>
+                  <div 
+                    className="geo-faq-question font-body cursor-pointer d-flex align-items-center justify-content-between" 
+                    onClick={() => toggleFaq(index)} 
+                    style={{ cursor: "pointer", minHeight: "48px" }}
+                  >
                     <span>{faq.q}</span>
                     <motion.div animate={{ rotate: openFaq === index ? 180 : 0 }}>
                       <ChevronDown size={16} />
@@ -315,7 +361,7 @@ export default function ProductDetailsClient({ product }) {
                         transition={{ duration: 0.3, ease: "easeInOut" }}
                         style={{ overflow: "hidden" }}
                       >
-                        <div className="geo-faq-answer font-body pt-2 pb-2">
+                        <div className="geo-faq-answer font-body pt-2 pb-3 text-muted">
                           {faq.a}
                         </div>
                       </motion.div>
@@ -328,7 +374,6 @@ export default function ProductDetailsClient({ product }) {
         </div>
       </div>
 
-      {/* Floating Bottom checkout bar for mobile views */}
       <DirectCheckoutBar product={product} activeVariant={activeVariant} />
     </article>
   );
