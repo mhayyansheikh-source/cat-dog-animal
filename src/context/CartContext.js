@@ -34,9 +34,13 @@ export function CartProvider({ children }) {
     try {
       const response = await addCartLinesAction([{ merchandiseId: variant.id, quantity }]);
       
+      if (response?.error) {
+        throw new Error(response.error);
+      }
+      
       if (response?.userErrors?.length > 0) {
         toast.error(response.userErrors[0].message);
-      } else {
+      } else if (response?.cart) {
         toast.success(`${product.title} added to cart`);
         setCart(response.cart);
         await refreshCart(); // Full refresh to get all line item details correctly
@@ -53,9 +57,12 @@ export function CartProvider({ children }) {
     setIsSyncing(true);
     try {
       const response = await removeCartLinesAction([lineId]);
+      
+      if (response?.error) throw new Error(response.error);
+      
       if (response?.userErrors?.length > 0) {
         toast.error(response.userErrors[0].message);
-      } else {
+      } else if (response?.cart) {
         setCart(response.cart);
         await refreshCart();
       }
@@ -74,9 +81,12 @@ export function CartProvider({ children }) {
     setIsSyncing(true);
     try {
       const response = await updateCartLinesAction([{ id: lineId, quantity: newQuantity }]);
+      
+      if (response?.error) throw new Error(response.error);
+      
       if (response?.userErrors?.length > 0) {
         toast.error(response.userErrors[0].message);
-      } else {
+      } else if (response?.cart) {
         setCart(response.cart);
         await refreshCart();
       }

@@ -15,17 +15,21 @@ export async function checkoutAction(lineItems) {
 }
 
 export async function createCartAction() {
-  const cart = await createCart();
-  if (cart?.id) {
-    cookies().set("shopify_cart_id", cart.id, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      path: "/",
-    });
+  try {
+    const cart = await createCart();
+    if (cart?.id) {
+      cookies().set("shopify_cart_id", cart.id, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+        path: "/",
+      });
+    }
+    return cart;
+  } catch (error) {
+    return { error: error.message };
   }
-  return cart;
 }
 
 export async function getCartAction() {
@@ -35,23 +39,36 @@ export async function getCartAction() {
 }
 
 export async function addCartLinesAction(lines) {
-  let cartId = cookies().get("shopify_cart_id")?.value;
-  if (!cartId) {
-    const cart = await createCartAction();
-    cartId = cart?.id;
+  try {
+    let cartId = cookies().get("shopify_cart_id")?.value;
+    if (!cartId) {
+      const cart = await createCartAction();
+      if (cart?.error) return cart;
+      cartId = cart?.id;
+    }
+    if (!cartId) return { error: "Could not create cart" };
+    return await addCartLines(cartId, lines);
+  } catch (error) {
+    return { error: error.message };
   }
-  if (!cartId) throw new Error("Could not create cart");
-  return await addCartLines(cartId, lines);
 }
 
 export async function updateCartLinesAction(lines) {
-  const cartId = cookies().get("shopify_cart_id")?.value;
-  if (!cartId) throw new Error("Cart not found");
-  return await updateCartLines(cartId, lines);
+  try {
+    const cartId = cookies().get("shopify_cart_id")?.value;
+    if (!cartId) return { error: "Cart not found" };
+    return await updateCartLines(cartId, lines);
+  } catch (error) {
+    return { error: error.message };
+  }
 }
 
 export async function removeCartLinesAction(lineIds) {
-  const cartId = cookies().get("shopify_cart_id")?.value;
-  if (!cartId) throw new Error("Cart not found");
-  return await removeCartLines(cartId, lineIds);
+  try {
+    const cartId = cookies().get("shopify_cart_id")?.value;
+    if (!cartId) return { error: "Cart not found" };
+    return await removeCartLines(cartId, lineIds);
+  } catch (error) {
+    return { error: error.message };
+  }
 }
