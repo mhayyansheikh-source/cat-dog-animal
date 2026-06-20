@@ -16,6 +16,7 @@ const ReviewsSection = nextDynamic(() => import("@/components/ReviewsSection"));
 const NewsletterSection = nextDynamic(() => import("@/components/NewsletterSection"));
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
 
 export default async function Home() {
   // Fetch live products from Shopify
