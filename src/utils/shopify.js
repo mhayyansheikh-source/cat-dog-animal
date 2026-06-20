@@ -578,3 +578,65 @@ export async function getShopifyProductRecommendations(productId) {
     return [];
   }
 }
+
+export async function getShopifyCollectionsWithProducts(limit = 10, productsPerCollection = 8) {
+  const query = `
+    query getCollectionsWithProducts($limit: Int!, $productsLimit: Int!) {
+      collections(first: $limit, sortKey: UPDATED_AT, reverse: true) {
+        edges {
+          node {
+            id
+            title
+            handle
+            products(first: $productsLimit) {
+              edges {
+                node {
+                  id
+                  title
+                  handle
+                  vendor
+                  productType
+                  tags
+                  images(first: 1) {
+                    edges {
+                      node {
+                        url
+                      }
+                    }
+                  }
+                  variants(first: 1) {
+                    edges {
+                      node {
+                        id
+                        price {
+                          amount
+                        }
+                        compareAtPrice {
+                          amount
+                        }
+                        availableForSale
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+  try {
+    const data = await shopifyFetch({ query, variables: { limit, productsLimit: productsPerCollection } });
+    if (!data?.collections?.edges) return [];
+    
+    return data.collections.edges.map(edge => {
+      const col = edge.node;
+      col.products = col.products.edges.map(normalizeProduct);
+      return col;
+    });
+  } catch (error) {
+    console.error("Failed to fetch collections with products", error);
+    return [];
+  }
+}

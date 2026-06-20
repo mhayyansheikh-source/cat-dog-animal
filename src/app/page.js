@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import Hero from "@/components/Hero";
 import FeaturesBand from "@/components/FeaturesBand";
 import TrustStats from "@/components/TrustStats";
-import { getShopifyProducts, getShopifyCollectionByHandle } from "@/utils/shopify";
+import { getShopifyProducts, getShopifyCollectionByHandle, getShopifyCollectionsWithProducts } from "@/utils/shopify";
 
 const ProductTabs = dynamic(() => import("@/components/ProductTabs"));
 const BundlesSection = dynamic(() => import("@/components/BundlesSection"));
@@ -13,6 +13,7 @@ const NewsletterSection = dynamic(() => import("@/components/NewsletterSection")
 export default async function Home() {
   // Fetch live products from Shopify
   const products = await getShopifyProducts();
+  const collections = await getShopifyCollectionsWithProducts(10, 8);
 
   // Fetch bundles explicitly
   let bundleProducts = [];
@@ -37,7 +38,7 @@ export default async function Home() {
       <FeaturesBand />
 
       {/* Best Sellers Grid Catalog */}
-      <ProductTabs products={products} />
+      <ProductTabs products={products} collections={collections} />
 
       {/* Trust Stats Numbers */}
       <TrustStats />

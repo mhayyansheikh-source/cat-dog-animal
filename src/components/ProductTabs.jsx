@@ -6,54 +6,21 @@ import { motion, AnimatePresence } from "framer-motion";
 
 
 
-// ── All tabs config ───────────────────────────────────────────────────────────
-const TABS = [
-  { id: "all",               label: "All" },
-  { id: "dog",               label: "🐶 Dogs" },
-  { id: "cat",               label: "🐱 Cats" },
-  { id: "accessories",       label: "🎾 Accessories" },
-  { id: "bundles",           label: "🎁 Bundles" },
-  { id: "cat-supplements",   label: "💊 Cat Supplements" },
-  { id: "scratchers",        label: "📦 Scratchers" },
-];
-
-// ── Filter Logic ──────────────────────────────────────────────────────────────
-function filterProducts(tab, liveProducts = []) {
-  if (!liveProducts) return [];
-  switch (tab) {
-    case "all":
-      return liveProducts;
-    case "dog":
-      return liveProducts.filter(p => p.tags?.some(t => t.toLowerCase() === "dog") || p.product_type === "Dog");
-    case "cat":
-      return liveProducts.filter(p => p.tags?.some(t => t.toLowerCase() === "cat") || p.product_type === "Cat" || p.product_type === "Cat Supplements");
-    case "accessories":
-      return liveProducts.filter(p => p.tags?.some(t => t.toLowerCase() === "accessory") || p.product_type === "Accessory");
-    case "bundles":
-      return liveProducts.filter(p => p.tags?.some(t => t.toLowerCase() === "bundle") || p.product_type === "Bundle");
-    case "cat-supplements":
-      return liveProducts.filter(p => p.tags?.some(t => t.toLowerCase() === "cat-supplement") || p.product_type === "Cat Supplements");
-    case "scratchers":
-      return liveProducts.filter(p => p.tags?.some(t => t.toLowerCase() === "scratcher"));
-    default:
-      return liveProducts;
-  }
-}
-
-// ── View All link per tab ─────────────────────────────────────────────────────
-const TAB_LINKS = {
-  all:             "/collections/dogs",
-  dog:             "/collections/dogs",
-  cat:             "/collections/cats",
-  accessories:     "/collections/accessories",
-  bundles:         "/collections/bundles",
-  "cat-supplements": "/collections/cat-supplements",
-  scratchers:      "/collections/cardboard-scratchers",
-};
-
-export default function ProductTabs({ products = [] }) {
+export default function ProductTabs({ products = [], collections = [] }) {
   const [activeTab, setActiveTab] = useState("all");
-  const displayProducts = filterProducts(activeTab, products);
+
+  // Build dynamic tabs
+  const tabs = [{ id: "all", label: "All" }];
+  collections.forEach(col => {
+    tabs.push({ id: col.handle, label: col.title });
+  });
+
+  // Filter products based on active tab
+  const displayProducts = activeTab === "all" 
+    ? products.slice(0, 8) 
+    : collections.find(c => c.handle === activeTab)?.products || [];
+
+  const viewAllLink = activeTab === "all" ? "/collections/all" : `/collections/${activeTab}`;
 
   return (
     <section id="catalog-section" className="py-5" style={{ backgroundColor: "var(--cream, #FDFAF5)" }}>
@@ -98,7 +65,7 @@ export default function ProductTabs({ products = [] }) {
               flexWrap: "wrap",
             }}
           >
-            {TABS.map((tab) => {
+            {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
                 <button
@@ -158,7 +125,7 @@ export default function ProductTabs({ products = [] }) {
         {/* View All CTA */}
         <div className="text-center" style={{ marginTop: "40px" }}>
           <a
-            href={TAB_LINKS[activeTab] || "/collections/dogs"}
+            href={viewAllLink}
             style={{
               display: "inline-flex",
               alignItems: "center",
