@@ -26,6 +26,20 @@ export default function ProductDetailsClient({ product }) {
   // Volume discount card selector
   const [selectedBulkQty, setSelectedBulkQty] = useState(1);
 
+  // Parse Metafields
+  const getMetafield = (key) => product.metafields?.find(m => m && m.key === key)?.value;
+  
+  let parsedFaqs = [];
+  try {
+    const faqJson = getMetafield("faq_json");
+    if (faqJson) parsedFaqs = JSON.parse(faqJson);
+  } catch(e) { console.error("Failed to parse FAQ JSON", e); }
+
+  const ingredientsText = getMetafield("ingredients");
+  
+  // Use 'bundle_items' metafield as an indicator for showing volume discounts (can be adapted as needed)
+  const hasBulkDiscount = !!getMetafield("bundle_items");
+
   const toggleFaq = (index) => {
     setOpenFaq(openFaq === index ? null : index);
   };
@@ -203,84 +217,87 @@ export default function ProductDetailsClient({ product }) {
           )}
 
           {/* Volume Bundle Cards - High Converting Dropshipping Feature */}
-          <div className="mb-4 text-start">
-            <span className="d-block small text-muted fw-bold mb-2 font-body text-uppercase">
-              Choose Bundle Package & Save:
-            </span>
-            <div className="d-flex flex-column gap-2">
-              <motion.div
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-                onClick={() => setSelectedBulkQty(1)}
-                className={`volume-card d-flex align-items-center justify-content-between cursor-pointer ${selectedBulkQty === 1 ? "active" : ""}`}
-                style={{ cursor: "pointer", minHeight: "72px" }}
-              >
-                <div>
-                  <strong className="d-block">Buy 1 Item</strong>
-                  <span className="small text-muted font-body">Perfect for trying it out</span>
-                </div>
-                <div className="text-end">
-                  <strong className="fs-5">${basePrice.toFixed(2)}</strong>
-                  <span className="d-block small text-muted">/unit</span>
-                </div>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-                onClick={() => setSelectedBulkQty(2)}
-                className={`volume-card d-flex align-items-center justify-content-between cursor-pointer ${selectedBulkQty === 2 ? "active" : ""}`}
-                style={{ cursor: "pointer", minHeight: "72px" }}
-              >
-                <span className="discount-badge">★ STOCK UP</span>
-                <div>
-                  <strong className="d-block">Buy 2 Items (Save 10% Off)</strong>
-                  <span className="small text-success font-body">Recommended - ensure you don't run out</span>
-                </div>
-                <div className="text-end">
-                  <strong className="fs-5 text-success">${getBulkCardPrice(2).toFixed(2)}</strong>
-                  <span className="d-block small text-muted">/unit</span>
-                </div>
-              </motion.div>
-
-              <motion.div
-                animate={{ boxShadow: selectedBulkQty === 3 ? "0 0 15px rgba(245,118,26,0.3)" : "none" }}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-                onClick={() => setSelectedBulkQty(3)}
-                className={`volume-card d-flex align-items-center justify-content-between cursor-pointer ${selectedBulkQty === 3 ? "active" : ""}`}
-                style={{ cursor: "pointer", minHeight: "72px" }}
-              >
-                <motion.span 
-                  animate={{ scale: [1, 1.05, 1] }} 
-                  transition={{ duration: 2, repeat: Infinity }} 
-                  className="discount-badge bg-success"
+          {hasBulkDiscount && (
+            <div className="mb-4 text-start">
+              <span className="d-block small text-muted fw-bold mb-2 font-body text-uppercase">
+                Choose Bundle Package & Save:
+              </span>
+              <div className="d-flex flex-column gap-2">
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={() => setSelectedBulkQty(1)}
+                  className={`volume-card d-flex align-items-center justify-content-between cursor-pointer ${selectedBulkQty === 1 ? "active" : ""}`}
+                  style={{ cursor: "pointer", minHeight: "72px" }}
                 >
-                  🏆 BEST VALUE
-                </motion.span>
-                <div>
-                  <strong className="d-block">Buy 3 Items (Save 15% Off)</strong>
-                  <span className="small text-success font-body">Maximum savings for your pet</span>
-                </div>
-                <div className="text-end">
-                  <strong className="fs-5 text-success">${getBulkCardPrice(3).toFixed(2)}</strong>
-                  <span className="d-block small text-muted">/unit</span>
-                </div>
-              </motion.div>
+                  <div>
+                    <strong className="d-block">Buy 1 Item</strong>
+                    <span className="small text-muted font-body">Perfect for trying it out</span>
+                  </div>
+                  <div className="text-end">
+                    <strong className="fs-5">${basePrice.toFixed(2)}</strong>
+                    <span className="d-block small text-muted">/unit</span>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={() => setSelectedBulkQty(2)}
+                  className={`volume-card d-flex align-items-center justify-content-between cursor-pointer ${selectedBulkQty === 2 ? "active" : ""}`}
+                  style={{ cursor: "pointer", minHeight: "72px" }}
+                >
+                  <span className="discount-badge">★ STOCK UP</span>
+                  <div>
+                    <strong className="d-block">Buy 2 Items (Save 10% Off)</strong>
+                    <span className="small text-success font-body">Recommended - ensure you don't run out</span>
+                  </div>
+                  <div className="text-end">
+                    <strong className="fs-5 text-success">${getBulkCardPrice(2).toFixed(2)}</strong>
+                    <span className="d-block small text-muted">/unit</span>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  animate={{ boxShadow: selectedBulkQty === 3 ? "0 0 15px rgba(245,118,26,0.3)" : "none" }}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={() => setSelectedBulkQty(3)}
+                  className={`volume-card d-flex align-items-center justify-content-between cursor-pointer ${selectedBulkQty === 3 ? "active" : ""}`}
+                  style={{ cursor: "pointer", minHeight: "72px" }}
+                >
+                  <motion.span 
+                    animate={{ scale: [1, 1.05, 1] }} 
+                    transition={{ duration: 2, repeat: Infinity }} 
+                    className="discount-badge bg-success"
+                  >
+                    🏆 BEST VALUE
+                  </motion.span>
+                  <div>
+                    <strong className="d-block">Buy 3 Items (Save 15% Off)</strong>
+                    <span className="small text-success font-body">Maximum savings for your pet</span>
+                  </div>
+                  <div className="text-end">
+                    <strong className="fs-5 text-success">${getBulkCardPrice(3).toFixed(2)}</strong>
+                    <span className="d-block small text-muted">/unit</span>
+                  </div>
+                </motion.div>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Add to Cart Actions */}
           <div className="mb-4">
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: activeVariant.available ? 1.02 : 1 }}
+              whileTap={{ scale: activeVariant.available ? 0.98 : 1 }}
               onClick={handleAddToCart}
-              className="w-100 rounded-pill-cta btn-zesty-primary fs-5 d-flex align-items-center justify-content-center gap-2 shadow"
+              disabled={!activeVariant.available}
+              className={`w-100 rounded-pill-cta fs-5 d-flex align-items-center justify-content-center gap-2 shadow ${!activeVariant.available ? "btn-secondary opacity-75" : "btn-zesty-primary"}`}
               style={{ minHeight: "56px" }}
             >
               <ShoppingCart size={22} />
-              ADD TO CART
+              {activeVariant.available ? "ADD TO CART" : "OUT OF STOCK"}
             </motion.button>
           </div>
 
@@ -323,11 +340,21 @@ export default function ProductDetailsClient({ product }) {
             </div>
           </section>
 
+          {/* Ingredients Metafield */}
+          {ingredientsText && (
+            <section className="mt-5 text-start mb-4">
+              <h4 className="font-heading mb-3 fw-bold" style={{ fontSize: "clamp(20px, 4vw, 24px)" }}>Active Ingredients</h4>
+              <div className="p-4 rounded border bg-light font-body text-muted">
+                {ingredientsText}
+              </div>
+            </section>
+          )}
+
           {/* Dynamic Factual FAQ */}
           <section className="mt-5 text-start mb-5">
             <h4 className="font-heading mb-3 fw-bold" style={{ fontSize: "clamp(20px, 4vw, 24px)" }}>Frequently Asked Questions</h4>
             <div className="border rounded bg-white shadow-sm p-2">
-              {[
+              {(parsedFaqs.length > 0 ? parsedFaqs : [
                 {
                   q: `How fast is shipping?`,
                   a: `We process all orders within 24-48 hours. Standard US delivery typically takes 5-8 business days, and all orders include tracking information.`
@@ -340,7 +367,7 @@ export default function ProductDetailsClient({ product }) {
                   q: `Are your products safe for my pet?`,
                   a: `Absolutely. Pet safety is our #1 priority. All our products are vetted, tested, and made from high-quality materials and ingredients to ensure the well-being of your companion.`
                 }
-              ].map((faq, index) => (
+              ]).map((faq, index) => (
                 <div key={index} className="geo-faq-item">
                   <div 
                     className="geo-faq-question font-body cursor-pointer d-flex align-items-center justify-content-between" 

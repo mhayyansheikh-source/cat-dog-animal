@@ -3,19 +3,30 @@ import dynamic from "next/dynamic";
 import Hero from "@/components/Hero";
 import FeaturesBand from "@/components/FeaturesBand";
 import TrustStats from "@/components/TrustStats";
-import { getShopifyProducts } from "@/utils/shopify";
+import { getShopifyProducts, getShopifyCollectionByHandle } from "@/utils/shopify";
 
-// Lazy-load heavy or below-the-fold components
-const ProductTabs = dynamic(() => import("@/components/ProductTabs"), { ssr: true });
-const BundlesSection = dynamic(() => import("@/components/BundlesSection"), { ssr: true });
-const ReviewsSection = dynamic(() => import("@/components/ReviewsSection"), { ssr: true });
-const NewsletterSection = dynamic(() => import("@/components/NewsletterSection"), { ssr: false });
-const CartDrawer = dynamic(() => import("@/components/CartDrawer"), { ssr: false });
-
+const ProductTabs = dynamic(() => import("@/components/ProductTabs"));
+const BundlesSection = dynamic(() => import("@/components/BundlesSection"));
+const ReviewsSection = dynamic(() => import("@/components/ReviewsSection"));
+const NewsletterSection = dynamic(() => import("@/components/NewsletterSection"));
 
 export default async function Home() {
   // Fetch live products from Shopify
   const products = await getShopifyProducts();
+
+  // Fetch bundles explicitly
+  let bundleProducts = [];
+  try {
+    const bundleCollection = await getShopifyCollectionByHandle("bundles");
+    if (bundleCollection && bundleCollection.products) {
+      bundleProducts = bundleCollection.products;
+    } else {
+      // Fallback
+      bundleProducts = products.filter(p => p.product_type?.toLowerCase().includes("bundle") || p.tags?.some(t => t.toLowerCase().includes("bundle")));
+    }
+  } catch(e) {
+    console.error("Error fetching bundles", e);
+  }
 
   return (
     <>
@@ -32,16 +43,13 @@ export default async function Home() {
       <TrustStats />
 
       {/* Value Combo Packs */}
-      <BundlesSection />
+      <BundlesSection dynamicProducts={bundleProducts} />
 
       {/* Customer Testimonials reviews */}
       <ReviewsSection />
 
       {/* Footer Newsletter Action banner */}
       <NewsletterSection />
-
-      {/* Dynamic Slide-out Cart Drawer Overlay */}
-      <CartDrawer />
     </>
   );
 }

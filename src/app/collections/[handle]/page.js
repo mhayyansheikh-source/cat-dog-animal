@@ -1,20 +1,13 @@
 import React from "react";
-import { getShopifyProducts } from "@/utils/shopify";
+import { getShopifyProducts, getShopifyCollectionByHandle } from "@/utils/shopify";
 import ProductCard from "@/components/ProductCard";
 import CartDrawer from "@/components/CartDrawer";
 import BundlesSection from "@/components/BundlesSection";
+import CollectionSidebar from "@/components/CollectionSidebar";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export const runtime = "edge";
-
-
-
-// ─────────────────────────────────────────────────────────────────────────────
-// NOTE: Dogs and Accessories data are fetched dynamically via Shopify API
-// (getShopifyProducts). These will be populated when products are added
-// to the Shopify store for those collections.
-// ─────────────────────────────────────────────────────────────────────────────
 
 const COLLECTION_CONFIGS = {
   "dogs": {
@@ -24,17 +17,14 @@ const COLLECTION_CONFIGS = {
     gradient: "linear-gradient(135deg, var(--orange-light), var(--cream))",
     badgeBg: "var(--orange-light)",
     badgeColor: "var(--orange-dark)",
-    // Dogs products fetched dynamically from Shopify API
-    getProducts: async (liveProducts) => liveProducts,
     sidebar: {
       categories: [
-        { label: "All Products", count: 12 },
-        { label: "Supplements", count: 8 },
-        { label: "Treats & Chews", count: 6 },
-        { label: "Food", count: 3 },
-        { label: "Accessories", count: 3 },
+        { label: "All Products" },
+        { label: "Supplements" },
+        { label: "Treats & Chews" },
+        { label: "Food" },
+        { label: "Accessories" },
       ],
-      benefits: ["Hip & Joint", "Skin & Coat", "Gut Health", "Immune Health", "Calming & Behavior"],
     },
   },
   "cats": {
@@ -44,19 +34,14 @@ const COLLECTION_CONFIGS = {
     gradient: "linear-gradient(135deg, #E0F5F2, #FDFAF5)",
     badgeBg: "var(--teal-light)",
     badgeColor: "var(--teal-dark)",
-    // Filter live products for Cat products
-    getProducts: async (liveProducts) => {
-      return liveProducts.filter(p => p.tags?.some(t => t.toLowerCase() === "cat") || p.product_type === "Cat" || p.product_type === "Cat Supplements");
-    },
     sidebar: {
       categories: [
-        { label: "All Products", count: 2 },
-        { label: "Interactive Toys", count: 2 },
-        { label: "Scratchers", count: 2 },
-        { label: "Supplements", count: 0 },
-        { label: "Treats", count: 0 },
+        { label: "All Products" },
+        { label: "Interactive Toys" },
+        { label: "Scratchers" },
+        { label: "Supplements" },
+        { label: "Treats" },
       ],
-      benefits: ["Mental Exercise & Play", "Scratching", "Interactive", "Furniture Protection"],
     },
   },
   "accessories": {
@@ -66,16 +51,13 @@ const COLLECTION_CONFIGS = {
     gradient: "linear-gradient(135deg, #F3F4F6, #FDFAF5)",
     badgeBg: "#EDE9FE",
     badgeColor: "#5B21B6",
-    // Accessories fetched dynamically from Shopify API
-    getProducts: async (liveProducts) => liveProducts,
     sidebar: {
       categories: [
-        { label: "All Products", count: 0 },
-        { label: "For Dogs", count: 0 },
-        { label: "For Cats", count: 0 },
-        { label: "For Both", count: 0 },
+        { label: "All Products" },
+        { label: "For Dogs" },
+        { label: "For Cats" },
+        { label: "For Both" },
       ],
-      benefits: ["Comfort & Sleep", "Play & Exercise", "Travel", "Grooming"],
     },
   },
   "bundles": {
@@ -85,89 +67,7 @@ const COLLECTION_CONFIGS = {
     gradient: "linear-gradient(135deg, #FFFBEB, #FEF0E6)",
     badgeBg: "#FEF3C7",
     badgeColor: "#92400E",
-    getProducts: async () => [],
     sidebar: null,
-  },
-  "replacement-parts": {
-    title: "Replacement Tracks & Parts",
-    subtitle: "Need new corrugated tracks or upgraded bell balls? Get original replacement items here.",
-    badge: "♻️ Smart Maintenance",
-    gradient: "linear-gradient(135deg, #FFFBEB, var(--cream))",
-    badgeBg: "#FEF3C7",
-    badgeColor: "#92400E",
-    getProducts: async () => [],
-    sidebar: {
-      categories: [{ label: "All Products", count: 0 }],
-      benefits: [],
-    },
-  },
-  "cat-supplements": {
-    title: "Cat Supplements & Health",
-    subtitle: "Vet-approved formulations designed to support your cat's long-term health and vitality.",
-    badge: "🐱 For Your Cat",
-    gradient: "linear-gradient(135deg, var(--teal-light), var(--cream))",
-    badgeBg: "var(--teal-light)",
-    badgeColor: "var(--teal-dark)",
-    // Filter live products for Cat Supplements
-    getProducts: async (liveProducts) => {
-      return liveProducts.filter(p => p.tags?.some(t => t.toLowerCase() === "cat-supplement") || p.product_type === "Cat Supplements");
-    },
-    sidebar: {
-      categories: [
-        { label: "All Products", count: 2 },
-        { label: "Interactive Toys", count: 2 },
-        { label: "Scratchers", count: 2 },
-        { label: "Standard Edition", count: 1 },
-        { label: "Top Cat Edition", count: 1 },
-      ],
-      benefits: ["Mental Exercise & Play", "Scratching", "Interactive", "Furniture Protection"],
-    },
-  },
-  "standard-edition": {
-    title: "Standard Shape-Shifting Scratcher",
-    subtitle: "The standard 3-in-1 interactive shape-shifting toy, ball track, and lounge area. Made from premium non-toxic corrugated cardboard.",
-    badge: "✨ Best Seller",
-    gradient: "linear-gradient(135deg, var(--orange-light), var(--cream))",
-    badgeBg: "var(--orange-light)",
-    badgeColor: "var(--orange-dark)",
-    // Live products matching standard edition
-    getProducts: async (liveProducts) => liveProducts.filter(p => p.tags?.some(t => t.toLowerCase() === "standard") || p.handle.includes("standard")),
-    sidebar: {
-      categories: [{ label: "All Products", count: 1 }, { label: "Standard Edition", count: 1 }],
-      benefits: ["Mental Exercise & Play", "Scratching", "Interactive", "Furniture Protection"],
-    },
-  },
-  "top-cat-edition": {
-    title: "Top Cat Heavy-Duty Edition",
-    subtitle: "Reinforced corrugated track scratcher and heavy bell ball built for larger breeds and multi-cat households.",
-    badge: "👑 Premium Edition",
-    gradient: "linear-gradient(135deg, var(--teal-light), var(--cream))",
-    badgeBg: "var(--teal-light)",
-    badgeColor: "var(--teal-dark)",
-    // Live products matching top-cat edition
-    getProducts: async (liveProducts) => liveProducts.filter(p => p.tags?.some(t => t.toLowerCase() === "top-cat") || p.handle.includes("top-cat")),
-    sidebar: {
-      categories: [{ label: "All Products", count: 1 }, { label: "Top Cat Edition", count: 1 }],
-      benefits: ["Mental Exercise & Play", "Deep Scratching", "Durable", "Multi-Cat"],
-    },
-  },
-  "cardboard-scratchers": {
-    title: "Premium Cardboard Scratchers",
-    subtitle: "Satisfy their scratching instincts, prevent furniture damage, and keep your feline active.",
-    badge: "📦 Eco-Friendly Sisal/Cardboard",
-    gradient: "linear-gradient(135deg, #F3F4F6, var(--cream))",
-    badgeBg: "#EDE9FE",
-    badgeColor: "#5B21B6",
-    getProducts: async (liveProducts) => liveProducts.filter(p => p.tags?.some(t => t.toLowerCase() === "scratcher" || t.toLowerCase() === "toy")),
-    sidebar: {
-      categories: [
-        { label: "All Products", count: 8 },
-        { label: "Standard", count: 4 },
-        { label: "Heavy-Duty", count: 2 },
-        { label: "Wall-Mount", count: 2 },
-      ],
-      benefits: ["Mental Exercise & Play", "Scratching", "Furniture Protection"],
-    },
   },
 };
 
@@ -177,9 +77,7 @@ export async function generateMetadata({ params }) {
   const config = COLLECTION_CONFIGS[handle];
 
   if (!config) {
-    return {
-      title: "Collection Not Found - Peteora",
-    };
+    return { title: "Collection Not Found - Peteora" };
   }
 
   return {
@@ -196,8 +94,9 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function CollectionPage({ params }) {
+export default async function CollectionPage({ params, searchParams }) {
   const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
   const handle = resolvedParams.handle;
   const config = COLLECTION_CONFIGS[handle];
 
@@ -205,9 +104,30 @@ export default async function CollectionPage({ params }) {
     notFound();
   }
 
-  const liveProducts = await getShopifyProducts();
-  const products = await config.getProducts(liveProducts);
-  const sidebar = config.sidebar;
+  // Parse Filters from searchParams
+  let filters = [];
+  if (resolvedSearchParams.price) {
+    const [min, max] = resolvedSearchParams.price.split("-");
+    filters.push({ price: { min: parseFloat(min), max: parseFloat(max) } });
+  }
+  if (resolvedSearchParams.type) {
+    filters.push({ productType: resolvedSearchParams.type });
+  }
+
+  // Attempt to fetch from Shopify Collection API
+  let products = [];
+  try {
+    const collection = await getShopifyCollectionByHandle(handle, filters);
+    if (collection && collection.products) {
+      products = collection.products;
+    } else {
+      // Fallback if collection doesn't exist yet but user wants to see all products
+      const liveProducts = await getShopifyProducts();
+      products = liveProducts.filter(p => p.tags?.some(t => t.toLowerCase() === handle) || p.product_type?.toLowerCase() === handle);
+    }
+  } catch (err) {
+    console.error("Error fetching collection:", err);
+  }
 
   return (
     <div>
@@ -221,76 +141,24 @@ export default async function CollectionPage({ params }) {
         }}
       >
         <div className="container">
-          {/* Breadcrumb */}
           <nav aria-label="breadcrumb" style={{ marginBottom: "20px" }}>
-            <ol
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                listStyle: "none",
-                padding: 0,
-                margin: 0,
-                gap: "6px",
-                fontSize: "13px",
-                color: "#6B7280",
-              }}
-            >
-              <li>
-                <Link href="/" style={{ color: "#6B7280", textDecoration: "none" }}>Home</Link>
-              </li>
+            <ol style={{ display: "flex", justifyContent: "center", listStyle: "none", padding: 0, margin: 0, gap: "6px", fontSize: "13px", color: "#6B7280" }}>
+              <li><Link href="/" style={{ color: "#6B7280", textDecoration: "none" }}>Home</Link></li>
               <li style={{ color: "#D1D5DB" }}>/</li>
-              <li>
-                <Link href="/" style={{ color: "#6B7280", textDecoration: "none" }}>Collections</Link>
-              </li>
+              <li><Link href="/collections/dogs" style={{ color: "#6B7280", textDecoration: "none" }}>Collections</Link></li>
               <li style={{ color: "#D1D5DB" }}>/</li>
               <li style={{ color: "var(--orange)", fontWeight: "600" }}>{config.title}</li>
             </ol>
           </nav>
-
-          {/* Badge */}
           <div style={{ marginBottom: "20px" }}>
-            <span
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-                backgroundColor: config.badgeBg,
-                color: config.badgeColor,
-                border: `1.5px solid ${config.badgeColor}44`,
-                borderRadius: "100px",
-                padding: "7px 20px",
-                fontSize: "13px",
-                fontWeight: "800",
-              }}
-            >
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", backgroundColor: config.badgeBg, color: config.badgeColor, border: `1.5px solid ${config.badgeColor}44`, borderRadius: "100px", padding: "7px 20px", fontSize: "13px", fontWeight: "800" }}>
               {config.badge}
             </span>
           </div>
-
-          {/* Title */}
-          <h1
-            style={{
-              fontFamily: "var(--font-playfair), 'Playfair Display', serif",
-              fontSize: "clamp(36px, 5.5vw, 64px)",
-              fontWeight: "800",
-              color: "var(--charcoal, #2A2A2A)",
-              lineHeight: "1.08",
-              marginBottom: "18px",
-            }}
-          >
+          <h1 style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif", fontSize: "clamp(36px, 5.5vw, 64px)", fontWeight: "800", color: "var(--charcoal, #2A2A2A)", lineHeight: "1.08", marginBottom: "18px" }}>
             {config.title}
           </h1>
-
-          {/* Subtitle */}
-          <p
-            style={{
-              fontSize: "17px",
-              color: "#6B7280",
-              maxWidth: "640px",
-              margin: "0 auto",
-              lineHeight: "1.65",
-            }}
-          >
+          <p style={{ fontSize: "17px", color: "#6B7280", maxWidth: "640px", margin: "0 auto", lineHeight: "1.65" }}>
             {config.subtitle}
           </p>
         </div>
@@ -299,296 +167,39 @@ export default async function CollectionPage({ params }) {
       {/* ── MAIN BODY ── */}
       <div className="container" style={{ padding: "48px 24px 80px" }}>
         {handle === "bundles" ? (
-          <BundlesSection />
+          <BundlesSection dynamicProducts={products} />
         ) : (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "280px 1fr",
-              gap: "40px",
-              alignItems: "start",
-            }}
-          >
+          <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: "40px", alignItems: "start" }}>
             {/* ══ SIDEBAR ══ */}
-            {sidebar && (
-              <aside style={{ position: "sticky", top: "90px" }}>
-                <div
-                  style={{
-                    background: "white",
-                    border: "1px solid #E5E7EB",
-                    borderRadius: "16px",
-                    padding: "28px 24px",
-                    boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
-                  }}
-                >
-                  {/* ── Category ── */}
-                  <h3
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: "800",
-                      color: "#1F2937",
-                      marginBottom: "14px",
-                      fontFamily: "var(--font-nunito), 'Nunito', sans-serif",
-                    }}
-                  >
-                    Category
-                  </h3>
-                  <ul style={{ listStyle: "none", padding: 0, margin: "0 0 28px" }}>
-                    {sidebar.categories.map((cat, i) => (
-                      <li
-                        key={i}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "8px 0",
-                        }}
-                      >
-                        <label
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "10px",
-                            cursor: "pointer",
-                            fontSize: "14px",
-                            fontWeight: i === 0 ? "700" : "500",
-                            color: i === 0 ? "var(--orange, #F5761A)" : "#374151",
-                            flex: 1,
-                          }}
-                        >
-                          <input
-                            type="radio"
-                            name={`category-${handle}`}
-                            defaultChecked={i === 0}
-                            style={{
-                              accentColor: "var(--orange, #F5761A)",
-                              width: "16px",
-                              height: "16px",
-                              cursor: "pointer",
-                              flexShrink: 0,
-                            }}
-                          />
-                          {cat.label}
-                        </label>
-                        <span
-                          style={{
-                            backgroundColor: "#F3F4F6",
-                            color: "#6B7280",
-                            borderRadius: "100px",
-                            padding: "2px 10px",
-                            fontSize: "12px",
-                            fontWeight: "600",
-                            minWidth: "28px",
-                            textAlign: "center",
-                            flexShrink: 0,
-                          }}
-                        >
-                          {cat.count}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* ── Health Benefit ── */}
-                  {sidebar.benefits.length > 0 && (
-                    <>
-                      <h3
-                        style={{
-                          fontSize: "16px",
-                          fontWeight: "800",
-                          color: "#1F2937",
-                          marginBottom: "14px",
-                          fontFamily: "var(--font-nunito), 'Nunito', sans-serif",
-                        }}
-                      >
-                        Health Benefit
-                      </h3>
-                      <ul style={{ listStyle: "none", padding: 0, margin: "0 0 28px" }}>
-                        {sidebar.benefits.map((benefit, i) => (
-                          <li key={i} style={{ padding: "7px 0" }}>
-                            <label
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "10px",
-                                cursor: "pointer",
-                                fontSize: "14px",
-                                fontWeight: "500",
-                                color: "#374151",
-                              }}
-                            >
-                              <input
-                                type="checkbox"
-                                style={{
-                                  accentColor: "var(--orange, #F5761A)",
-                                  width: "16px",
-                                  height: "16px",
-                                  cursor: "pointer",
-                                  flexShrink: 0,
-                                }}
-                              />
-                              {benefit}
-                            </label>
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  )}
-
-                  {/* ── Price ── */}
-                  <h3
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: "800",
-                      color: "#1F2937",
-                      marginBottom: "14px",
-                      fontFamily: "var(--font-nunito), 'Nunito', sans-serif",
-                    }}
-                  >
-                    Price
-                  </h3>
-                  <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                    {["Under $20", "$20–$40", "$40–$60", "Over $60"].map((range, i) => (
-                      <li key={i} style={{ padding: "7px 0" }}>
-                        <label
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "10px",
-                            cursor: "pointer",
-                            fontSize: "14px",
-                            fontWeight: "500",
-                            color: "#374151",
-                          }}
-                        >
-                          <input
-                            type="checkbox"
-                            style={{
-                              accentColor: "var(--orange, #F5761A)",
-                              width: "16px",
-                              height: "16px",
-                              cursor: "pointer",
-                              flexShrink: 0,
-                            }}
-                          />
-                          {range}
-                        </label>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </aside>
+            {config.sidebar && (
+              <CollectionSidebar sidebarConfig={config.sidebar} />
             )}
 
             {/* ══ PRODUCT GRID ══ */}
             <div>
               {products.length > 0 ? (
                 <>
-                  {/* Results bar */}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginBottom: "24px",
-                      paddingBottom: "16px",
-                      borderBottom: "1px solid #E5E7EB",
-                    }}
-                  >
-                    <p style={{ fontSize: "14px", color: "#6B7280", margin: 0 }}>
-                      Showing <strong style={{ color: "#2A2A2A" }}>{products.length}</strong> products
-                    </p>
-                    <span style={{ fontSize: "13px", color: "#6B7280", fontWeight: "600" }}>
-                      Sort: Featured
-                    </span>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px", paddingBottom: "16px", borderBottom: "1px solid #E5E7EB" }}>
+                    <p style={{ fontSize: "14px", color: "#6B7280", margin: 0 }}>Showing <strong style={{ color: "#2A2A2A" }}>{products.length}</strong> products</p>
+                    <span style={{ fontSize: "13px", color: "#6B7280", fontWeight: "600" }}>Sort: Featured</span>
                   </div>
-
-                  {/* Grid */}
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-                      gap: "24px",
-                    }}
-                  >
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "24px" }}>
                     {products.map((product) => (
                       <ProductCard key={product.id} product={product} />
                     ))}
                   </div>
                 </>
               ) : (
-                /* Empty State */
-                <div
-                  style={{
-                    textAlign: "center",
-                    padding: "80px 40px",
-                    background: "#F9FAFB",
-                    borderRadius: "16px",
-                    border: "1px solid #E5E7EB",
-                  }}
-                >
+                <div style={{ textAlign: "center", padding: "80px 40px", background: "#F9FAFB", borderRadius: "16px", border: "1px solid #E5E7EB" }}>
                   <div style={{ fontSize: "64px", marginBottom: "16px" }}>📦</div>
-                  <h3
-                    style={{
-                      fontFamily: "var(--font-playfair), 'Playfair Display', serif",
-                      fontSize: "24px",
-                      fontWeight: "700",
-                      color: "#2A2A2A",
-                      marginBottom: "12px",
-                    }}
-                  >
-                    No Products Available
+                  <h3 style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif", fontSize: "24px", fontWeight: "700", color: "#2A2A2A", marginBottom: "12px" }}>
+                    No Products Found
                   </h3>
                   <p style={{ fontSize: "15px", color: "#6B7280", maxWidth: "420px", margin: "0 auto 28px" }}>
-                    We are currently stocking this collection. Enter your email to get notified when products arrive.
+                    Try adjusting your filters or check back later when new products arrive.
                   </p>
-                  <form
-                    style={{
-                      display: "flex",
-                      gap: "8px",
-                      maxWidth: "420px",
-                      margin: "0 auto 20px",
-                    }}
-                  >
-                    <input
-                      type="email"
-                      placeholder="Your email address…"
-                      style={{
-                        flex: 1,
-                        padding: "12px 18px",
-                        borderRadius: "100px",
-                        border: "1px solid #E5E7EB",
-                        fontSize: "14px",
-                        outline: "none",
-                      }}
-                    />
-                    <button
-                      type="submit"
-                      style={{
-                        backgroundColor: "var(--orange)",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "100px",
-                        padding: "12px 24px",
-                        fontWeight: "800",
-                        fontSize: "14px",
-                        cursor: "pointer",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      Notify Me
-                    </button>
-                  </form>
-                  <Link
-                    href="/"
-                    style={{
-                      color: "var(--orange)",
-                      fontWeight: "700",
-                      fontSize: "14px",
-                      textDecoration: "none",
-                    }}
-                  >
-                    ← Back to Home
+                  <Link href="/collections/dogs" style={{ color: "var(--orange)", fontWeight: "700", fontSize: "14px", textDecoration: "none" }}>
+                    ← View All Products
                   </Link>
                 </div>
               )}
@@ -596,7 +207,6 @@ export default async function CollectionPage({ params }) {
           </div>
         )}
       </div>
-
       <CartDrawer />
     </div>
   );

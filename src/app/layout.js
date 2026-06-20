@@ -7,6 +7,7 @@ import PageTransition from "@/components/PageTransition";
 import ToastProvider from "@/components/ToastProvider";
 
 const Footer = dynamic(() => import("@/components/Footer"), { ssr: true });
+const CartDrawer = dynamic(() => import("@/components/CartDrawer"));
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -79,6 +80,7 @@ export default function RootLayout({ children }) {
             </PageTransition>
           </main>
           <Footer />
+          <CartDrawer />
         </CartProvider>
       </body>
     </html>

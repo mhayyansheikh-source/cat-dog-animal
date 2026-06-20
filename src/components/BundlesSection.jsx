@@ -193,7 +193,59 @@ function BundleCard({ bundle }) {
   );
 }
 
-export default function BundlesSection() {
+export default function BundlesSection({ dynamicProducts }) {
+  // If dynamicProducts is provided and has items, we map them.
+  // Otherwise, we fallback to the default static mock bundles.
+  const hasDynamic = dynamicProducts && dynamicProducts.length > 0;
+
+  const renderDynamicBundles = () => {
+    return dynamicProducts.map((product, idx) => {
+      const isEven = idx % 2 === 0;
+      
+      // Attempt to parse items from a Metafield if it exists (e.g. custom.bundle_items JSON array)
+      let parsedItems = ["Premium Pet Wellness Routine", "Vet Recommended", "100% Satisfaction Guarantee"];
+      const bundleItemsMeta = product.metafields?.find(m => m && m.key === "bundle_items");
+      if (bundleItemsMeta && bundleItemsMeta.value) {
+        try {
+          parsedItems = JSON.parse(bundleItemsMeta.value);
+        } catch(e) {
+          console.error("Failed to parse bundle items metafield", e);
+        }
+      }
+
+      // Format prices
+      const currentPrice = product.price ? `$${parseFloat(product.price).toFixed(2)}` : "TBD";
+      const oldPrice = product.compareAtPrice ? `$${parseFloat(product.compareAtPrice).toFixed(2)}` : "";
+      
+      // Calculate savings if possible
+      let tagText = "Special Offer";
+      if (product.price && product.compareAtPrice && parseFloat(product.compareAtPrice) > parseFloat(product.price)) {
+        const savingStr = Math.round((1 - (parseFloat(product.price) / parseFloat(product.compareAtPrice))) * 100);
+        tagText = `Save ${savingStr}%`;
+      }
+
+      const bundleConfig = {
+        emoji: isEven ? "🐕" : "🐈",
+        label: "Value Bundle",
+        bg: isEven ? "var(--orange-light)" : "var(--teal-light)",
+        tag: tagText,
+        tagStyle: isEven 
+          ? { backgroundColor: "var(--teal-light)", color: "var(--teal-dark)" }
+          : { backgroundColor: "var(--orange-light)", color: "var(--orange-dark)" },
+        title: product.title,
+        desc: product.body_html ? product.body_html.replace(/<[^>]*>/g, '').substring(0, 100) + "..." : "A complete routine for your pet.",
+        items: parsedItems,
+        newPrice: currentPrice,
+        oldPrice: oldPrice,
+        href: `/product/${product.handle}`,
+        btnStyle: isEven ? { backgroundColor: "var(--orange)", color: "white" } : { backgroundColor: "var(--teal)", color: "white" },
+        btnHover: isEven ? "#C45A0E" : "#0F5E52",
+      };
+
+      return <BundleCard key={product.id} bundle={bundleConfig} />;
+    });
+  };
+
   return (
     <section className="py-5 bg-white">
       <div className="container">
@@ -232,8 +284,14 @@ export default function BundlesSection() {
             gap: "24px",
           }}
         >
-          <BundleCard bundle={DOG_BUNDLE} />
-          <BundleCard bundle={CAT_BUNDLE} />
+          {hasDynamic ? (
+            renderDynamicBundles()
+          ) : (
+            <>
+              <BundleCard bundle={DOG_BUNDLE} />
+              <BundleCard bundle={CAT_BUNDLE} />
+            </>
+          )}
         </div>
       </div>
     </section>

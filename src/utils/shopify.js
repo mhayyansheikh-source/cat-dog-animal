@@ -82,7 +82,8 @@ function normalizeProduct(node) {
     images: imagesMapped,
     options: optionsMapped,
     variants: variantsMapped,
-    body_html: node.descriptionHtml || ""
+    body_html: node.descriptionHtml || "",
+    metafields: node.metafields || []
   };
 }
 
@@ -139,6 +140,69 @@ export async function getShopifyProducts() {
   return edges.map(edge => normalizeProduct(edge.node)).filter(Boolean);
 }
 
+export async function getShopifyCollectionByHandle(handle, filter = [], sortKey = "COLLECTION_DEFAULT", reverse = false) {
+  const query = `
+    query getCollectionByHandle($handle: String!, $filters: [ProductFilter!], $sortKey: ProductCollectionSortKeys!, $reverse: Boolean) {
+      collection(handle: $handle) {
+        id
+        title
+        descriptionHtml
+        products(first: 50, filters: $filters, sortKey: $sortKey, reverse: $reverse) {
+          edges {
+            node {
+              id
+              title
+              handle
+              vendor
+              productType
+              tags
+              images(first: 1) {
+                edges {
+                  node {
+                    url
+                  }
+                }
+              }
+              variants(first: 1) {
+                edges {
+                  node {
+                    id
+                    price {
+                      amount
+                    }
+                    compareAtPrice {
+                      amount
+                    }
+                    availableForSale
+                  }
+                }
+              }
+            }
+          }
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    handle,
+    filters: filter,
+    sortKey,
+    reverse
+  };
+
+  const data = await shopifyFetch({ query, variables });
+  if (!data?.collection) return null;
+  
+  return {
+    ...data.collection,
+    products: data.collection.products.edges.map(({ node }) => normalizeProduct(node))
+  };
+}
 export async function getShopifyProductByHandle(handle) {
   const query = `
     query getProductByHandle($handle: String!) {
@@ -176,6 +240,12 @@ export async function getShopifyProductByHandle(handle) {
               sku
             }
           }
+        }
+        metafields(identifiers: [{namespace: "custom", key: "faq_json"}, {namespace: "custom", key: "ingredients"}, {namespace: "custom", key: "bundle_items"}]) {
+          namespace
+          key
+          value
+          type
         }
       }
     }
