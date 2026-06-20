@@ -82,8 +82,8 @@ export default function CartDrawer() {
   // Handle Shopify checkout redirect
   const handleCheckout = () => {
     if (checkoutUrl) {
-      // Direct redirect to Shopify checkout or our custom embedded checkout
-      window.location.href = "/checkout"; 
+      // Direct redirect to Shopify's secure checkout
+      window.location.href = checkoutUrl; 
     } else {
       alert("Checkout session not found. Please try again.");
     }
