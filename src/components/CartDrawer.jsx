@@ -3,7 +3,7 @@
 import React, { useRef, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Trash2, Plus, Minus, ShoppingBag, CreditCard, Shield } from "lucide-react";
+import { X, Trash2, Plus, Minus, ShoppingBag, CreditCard, Shield, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { checkoutAction } from "@/app/actions";
 
@@ -16,12 +16,14 @@ export default function CartDrawer() {
     updateQuantity,
     cartCount,
     subtotal,
-    discountRate,
     discountAmount,
     total,
+    checkoutUrl,
+    isSyncing,
   } = useCart();
 
   const drawerRef = useRef();
+  const [upsellProduct, setUpsellProduct] = useState(null);
 
   // Close drawer on clicking outside
   useEffect(() => {
@@ -46,6 +48,20 @@ export default function CartDrawer() {
     };
   }, [isCartOpen]);
 
+  // Fetch upsell product
+  useEffect(() => {
+    if (isCartOpen && !upsellProduct) {
+      fetch("/api/search?q=bundle")
+        .then(res => res.json())
+        .then(data => {
+          if (data.products && data.products.length > 0) {
+            setUpsellProduct(data.products[0]);
+          }
+        })
+        .catch(err => console.error("Failed to fetch upsell", err));
+    }
+  }, [isCartOpen, upsellProduct]);
+
   // Shipping Threshold Calculations
   const shippingThreshold = 35.0;
   const remainingForFreeShipping = shippingThreshold - subtotal;
@@ -64,34 +80,12 @@ export default function CartDrawer() {
   }
 
   // Handle Shopify checkout redirect
-  const handleCheckout = async () => {
-    try {
-      // Prevent checkout if there are stale mock items in the cart
-      const hasLegacyItems = cartItems.some(item => !item.variant.id.startsWith("gid://shopify/ProductVariant/"));
-      if (hasLegacyItems) {
-        alert("Your cart contains outdated test items. We are clearing your cart so you can add live products.");
-        removeFromCart(cartItems[0].variant.id); // Or ideally clearCart() if we expose it
-        // To properly clear the entire cart, we can just reload or clear localStorage
-        localStorage.removeItem("zesty_cart");
-        window.location.reload();
-        return;
-      }
-
-      const lineItems = cartItems.map((item) => ({
-        variantId: item.variant.id,
-        quantity: item.quantity,
-      }));
-
-      // Trigger mutation
-      const checkoutUrl = await checkoutAction(lineItems);
-      if (checkoutUrl) {
-        window.location.href = checkoutUrl;
-      } else {
-        alert("Failed to build a checkout session. Please try again.");
-      }
-    } catch (e) {
-      console.error("Error creating checkout:", e);
-      alert("Checkout error: " + e.message);
+  const handleCheckout = () => {
+    if (checkoutUrl) {
+      // Direct redirect to Shopify checkout or our custom embedded checkout
+      window.location.href = "/checkout"; 
+    } else {
+      alert("Checkout session not found. Please try again.");
     }
   };
 
@@ -153,11 +147,13 @@ export default function CartDrawer() {
                       <strong className="text-forest-green">🎉 You've unlocked FREE Tracked US Shipping!</strong>
                     )}
                   </p>
-                  <div className="progress" style={{ height: "6px" }}>
-                    <div
+                  <div className="progress overflow-hidden bg-white" style={{ height: "8px", borderRadius: "10px" }}>
+                    <motion.div
                       className={`progress-bar ${remainingForFreeShipping <= 0 ? "bg-success" : "bg-warning"}`}
                       role="progressbar"
-                      style={{ width: `${shippingProgress}%` }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${shippingProgress}%` }}
+                      transition={{ type: "spring", stiffness: 100, damping: 20 }}
                       aria-valuenow={shippingProgress}
                       aria-valuemin="0"
                       aria-valuemax="100"
@@ -169,13 +165,13 @@ export default function CartDrawer() {
                 {/* Bulk Discount Meter */}
                 <div className="mt-3 text-start">
                   <p className="small mb-1 font-body text-dark fw-semibold">{discountPromoText}</p>
-                  <div className="progress" style={{ height: "6px" }}>
-                    <div
+                  <div className="progress overflow-hidden bg-white" style={{ height: "8px", borderRadius: "10px" }}>
+                    <motion.div
                       className="progress-bar bg-success"
                       role="progressbar"
-                      style={{
-                        width: cartCount >= 3 ? "100%" : cartCount === 2 ? "66%" : cartCount === 1 ? "33%" : "0%",
-                      }}
+                      initial={{ width: 0 }}
+                      animate={{ width: cartCount >= 3 ? "100%" : cartCount === 2 ? "66%" : cartCount === 1 ? "33%" : "0%" }}
+                      transition={{ type: "spring", stiffness: 100, damping: 20 }}
                       aria-valuenow={cartCount}
                       aria-valuemin="0"
                       aria-valuemax="3"
@@ -222,7 +218,9 @@ export default function CartDrawer() {
                       {/* Info & Quantity controls */}
                       <div className="flex-grow-1 text-start">
                         <h6 className="fw-bold mb-0 small text-charcoal-dark">{item.title}</h6>
-                        <span className="small text-muted d-block mb-1">{item.variant.title}</span>
+                        <span className="small text-muted d-block mb-1">
+                          {item.variant.title !== "Default Title" ? item.variant.title : ""}
+                        </span>
 
                         {/* Price */}
                         <div className="d-flex align-items-center gap-2 mb-2">
@@ -238,10 +236,10 @@ export default function CartDrawer() {
                         <div className="d-flex align-items-center gap-2">
                           <div
                             className="d-flex align-items-center border rounded-pill overflow-hidden bg-light"
-                            style={{ height: "30px" }}
+                            style={{ height: "30px", opacity: isSyncing ? 0.5 : 1, pointerEvents: isSyncing ? 'none' : 'auto' }}
                           >
                             <button
-                              onClick={() => updateQuantity(item.variant.id, item.quantity - 1)}
+                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
                               className="btn btn-sm px-2 py-0 border-0 d-flex align-items-center"
                               aria-label="Decrease quantity"
                             >
@@ -249,7 +247,7 @@ export default function CartDrawer() {
                             </button>
                             <span className="px-2 small fw-bold">{item.quantity}</span>
                             <button
-                              onClick={() => updateQuantity(item.variant.id, item.quantity + 1)}
+                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
                               className="btn btn-sm px-2 py-0 border-0 d-flex align-items-center"
                               aria-label="Increase quantity"
                             >
@@ -259,9 +257,10 @@ export default function CartDrawer() {
 
                           {/* Delete button */}
                           <button
-                            onClick={() => removeFromCart(item.variant.id)}
+                            onClick={() => removeFromCart(item.id)}
                             className="btn btn-sm text-danger border-0 p-1 hover-scale"
                             aria-label="Remove item"
+                            disabled={isSyncing}
                           >
                             <Trash2 size={16} />
                           </button>
@@ -269,6 +268,36 @@ export default function CartDrawer() {
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+              
+              {/* Dynamic In-Cart Upsell */}
+              {cartCount > 0 && upsellProduct && (
+                <div className="mt-4 p-3 bg-light rounded border border-zesty-orange border-opacity-25 shadow-sm">
+                  <p className="small fw-bold text-charcoal-dark mb-2 font-heading d-flex justify-content-between">
+                    <span>🔥 Complete Your Pack</span>
+                    <span className="badge bg-danger rounded-pill">Limited Offer</span>
+                  </p>
+                  <div className="d-flex gap-3 align-items-center">
+                    <div className="bg-white rounded p-1" style={{ width: "60px", height: "60px", flexShrink: 0 }}>
+                      {upsellProduct.image && (
+                        <img 
+                          src={upsellProduct.image} 
+                          alt={upsellProduct.title}
+                          className="w-100 h-100 object-fit-contain"
+                        />
+                      )}
+                    </div>
+                    <div className="flex-grow-1 text-start">
+                      <h6 className="mb-0 small fw-bold text-dark">{upsellProduct.title}</h6>
+                      <span className="text-zesty-orange fw-bold small">${upsellProduct.price}</span>
+                    </div>
+                    <Link href={`/product/${upsellProduct.handle}`} onClick={() => setIsCartOpen(false)}>
+                      <button className="btn btn-sm btn-outline-zesty-primary rounded-circle p-2 hover-scale">
+                        <PlusCircle size={18} />
+                      </button>
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>
@@ -286,7 +315,7 @@ export default function CartDrawer() {
                   {/* Volume Discount */}
                   {discountAmount > 0 && (
                     <div className="d-flex justify-content-between align-items-center text-success">
-                      <span className="small">Bulk Savings ({(discountRate * 100).toFixed(0)}% Off)</span>
+                      <span className="small">Bulk Savings</span>
                       <span className="fw-semibold">-${discountAmount.toFixed(2)}</span>
                     </div>
                   )}

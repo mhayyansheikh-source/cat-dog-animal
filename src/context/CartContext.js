@@ -1,107 +1,119 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { getCartAction, addCartLinesAction, updateCartLinesAction, removeCartLinesAction } from "@/app/actions";
+import { toast } from "react-hot-toast";
 
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState([]);
+  const [cart, setCart] = useState(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(true);
 
-  // Load cart from localStorage on mount
-  useEffect(() => {
-    const savedCart = localStorage.getItem("zesty_cart");
-    if (savedCart) {
-      try {
-        setCartItems(JSON.parse(savedCart));
-      } catch (e) {
-        console.error("Error loading cart:", e);
-      }
+  // Initialize cart from Shopify
+  const refreshCart = useCallback(async () => {
+    setIsSyncing(true);
+    try {
+      const liveCart = await getCartAction();
+      setCart(liveCart);
+    } catch (error) {
+      console.error("Failed to load cart:", error);
+    } finally {
+      setIsSyncing(false);
     }
   }, []);
 
-  // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("zesty_cart", JSON.stringify(cartItems));
-  }, [cartItems]);
+    refreshCart();
+  }, [refreshCart]);
 
-  const addToCart = (product, variant, quantity = 1) => {
-    setCartItems((prevItems) => {
-      const existingItemIndex = prevItems.findIndex(
-        (item) => item.variant.id === variant.id
-      );
-
-      if (existingItemIndex > -1) {
-        const updatedItems = [...prevItems];
-        updatedItems[existingItemIndex].quantity += quantity;
-        return updatedItems;
+  const addToCart = async (product, variant, quantity = 1) => {
+    setIsCartOpen(true);
+    setIsSyncing(true);
+    try {
+      const response = await addCartLinesAction([{ merchandiseId: variant.id, quantity }]);
+      
+      if (response?.userErrors?.length > 0) {
+        toast.error(response.userErrors[0].message);
+      } else {
+        toast.success(`${product.title} added to cart`);
+        setCart(response.cart);
+        await refreshCart(); // Full refresh to get all line item details correctly
       }
-
-      return [
-        ...prevItems,
-        {
-          id: product.id,
-          title: product.title,
-          handle: product.handle,
-          product_type: product.product_type,
-          image: product.images[0] || "",
-          variant: {
-            id: variant.id,
-            title: variant.title,
-            price: parseFloat(variant.price),
-            compare_at_price: variant.compare_at_price ? parseFloat(variant.compare_at_price) : null,
-          },
-          quantity,
-        },
-      ];
-    });
-    setIsCartOpen(true); // Automatically slide open cart on add
-  };
-
-  const removeFromCart = (variantId) => {
-    setCartItems((prevItems) =>
-      prevItems.filter((item) => item.variant.id !== variantId)
-    );
-  };
-
-  const updateQuantity = (variantId, newQuantity) => {
-    if (newQuantity <= 0) {
-      removeFromCart(variantId);
-      return;
+    } catch (error) {
+      console.error("Add to cart error:", error);
+      toast.error(error.message || "Could not add item to cart");
+    } finally {
+      setIsSyncing(false);
     }
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.variant.id === variantId
-          ? { ...item, quantity: newQuantity }
-          : item
-      )
-    );
+  };
+
+  const removeFromCart = async (lineId) => {
+    setIsSyncing(true);
+    try {
+      const response = await removeCartLinesAction([lineId]);
+      if (response?.userErrors?.length > 0) {
+        toast.error(response.userErrors[0].message);
+      } else {
+        setCart(response.cart);
+        await refreshCart();
+      }
+    } catch (error) {
+      console.error("Remove from cart error:", error);
+      toast.error("Failed to remove item");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  const updateQuantity = async (lineId, newQuantity) => {
+    if (newQuantity <= 0) {
+      return removeFromCart(lineId);
+    }
+    setIsSyncing(true);
+    try {
+      const response = await updateCartLinesAction([{ id: lineId, quantity: newQuantity }]);
+      if (response?.userErrors?.length > 0) {
+        toast.error(response.userErrors[0].message);
+      } else {
+        setCart(response.cart);
+        await refreshCart();
+      }
+    } catch (error) {
+      console.error("Update quantity error:", error);
+      toast.error("Failed to update quantity");
+    } finally {
+      setIsSyncing(false);
+    }
   };
 
   const clearCart = () => {
-    setCartItems([]);
+    // Note: Storefront API doesn't have a direct clear cart, 
+    // we would just let the cookie expire or create a new cart.
+    setCart(null);
   };
 
-  // Calculations
+  // Map Shopify cart data to our UI expectations
+  const cartItems = cart?.lines?.edges?.map(edge => ({
+    id: edge.node.id, // This is the LINE ID, not the variant ID
+    variant: {
+      id: edge.node.merchandise.id,
+      title: edge.node.merchandise.title,
+      price: parseFloat(edge.node.merchandise.price.amount),
+      compare_at_price: edge.node.merchandise.compareAtPrice ? parseFloat(edge.node.merchandise.compareAtPrice.amount) : null,
+    },
+    title: edge.node.merchandise.product.title,
+    handle: edge.node.merchandise.product.handle,
+    image: edge.node.merchandise.image?.url || "",
+    quantity: edge.node.quantity,
+  })) || [];
+
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.variant.price * item.quantity,
-    0
-  );
-
-  // Dynamic Dropshipping Volume Discount tiers:
-  // Buy 2 items -> 10% discount on entire cart
-  // Buy 3+ items -> 15% discount on entire cart
-  let discountRate = 0;
-  if (cartCount >= 3) {
-    discountRate = 0.15;
-  } else if (cartCount === 2) {
-    discountRate = 0.10;
-  }
-
-  const discountAmount = subtotal * discountRate;
-  const total = subtotal - discountAmount;
+  const subtotal = cart?.cost?.subtotalAmount?.amount ? parseFloat(cart.cost.subtotalAmount.amount) : 0;
+  const total = cart?.cost?.totalAmount?.amount ? parseFloat(cart.cost.totalAmount.amount) : 0;
+  const discountAmount = subtotal > 0 && total > 0 ? subtotal - total : 0;
+  const checkoutUrl = cart?.checkoutUrl || null;
 
   return (
     <CartContext.Provider
@@ -115,9 +127,10 @@ export function CartProvider({ children }) {
         clearCart,
         cartCount,
         subtotal,
-        discountRate,
         discountAmount,
         total,
+        checkoutUrl,
+        isSyncing,
       }}
     >
       {children}

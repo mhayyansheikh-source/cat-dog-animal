@@ -20,17 +20,29 @@ async function shopifyFetch({ query, variables = {} }) {
       method: "POST",
       headers,
       body: JSON.stringify({ query, variables }),
-      next: { revalidate: 30 } // Cache data on Vercel for 5 minutes
+      next: { revalidate: 30 } // Cache data on Vercel for 30 seconds
     });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      const error = new Error(`Shopify API Error: ${response.status} ${response.statusText}`);
+      error.status = response.status;
+      error.details = errorText;
+      throw error;
+    }
 
     const result = await response.json();
     if (result.errors) {
-      console.error("Shopify API errors in payload:", result.errors);
+      console.error("Shopify GraphQL errors:", result.errors);
+      const graphqlError = new Error(result.errors[0].message || "GraphQL Error");
+      graphqlError.isGraphQL = true;
+      graphqlError.errors = result.errors;
+      throw graphqlError;
     }
     return result.data;
   } catch (error) {
     console.error("Failed to query Shopify Storefront API:", error);
-    return null;
+    throw error;
   }
 }
 
@@ -204,4 +216,289 @@ export async function createShopifyCheckout(lineItems) {
   }
 
   return data?.cartCreate?.cart?.checkoutUrl || null;
+}
+
+export async function getPredictiveSearch(queryStr) {
+  const query = `
+    query predictiveSearch($query: String!) {
+      predictiveSearch(query: $query) {
+        products {
+          id
+          title
+          handle
+          images(first: 1) {
+            edges {
+              node {
+                url
+              }
+            }
+          }
+          variants(first: 1) {
+            edges {
+              node {
+                price {
+                  amount
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const data = await shopifyFetch({ query, variables: { query: queryStr } });
+  
+  if (!data?.predictiveSearch?.products) return [];
+  
+  return data.predictiveSearch.products.map(node => ({
+    id: node.id,
+    title: node.title,
+    handle: node.handle,
+    image: node.images.edges[0]?.node?.url || null,
+    price: node.variants.edges[0]?.node?.price?.amount || "0.00"
+  }));
+}
+
+// Headless Customer Auth Mutations
+export async function customerAccessTokenCreate(email, password) {
+  const query = `
+    mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
+      customerAccessTokenCreate(input: $input) {
+        customerAccessToken {
+          accessToken
+          expiresAt
+        }
+        customerUserErrors {
+          code
+          field
+          message
+        }
+      }
+    }
+  `;
+  const data = await shopifyFetch({
+    query,
+    variables: { input: { email, password } }
+  });
+  return data?.customerAccessTokenCreate;
+}
+
+export async function customerCreate(email, password, firstName, lastName) {
+  const query = `
+    mutation customerCreate($input: CustomerCreateInput!) {
+      customerCreate(input: $input) {
+        customer {
+          id
+        }
+        customerUserErrors {
+          code
+          field
+          message
+        }
+      }
+    }
+  `;
+  const data = await shopifyFetch({
+    query,
+    variables: { input: { email, password, firstName, lastName } }
+  });
+  return data?.customerCreate;
+}
+
+export async function getCustomerData(accessToken) {
+  const query = `
+    query getCustomerData($customerAccessToken: String!) {
+      customer(customerAccessToken: $customerAccessToken) {
+        id
+        firstName
+        lastName
+        email
+        orders(first: 10) {
+          edges {
+            node {
+              id
+              orderNumber
+              processedAt
+              totalPrice {
+                amount
+              }
+              lineItems(first: 5) {
+                edges {
+                  node {
+                    title
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+  const data = await shopifyFetch({
+    query,
+    variables: { customerAccessToken: accessToken }
+  });
+  return data?.customer;
+}
+
+// -----------------------------------------
+// Native Dynamic Cart API Methods
+// -----------------------------------------
+
+export async function createCart() {
+  const query = `
+    mutation cartCreate {
+      cartCreate {
+        cart {
+          id
+          checkoutUrl
+          cost {
+            totalAmount {
+              amount
+            }
+            subtotalAmount {
+              amount
+            }
+          }
+          lines(first: 10) {
+            edges {
+              node {
+                id
+                quantity
+                cost {
+                  totalAmount {
+                    amount
+                  }
+                }
+                merchandise {
+                  ... on ProductVariant {
+                    id
+                    title
+                    price {
+                      amount
+                    }
+                    product {
+                      title
+                      handle
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+  const data = await shopifyFetch({ query });
+  return data?.cartCreate?.cart;
+}
+
+export async function getCart(cartId) {
+  const query = `
+    query getCart($id: ID!) {
+      cart(id: $id) {
+        id
+        checkoutUrl
+        cost {
+          totalAmount {
+            amount
+          }
+          subtotalAmount {
+            amount
+          }
+        }
+        lines(first: 50) {
+          edges {
+            node {
+              id
+              quantity
+              cost {
+                totalAmount {
+                  amount
+                }
+              }
+              merchandise {
+                ... on ProductVariant {
+                  id
+                  title
+                  price {
+                    amount
+                  }
+                  compareAtPrice {
+                    amount
+                  }
+                  image {
+                    url
+                  }
+                  product {
+                    title
+                    handle
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+  const data = await shopifyFetch({ query, variables: { id: cartId } });
+  return data?.cart;
+}
+
+export async function addCartLines(cartId, lines) {
+  const query = `
+    mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
+      cartLinesAdd(cartId: $cartId, lines: $lines) {
+        cart {
+          id
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+  const data = await shopifyFetch({ query, variables: { cartId, lines } });
+  return data?.cartLinesAdd;
+}
+
+export async function updateCartLines(cartId, lines) {
+  const query = `
+    mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+      cartLinesUpdate(cartId: $cartId, lines: $lines) {
+        cart {
+          id
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+  const data = await shopifyFetch({ query, variables: { cartId, lines } });
+  return data?.cartLinesUpdate;
+}
+
+export async function removeCartLines(cartId, lineIds) {
+  const query = `
+    mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
+      cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+        cart {
+          id
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+  const data = await shopifyFetch({ query, variables: { cartId, lineIds } });
+  return data?.cartLinesRemove;
 }

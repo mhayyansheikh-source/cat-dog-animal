@@ -4,6 +4,7 @@ import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
 import dynamic from "next/dynamic";
 import PageTransition from "@/components/PageTransition";
+import ToastProvider from "@/components/ToastProvider";
 
 const Footer = dynamic(() => import("@/components/Footer"), { ssr: true });
 
@@ -69,6 +70,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="min-h-full d-flex flex-column bg-white text-charcoal-dark">
+        <ToastProvider />
         <CartProvider>
           <Header />
           <main className="flex-grow-1">

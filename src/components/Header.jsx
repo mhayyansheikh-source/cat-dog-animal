@@ -5,10 +5,14 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { ShoppingCart, Search, Menu, X } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
+import PredictiveSearch from "@/components/PredictiveSearch";
+import CustomerAuthModal from "@/components/CustomerAuthModal";
 
 export default function Header() {
   const { setIsCartOpen, cartCount } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
 
@@ -62,7 +66,7 @@ export default function Header() {
               className="btn p-2 border-0 position-relative"
               aria-label="Open cart"
             >
-              <span style={{ fontSize: "22px" }}>🛒</span>
+              <ShoppingCart size={24} strokeWidth={2.5} />
               {cartCount > 0 && (
                 <span 
                   className="position-absolute top-0 start-100 translate-middle badge rounded-circle d-flex align-items-center justify-content-center text-white" 
@@ -100,27 +104,56 @@ export default function Header() {
 
             {/* Right Side Tools matched to design */}
             <div className="d-flex align-items-center gap-4 text-dark fs-5">
-              <span className="cursor-pointer hover-scale" style={{ cursor: "pointer" }} title="Search">🔍</span>
-              <span className="cursor-pointer hover-scale" style={{ cursor: "pointer" }} title="Account">👤</span>
-              <span 
-                className="cursor-pointer hover-scale position-relative" 
+              <motion.button 
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsSearchOpen(true)}
+                className="btn p-0 border-0 bg-transparent text-charcoal-dark"
+                title="Search"
+                aria-label="Open search"
+              >
+                <Search size={22} strokeWidth={2.5} />
+              </motion.button>
+
+              <motion.button 
+                whileHover={{ scale: 1.1, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsAuthOpen(true)}
+                className="btn p-0 border-0 bg-transparent text-charcoal-dark"
+                title="Account"
+                aria-label="User account"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </motion.button>
+
+              <motion.button 
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="btn p-0 border-0 bg-transparent text-charcoal-dark position-relative" 
                 onClick={() => setIsCartOpen(true)}
                 title="Cart"
-                style={{ userSelect: "none", cursor: "pointer" }}
+                aria-label="Shopping cart"
               >
-                🛒
-                {cartCount > 0 && (
-                  <span 
-                    className="position-absolute top-0 start-100 translate-middle badge rounded-circle d-flex align-items-center justify-content-center text-white" 
-                    style={{ 
-                      fontSize: "0.625rem", width: "18px", height: "18px", 
-                      backgroundColor: "var(--zesty-orange, #F5761A)", marginTop: "-2px", marginLeft: "-2px"
-                    }}
-                  >
-                    {cartCount}
-                  </span>
-                )}
-              </span>
+                <ShoppingCart size={22} strokeWidth={2.5} />
+                <AnimatePresence mode="popLayout">
+                  {cartCount > 0 && (
+                    <motion.span 
+                      key={cartCount}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1, rotate: [0, -10, 10, -10, 0] }}
+                      exit={{ scale: 0 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      className="position-absolute top-0 start-100 translate-middle badge rounded-circle d-flex align-items-center justify-content-center text-white" 
+                      style={{ 
+                        fontSize: "0.625rem", width: "18px", height: "18px", 
+                        backgroundColor: "var(--zesty-orange, #F5761A)", marginTop: "2px", marginLeft: "-4px"
+                      }}
+                    >
+                      {cartCount}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.button>
             </div>
           </div>
         </div>
@@ -161,6 +194,12 @@ export default function Header() {
           />
         )}
       </AnimatePresence>
+
+      {/* Predictive Search Overlay */}
+      <PredictiveSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+
+      {/* Customer Auth Modal */}
+      <CustomerAuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
 
     </motion.header>
   );
