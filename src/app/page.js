@@ -1,5 +1,5 @@
 import React from "react";
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 import Hero from "@/components/Hero";
 import FeaturesBand from "@/components/FeaturesBand";
 import TrustStats from "@/components/TrustStats";
@@ -10,10 +10,10 @@ import {
   getShopifyMetaobject
 } from "@/utils/shopify";
 
-const ProductTabs = dynamic(() => import("@/components/ProductTabs"));
-const BundlesSection = dynamic(() => import("@/components/BundlesSection"));
-const ReviewsSection = dynamic(() => import("@/components/ReviewsSection"));
-const NewsletterSection = dynamic(() => import("@/components/NewsletterSection"));
+const ProductTabs = nextDynamic(() => import("@/components/ProductTabs"));
+const BundlesSection = nextDynamic(() => import("@/components/BundlesSection"));
+const ReviewsSection = nextDynamic(() => import("@/components/ReviewsSection"));
+const NewsletterSection = nextDynamic(() => import("@/components/NewsletterSection"));
 
 export const dynamic = 'force-dynamic';
 
