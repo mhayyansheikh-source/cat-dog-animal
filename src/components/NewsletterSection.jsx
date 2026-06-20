@@ -1,16 +1,28 @@
 "use client";
 
 import React, { useState } from "react";
+import { subscribeAction } from "@/app/actions";
 
 export default function NewsletterSection() {
   const [subscribed, setSubscribed] = useState(false);
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (email) {
-      setSubscribed(true);
-      setEmail("");
+      setLoading(true);
+      setError(null);
+      const res = await subscribeAction(email);
+      setLoading(false);
+      
+      if (res.error) {
+        setError(res.error);
+      } else {
+        setSubscribed(true);
+        setEmail("");
+      }
     }
   };
 
@@ -53,7 +65,8 @@ export default function NewsletterSection() {
               />
               <button 
                 type="submit" 
-                className="btn text-white" 
+                className="btn text-white"
+                disabled={loading}
                 style={{ 
                   backgroundColor: "var(--charcoal)", 
                   borderRadius: "0 100px 100px 0",
@@ -62,10 +75,11 @@ export default function NewsletterSection() {
                   border: "none"
                 }}
               >
-                Subscribe
+                {loading ? "..." : "Subscribe"}
               </button>
             </form>
           )}
+          {error && <p className="text-white mt-2 small">{error}</p>}
         </div>
       </div>
     </section>

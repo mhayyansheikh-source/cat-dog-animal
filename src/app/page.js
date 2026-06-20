@@ -3,7 +3,12 @@ import dynamic from "next/dynamic";
 import Hero from "@/components/Hero";
 import FeaturesBand from "@/components/FeaturesBand";
 import TrustStats from "@/components/TrustStats";
-import { getShopifyProducts, getShopifyCollectionByHandle, getShopifyCollectionsWithProducts } from "@/utils/shopify";
+import { 
+  getShopifyProducts, 
+  getShopifyCollectionByHandle, 
+  getShopifyCollectionsWithProducts,
+  getShopifyMetaobject
+} from "@/utils/shopify";
 
 const ProductTabs = dynamic(() => import("@/components/ProductTabs"));
 const BundlesSection = dynamic(() => import("@/components/BundlesSection"));
@@ -14,6 +19,10 @@ export default async function Home() {
   // Fetch live products from Shopify
   const products = await getShopifyProducts();
   const collections = await getShopifyCollectionsWithProducts(10, 8);
+  
+  // Fetch Homepage Metaobject configuration (gracefully falls back if not created yet)
+  const heroMeta = await getShopifyMetaobject("homepage_config", "hero") || null;
+  const statsMeta = await getShopifyMetaobject("homepage_config", "stats") || null;
 
   // Fetch bundles explicitly
   let bundleProducts = [];
@@ -32,7 +41,7 @@ export default async function Home() {
   return (
     <>
       {/* Hero Section */}
-      <Hero />
+      <Hero collections={collections} heroMeta={heroMeta} />
 
       {/* Features Band Segment */}
       <FeaturesBand />
@@ -41,7 +50,7 @@ export default async function Home() {
       <ProductTabs products={products} collections={collections} />
 
       {/* Trust Stats Numbers */}
-      <TrustStats />
+      <TrustStats statsMeta={statsMeta} />
 
       {/* Value Combo Packs */}
       <BundlesSection dynamicProducts={bundleProducts} />

@@ -11,7 +11,17 @@ const stats = [
   { num: "12+", label: "Years of Expertise" },
 ];
 
-export default function TrustStats() {
+export default function TrustStats({ statsMeta = null }) {
+  let displayStats = stats;
+  
+  if (statsMeta?.stats_json) {
+    try {
+      displayStats = JSON.parse(statsMeta.stats_json);
+    } catch(e) {
+      console.error("Failed to parse stats JSON", e);
+    }
+  }
+
   return (
     <section
       style={{
@@ -46,7 +56,7 @@ export default function TrustStats() {
             gap: "20px",
           }}
         >
-          {stats.map((s, i) => (
+          {displayStats.map((s, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 20 }}

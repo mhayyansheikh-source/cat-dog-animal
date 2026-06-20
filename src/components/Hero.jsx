@@ -53,7 +53,39 @@ const stats = [
   { num: "60+", label: "Products" },
 ];
 
-export default function Hero() {
+export default function Hero({ collections = [], heroMeta = null }) {
+  // Map dynamic collections to visual cards or fallback to hardcoded
+  const displayCards = collections && collections.length > 0 
+    ? collections.slice(0, 4).map((col, i) => {
+        const emojis = ["🐕", "🐈", "🎾", "🎁"];
+        const colors = [
+          { bg: "var(--orange-light)", text: "var(--orange-dark)" },
+          { bg: "var(--orange-light)", text: "var(--orange-dark)" },
+          { bg: "var(--teal-light)", text: "var(--teal-dark)" },
+          { bg: "var(--teal-light)", text: "var(--teal-dark)" }
+        ];
+        return {
+          emoji: emojis[i % emojis.length],
+          title: col.title,
+          desc: col.description || "Discover premium products",
+          badge: `${col.products?.length || 0} Products`,
+          href: `/collections/${col.handle}`,
+          badgeStyle: { backgroundColor: colors[i].bg, color: colors[i].text },
+          delay: 0.2 + (i * 0.1),
+          offset: i % 2 !== 0,
+        };
+      })
+    : categoryCards;
+
+  // Dynamic Metaobject Fallbacks
+  const titleText = heroMeta?.title || "Your Pet Deserves the Best of Everything";
+  const titleWords = titleText.split(" ");
+  const lastThreeWords = titleWords.splice(-3).join(" "); // Splice modifies the array
+  const firstPartWords = titleWords;
+  
+  const descriptionText = heroMeta?.description || "Premium supplements, treats, food, and accessories for happy, healthy cats and dogs. Science-backed ingredients, loved by pets worldwide.";
+  const badgeText = heroMeta?.badge_text || "Vet-Recommended Formulas";
+
   return (
     <section
       style={{
@@ -113,7 +145,7 @@ export default function Hero() {
               }}
             >
               <span>✨</span>
-              <span>Vet-Recommended Formulas</span>
+              <span>{badgeText}</span>
             </motion.div>
 
             {/* H1 */}
@@ -135,7 +167,7 @@ export default function Hero() {
                 color: "var(--charcoal)",
               }}
             >
-              {"Your Pet Deserves the ".split(" ").map((word, i) => (
+              {firstPartWords.map((word, i) => (
                 <motion.span
                   key={i}
                   style={{ display: "inline-block", marginRight: "8px" }}
@@ -155,7 +187,7 @@ export default function Hero() {
                   visible: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 200, damping: 20 } }
                 }}
               >
-                Best of Everything
+                {lastThreeWords}
               </motion.span>
             </motion.div>
 
@@ -172,8 +204,7 @@ export default function Hero() {
                 lineHeight: "1.65",
               }}
             >
-              Premium supplements, treats, food, and accessories for happy, healthy cats and dogs.
-              Science-backed ingredients, loved by pets worldwide.
+              {descriptionText}
             </motion.p>
 
             {/* CTA Buttons */}
@@ -275,7 +306,7 @@ export default function Hero() {
                 gap: "16px",
               }}
             >
-              {categoryCards.map((card, i) => (
+              {displayCards.map((card, i) => (
                 <Link key={i} href={card.href} className="text-decoration-none">
                   <motion.div
                     initial={{ opacity: 0, y: 30 }}

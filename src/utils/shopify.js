@@ -631,3 +631,71 @@ export async function getShopifyCollectionsWithProducts(limit = 10, productsPerC
     return [];
   }
 }
+
+export async function subscribeToNewsletter(email) {
+  const query = `
+    mutation customerCreate($input: CustomerCreateInput!) {
+      customerCreate(input: $input) {
+        customer {
+          id
+          email
+        }
+        customerUserErrors {
+          code
+          field
+          message
+        }
+      }
+    }
+  `;
+  
+  const variables = {
+    input: {
+      email,
+      acceptsMarketing: true
+    }
+  };
+
+  try {
+    const data = await shopifyFetch({ query, variables });
+    return data?.customerCreate;
+  } catch (error) {
+    console.error("Failed to subscribe customer", error);
+    return null;
+  }
+}
+
+export async function getShopifyMetaobject(type, handle) {
+  const query = `
+    query getMetaobject($handle: MetaobjectHandleInput!) {
+      metaobject(handle: $handle) {
+        id
+        handle
+        type
+        fields {
+          key
+          value
+        }
+      }
+    }
+  `;
+  try {
+    const data = await shopifyFetch({ 
+      query, 
+      variables: { handle: { type, handle } } 
+    });
+    
+    if (!data?.metaobject?.fields) return null;
+    
+    // Convert fields array into a simple key-value object
+    const fieldsMap = {};
+    data.metaobject.fields.forEach(f => {
+      fieldsMap[f.key] = f.value;
+    });
+    
+    return fieldsMap;
+  } catch (error) {
+    console.error(`Failed to fetch metaobject ${type}/${handle}`, error);
+    return null;
+  }
+}
