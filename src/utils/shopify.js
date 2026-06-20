@@ -147,7 +147,21 @@ export async function getShopifyCollectionByHandle(handle, filter = [], sortKey 
         id
         title
         descriptionHtml
+        image {
+          url
+        }
         products(first: 50, filters: $filters, sortKey: $sortKey, reverse: $reverse) {
+          filters {
+            id
+            label
+            type
+            values {
+              id
+              label
+              count
+              input
+            }
+          }
           edges {
             node {
               id
@@ -200,7 +214,8 @@ export async function getShopifyCollectionByHandle(handle, filter = [], sortKey 
   
   return {
     ...data.collection,
-    products: data.collection.products.edges.map(({ node }) => normalizeProduct(node))
+    products: data.collection.products.edges.map(({ node }) => normalizeProduct(node)),
+    filters: data.collection.products.filters || []
   };
 }
 export async function getShopifyProductByHandle(handle) {
@@ -330,88 +345,6 @@ export async function getPredictiveSearch(queryStr) {
   }));
 }
 
-// Headless Customer Auth Mutations
-export async function customerAccessTokenCreate(email, password) {
-  const query = `
-    mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
-      customerAccessTokenCreate(input: $input) {
-        customerAccessToken {
-          accessToken
-          expiresAt
-        }
-        customerUserErrors {
-          code
-          field
-          message
-        }
-      }
-    }
-  `;
-  const data = await shopifyFetch({
-    query,
-    variables: { input: { email, password } }
-  });
-  return data?.customerAccessTokenCreate;
-}
-
-export async function customerCreate(email, password, firstName, lastName) {
-  const query = `
-    mutation customerCreate($input: CustomerCreateInput!) {
-      customerCreate(input: $input) {
-        customer {
-          id
-        }
-        customerUserErrors {
-          code
-          field
-          message
-        }
-      }
-    }
-  `;
-  const data = await shopifyFetch({
-    query,
-    variables: { input: { email, password, firstName, lastName } }
-  });
-  return data?.customerCreate;
-}
-
-export async function getCustomerData(accessToken) {
-  const query = `
-    query getCustomerData($customerAccessToken: String!) {
-      customer(customerAccessToken: $customerAccessToken) {
-        id
-        firstName
-        lastName
-        email
-        orders(first: 10) {
-          edges {
-            node {
-              id
-              orderNumber
-              processedAt
-              totalPrice {
-                amount
-              }
-              lineItems(first: 5) {
-                edges {
-                  node {
-                    title
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  `;
-  const data = await shopifyFetch({
-    query,
-    variables: { customerAccessToken: accessToken }
-  });
-  return data?.customer;
-}
 
 // -----------------------------------------
 // Native Dynamic Cart API Methods
@@ -571,4 +504,77 @@ export async function removeCartLines(cartId, lineIds) {
   `;
   const data = await shopifyFetch({ query, variables: { cartId, lineIds } });
   return data?.cartLinesRemove;
+}
+
+export async function getShopifyMenu(handle) {
+  const query = `
+    query getMenu($handle: String!) {
+      menu(handle: $handle) {
+        id
+        title
+        items {
+          id
+          title
+          url
+          type
+          items {
+            id
+            title
+            url
+            type
+          }
+        }
+      }
+    }
+  `;
+  try {
+    const data = await shopifyFetch({ query, variables: { handle } });
+    return data?.menu || null;
+  } catch (error) {
+    console.error(`Failed to fetch menu ${handle}:`, error);
+    return null;
+  }
+}
+
+export async function getShopifyProductRecommendations(productId) {
+  const query = `
+    query productRecommendations($productId: ID!) {
+      productRecommendations(productId: $productId) {
+        id
+        title
+        handle
+        vendor
+        productType
+        tags
+        images(first: 1) {
+          edges {
+            node {
+              url
+            }
+          }
+        }
+        variants(first: 1) {
+          edges {
+            node {
+              id
+              price {
+                amount
+              }
+              compareAtPrice {
+                amount
+              }
+              availableForSale
+            }
+          }
+        }
+      }
+    }
+  `;
+  try {
+    const data = await shopifyFetch({ query, variables: { productId } });
+    return data?.productRecommendations?.map(normalizeProduct) || [];
+  } catch (error) {
+    console.error(`Failed to fetch recommendations for ${productId}:`, error);
+    return [];
+  }
 }

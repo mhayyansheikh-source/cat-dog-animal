@@ -1,40 +1,34 @@
-import { NextResponse } from "next/server";
-import { customerAccessTokenCreate } from "@/utils/shopify";
-import { cookies } from "next/headers";
+import { NextResponse } from 'next/server';
 
-export async function POST(request) {
-  try {
-    const { email, password } = await request.json();
+export const runtime = 'edge';
 
-    if (!email || !password) {
-      return NextResponse.json({ success: false, error: "Email and password are required" }, { status: 400 });
-    }
+export async function GET(request) {
+  const authorizationEndpoint = process.env.SHOPIFY_CUSTOMER_API_AUTHORIZATION_ENDPOINT;
+  const clientId = process.env.SHOPIFY_CUSTOMER_API_CLIENT_ID;
+  // Dynamically resolve redirect URI for Cloudflare preview deployments
+  const redirectUri = process.env.SHOPIFY_CUSTOMER_API_REDIRECT_URI || new URL('/api/auth/callback', request.url).toString();
 
-    const authData = await customerAccessTokenCreate(email, password);
-
-    if (authData?.customerUserErrors?.length > 0) {
-      return NextResponse.json({ success: false, error: authData.customerUserErrors[0].message }, { status: 401 });
-    }
-
-    const token = authData?.customerAccessToken?.accessToken;
-    const expiresAt = authData?.customerAccessToken?.expiresAt;
-
-    if (token) {
-      // Set HTTP-only cookie
-      cookies().set("shopify_customer_token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        expires: new Date(expiresAt),
-        path: "/",
-      });
-
-      return NextResponse.json({ success: true });
-    }
-
-    return NextResponse.json({ success: false, error: "Invalid credentials" }, { status: 401 });
-  } catch (error) {
-    console.error("Login API error:", error);
-    return NextResponse.json({ success: false, error: "Internal Server Error" }, { status: 500 });
+  if (!authorizationEndpoint || !clientId || !redirectUri) {
+    return NextResponse.json({ error: 'Missing environment variables' }, { status: 500 });
   }
+
+  // Generate a random state for security
+  const state = Math.random().toString(36).substring(7);
+
+  // Note: For a production app, Shopify Customer Account API requires PKCE.
+  // For demonstration, we construct the authorization URL with minimal required parameters.
+  // We recommend using a library like 'oauth4webapi' or 'client-oauth2' for full PKCE compliance.
+  
+  const authUrl = new URL(authorizationEndpoint);
+  authUrl.searchParams.append('client_id', clientId);
+  authUrl.searchParams.append('response_type', 'code');
+  authUrl.searchParams.append('redirect_uri', redirectUri);
+  authUrl.searchParams.append('state', state);
+  authUrl.searchParams.append('scope', 'openid email https://api.customers.com/auth/customer.graphql');
+
+  // Set the state in a cookie to verify it in the callback
+  const response = NextResponse.redirect(authUrl.toString());
+  response.cookies.set('oauth_state', state, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+
+  return response;
 }

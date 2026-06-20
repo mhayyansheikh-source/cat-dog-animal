@@ -1,6 +1,7 @@
-import { getShopifyProductByHandle, getShopifyProducts } from "@/utils/shopify";
+import { getShopifyProductByHandle, getShopifyProducts, getShopifyProductRecommendations } from "@/utils/shopify";
 import ProductDetailsClient from "@/components/ProductDetailsClient";
 import CartDrawer from "@/components/CartDrawer";
+import ProductCard from "@/components/ProductCard";
 import { notFound } from "next/navigation";
 
 export const runtime = "edge";
@@ -36,6 +37,8 @@ export default async function ProductPage({ params }) {
   if (!product) {
     notFound();
   }
+
+  const recommendations = await getShopifyProductRecommendations(product.id);
 
   // Structured JSON-LD Schema (GEO & AEO search optimization)
   const productSchema = {
@@ -110,6 +113,20 @@ export default async function ProductPage({ params }) {
       
       {/* Interactive PDP Client section */}
       <ProductDetailsClient product={product} />
+
+      {/* Recommendations Section */}
+      {recommendations && recommendations.length > 0 && (
+        <div className="mt-5 pt-5 border-top">
+          <h3 className="mb-4 fw-bold" style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif" }}>
+            You May Also Like
+          </h3>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "24px" }}>
+            {recommendations.map((rec) => (
+              <ProductCard key={rec.id} product={rec} />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Dynamic slide-out Cart overlay */}
       <CartDrawer />

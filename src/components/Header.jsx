@@ -6,13 +6,11 @@ import { useCart } from "@/context/CartContext";
 import { ShoppingCart, Search, Menu, X } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import PredictiveSearch from "@/components/PredictiveSearch";
-import CustomerAuthModal from "@/components/CustomerAuthModal";
 
-export default function Header() {
+export default function Header({ menu }) {
   const { setIsCartOpen, cartCount } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
 
@@ -95,11 +93,24 @@ export default function Header() {
           {/* Desktop Navigation Links */}
           <div className="collapse navbar-collapse d-none d-lg-block" id="navbarNav">
             <ul className="navbar-nav mx-auto mb-3 mb-lg-0 fw-semibold">
-              <li className="nav-item px-2"><Link href="/" className="nav-link premium-nav-link">Home</Link></li>
-              <li className="nav-item px-2"><Link href="/collections/dogs" className="nav-link premium-nav-link">🐶 Dogs</Link></li>
-              <li className="nav-item px-2"><Link href="/collections/cats" className="nav-link premium-nav-link">🐱 Cats</Link></li>
-              <li className="nav-item px-2"><Link href="/collections/accessories" className="nav-link premium-nav-link">Accessories</Link></li>
-              <li className="nav-item px-2"><Link href="/collections/bundles" className="nav-link premium-nav-link">Bundles</Link></li>
+              {menu?.items ? (
+                menu.items.map((item) => (
+                  <li className="nav-item px-2" key={item.id}>
+                    <Link href={new URL(item.url, "http://localhost").pathname} className="nav-link premium-nav-link">
+                      {item.title}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <>
+                  <li className="nav-item px-2"><Link href="/" className="nav-link premium-nav-link">Home</Link></li>
+                  <li className="nav-item px-2"><Link href="/collections/dogs" className="nav-link premium-nav-link">🐶 Dogs</Link></li>
+                  <li className="nav-item px-2"><Link href="/collections/cats" className="nav-link premium-nav-link">🐱 Cats</Link></li>
+                  <li className="nav-item px-2"><Link href="/collections/accessories" className="nav-link premium-nav-link">Accessories</Link></li>
+                  <li className="nav-item px-2"><Link href="/collections/bundles" className="nav-link premium-nav-link">Bundles</Link></li>
+                  <li className="nav-item px-2"><Link href="/collections/replacement-parts" className="nav-link premium-nav-link">Parts</Link></li>
+                </>
+              )}
             </ul>
 
             {/* Right Side Tools matched to design */}
@@ -115,16 +126,17 @@ export default function Header() {
                 <Search size={22} strokeWidth={2.5} />
               </motion.button>
 
-              <motion.button 
-                whileHover={{ scale: 1.1, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setIsAuthOpen(true)}
-                className="btn p-0 border-0 bg-transparent text-charcoal-dark"
+              <Link 
+                href="/account"
+                className="btn p-0 border-0 bg-transparent text-charcoal-dark d-flex align-items-center justify-content-center transition-transform hover-scale"
                 title="Account"
                 aria-label="User account"
+                style={{ transition: 'transform 0.2s ease-in-out' }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1) translateY(-2px)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              </motion.button>
+              </Link>
 
               <motion.button 
                 whileHover={{ scale: 1.1 }}
@@ -170,12 +182,26 @@ export default function Header() {
             className="position-fixed top-0 start-0 h-100 bg-white shadow-lg z-2"
             style={{ width: "80%", maxWidth: "300px", paddingTop: "80px" }}
           >
-            <ul className="list-unstyled p-4 fs-5 fw-semibold d-flex flex-column gap-3">
-              <li><Link href="/" onClick={() => setIsMenuOpen(false)} className="text-dark text-decoration-none d-block">Home</Link></li>
-              <li><Link href="/collections/dogs" onClick={() => setIsMenuOpen(false)} className="text-dark text-decoration-none d-block">🐶 Dogs</Link></li>
-              <li><Link href="/collections/cats" onClick={() => setIsMenuOpen(false)} className="text-dark text-decoration-none d-block">🐱 Cats</Link></li>
-              <li><Link href="/collections/accessories" onClick={() => setIsMenuOpen(false)} className="text-dark text-decoration-none d-block">Accessories</Link></li>
-              <li><Link href="/collections/bundles" onClick={() => setIsMenuOpen(false)} className="text-dark text-decoration-none d-block">Bundles</Link></li>
+            {/* Mobile Navigation Links */}
+            <ul className="list-unstyled mb-0 font-body fs-5 p-4">
+              {menu?.items ? (
+                menu.items.map((item) => (
+                  <li className="mb-4" key={item.id}>
+                    <Link href={new URL(item.url, "http://localhost").pathname} onClick={() => setIsMenuOpen(false)} className="text-decoration-none text-charcoal-dark d-block">
+                      {item.title}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <>
+                  <li className="mb-4"><Link href="/" onClick={() => setIsMenuOpen(false)} className="text-decoration-none text-charcoal-dark d-block">Home</Link></li>
+                  <li className="mb-4"><Link href="/collections/dogs" onClick={() => setIsMenuOpen(false)} className="text-decoration-none text-charcoal-dark d-block">🐶 For Dogs</Link></li>
+                  <li className="mb-4"><Link href="/collections/cats" onClick={() => setIsMenuOpen(false)} className="text-decoration-none text-charcoal-dark d-block">🐱 For Cats</Link></li>
+                  <li className="mb-4"><Link href="/collections/accessories" onClick={() => setIsMenuOpen(false)} className="text-decoration-none text-charcoal-dark d-block">Accessories</Link></li>
+                  <li className="mb-4"><Link href="/collections/bundles" onClick={() => setIsMenuOpen(false)} className="text-decoration-none text-charcoal-dark d-block">Value Bundles</Link></li>
+                  <li className="mb-4"><Link href="/collections/replacement-parts" onClick={() => setIsMenuOpen(false)} className="text-decoration-none text-charcoal-dark d-block">Replacement Parts</Link></li>
+                </>
+              )}
             </ul>
           </motion.div>
         )}
@@ -197,9 +223,6 @@ export default function Header() {
 
       {/* Predictive Search Overlay */}
       <PredictiveSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
-
-      {/* Customer Auth Modal */}
-      <CustomerAuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
 
     </motion.header>
   );

@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import dynamic from "next/dynamic";
 import PageTransition from "@/components/PageTransition";
 import ToastProvider from "@/components/ToastProvider";
+import { getShopifyMenu } from "@/utils/shopify";
 
 const Footer = dynamic(() => import("@/components/Footer"), { ssr: true });
 const CartDrawer = dynamic(() => import("@/components/CartDrawer"));
@@ -47,7 +48,10 @@ export const metadata = {
   }
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const mainMenu = await getShopifyMenu('main-menu');
+  const footerMenu = await getShopifyMenu('footer');
+
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -73,13 +77,13 @@ export default function RootLayout({ children }) {
       <body className="min-h-full d-flex flex-column bg-white text-charcoal-dark">
         <ToastProvider />
         <CartProvider>
-          <Header />
+          <Header menu={mainMenu} />
           <main className="flex-grow-1">
             <PageTransition>
               {children}
             </PageTransition>
           </main>
-          <Footer />
+          <Footer menu={footerMenu} />
           <CartDrawer />
         </CartProvider>
       </body>
