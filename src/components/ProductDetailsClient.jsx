@@ -100,7 +100,15 @@ export default function ProductDetailsClient({ product }) {
 
               {/* Desktop Thumbnail Carousel */}
               {product.images.length > 1 && (
-                <div className="d-flex gap-2 overflow-auto pb-2">
+                <div 
+                  className="d-flex gap-2 overflow-auto pb-2 hide-scrollbar"
+                  style={{
+                    msOverflowStyle: "none",
+                    scrollbarWidth: "none",
+                    scrollSnapType: "x mandatory",
+                    WebkitOverflowScrolling: "touch"
+                  }}
+                >
                   {product.images.map((img, idx) => (
                     <button
                       key={idx}
@@ -111,7 +119,8 @@ export default function ProductDetailsClient({ product }) {
                         height: "80px",
                         border: activeImage === img ? "2px solid var(--zesty-orange)" : "1px solid var(--pale-gray)",
                         transition: "border 0.3s ease",
-                        background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)"
+                        background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)",
+                        scrollSnapAlign: "start"
                       }}
                       aria-label={`View image thumbnail ${idx + 1}`}
                     >
@@ -121,6 +130,7 @@ export default function ProductDetailsClient({ product }) {
                         fill
                         quality={60}
                         sizes="80px"
+                        loading="lazy"
                         style={{ objectFit: "contain" }}
                       />
                     </button>
