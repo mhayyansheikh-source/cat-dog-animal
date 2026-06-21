@@ -63,10 +63,10 @@ export default function ProductCard({ product }) {
               <img
                 src={defaultImage}
                 alt={product.title}
-                className="w-100 h-100 object-fit-contain p-3 transition-all duration-500"
+                className="w-100 h-100 object-fit-cover transition-all duration-500"
                 style={{
                   opacity: isHovered ? 0 : 1,
-                  transform: isHovered ? "scale(0.95)" : "scale(1)",
+                  transform: isHovered ? "scale(1)" : "scale(1.05)",
                   position: "absolute",
                   top: 0,
                   left: 0,
@@ -77,10 +77,10 @@ export default function ProductCard({ product }) {
               <img
                 src={hoverImage}
                 alt={`${product.title} lifestyle`}
-                className="w-100 h-100 object-fit-contain p-3 transition-all duration-500"
+                className="w-100 h-100 object-fit-cover transition-all duration-500"
                 style={{
                   opacity: isHovered ? 1 : 0,
-                  transform: isHovered ? "scale(1)" : "scale(1.05)",
+                  transform: isHovered ? "scale(1.05)" : "scale(1.1)",
                   position: "absolute",
                   top: 0,
                   left: 0,
