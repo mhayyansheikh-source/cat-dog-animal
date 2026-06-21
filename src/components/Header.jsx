@@ -7,7 +7,7 @@ import { ShoppingCart, Search, Menu, X, PawPrint, ChevronRight } from "lucide-re
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import PredictiveSearch from "@/components/PredictiveSearch";
 
-export default function Header({ menu, shop }) {
+export default function Header({ menu, shop, collections }) {
   const { setIsCartOpen, cartCount } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -45,7 +45,7 @@ export default function Header({ menu, shop }) {
         }}
       >
         <span>🐾 Free Shipping on Orders Over $50 · Subscribe & Save 20% · </span>
-        <Link href="/collections/cats" className="text-white text-decoration-underline ms-1">
+        <Link href={collections?.length > 0 ? `/collections/${collections[0].handle}` : "/collections/all"} className="text-white text-decoration-underline ms-1">
           Shop Now
         </Link>
       </div>

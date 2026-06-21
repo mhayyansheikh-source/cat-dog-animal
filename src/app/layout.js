@@ -92,7 +92,7 @@ export default async function RootLayout({ children }) {
       <body className="min-h-full d-flex flex-column bg-white text-charcoal-dark">
         <ToastProvider />
         <CartProvider>
-          <Header menu={mainMenu} shop={shop} />
+          <Header menu={mainMenu} shop={shop} collections={collectionsData} />
           <main className="flex-grow-1">
             <PageTransition>
               {children}
