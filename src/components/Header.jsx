@@ -178,13 +178,15 @@ export default function Header({ menu, shop }) {
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            className="position-fixed top-0 start-0 h-100 shadow-lg"
+            className="position-fixed top-0 start-0 shadow-lg"
             style={{ 
+              height: "100vh",
               width: "85%", 
               maxWidth: "360px", 
               paddingTop: "80px",
               background: "linear-gradient(145deg, var(--forest-green) 0%, #1a6b58 100%)",
-              zIndex: 1040
+              zIndex: 1040,
+              overflowY: "auto"
             }}
           >
             {/* Drawer Header with Logo Area (Optional, but looks premium) */}
@@ -250,8 +252,8 @@ export default function Header({ menu, shop }) {
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsMenuOpen(false)}
-            className="position-fixed top-0 start-0 w-100 h-100 bg-dark z-1"
-            style={{ pointerEvents: "auto" }}
+            className="position-fixed top-0 start-0 w-100 bg-dark"
+            style={{ height: "100vh", zIndex: 1030, pointerEvents: "auto" }}
           />
         )}
       </AnimatePresence>
