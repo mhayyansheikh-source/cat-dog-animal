@@ -16,6 +16,16 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
     }
   };
 
+  const getPath = (url) => {
+    if (!url) return "#";
+    try {
+      if (url.startsWith('/')) return url;
+      return new URL(url, "https://peteora.com").pathname;
+    } catch (e) {
+      return url;
+    }
+  };
+
   const policyLinks = [
     policies?.refundPolicy && { title: policies.refundPolicy.title || "Refund Policy", url: "/policies/refund-policy" },
     policies?.privacyPolicy && { title: policies.privacyPolicy.title || "Privacy Policy", url: "/policies/privacy-policy" },
@@ -57,13 +67,13 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
             </form>
           </div>
 
-          {/* Quick Links (Main Menu) */}
+          {/* Shop (Main Menu) */}
           <div className="col-lg-2 col-md-3 col-6">
-            <h6 className="fw-bold mb-4 text-uppercase text-white letter-spacing-wide">Quick Links</h6>
+            <h6 className="fw-bold mb-4 text-uppercase text-white letter-spacing-wide">Shop</h6>
             <ul className="list-unstyled mb-0 font-body fs-6">
               {mainMenu?.items?.map((link) => (
                 <li className="mb-3" key={link.id}>
-                  <Link href={new URL(link.url, "https://peteora.com").pathname} className="footer-link text-white-50">
+                  <Link href={getPath(link.url)} className="footer-link text-white-50">
                     {link.title}
                   </Link>
                 </li>
@@ -77,18 +87,18 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
             </ul>
           </div>
 
-          {/* Collections */}
+          {/* Explore (Footer Menu) */}
           <div className="col-lg-2 col-md-3 col-6">
-            <h6 className="fw-bold mb-4 text-uppercase text-white letter-spacing-wide">Collections</h6>
+            <h6 className="fw-bold mb-4 text-uppercase text-white letter-spacing-wide">Explore</h6>
             <ul className="list-unstyled mb-0 font-body fs-6">
-              {collections?.map((col) => (
-                <li className="mb-3" key={col.id}>
-                  <Link href={`/collections/${col.handle}`} className="footer-link text-white-50">
-                    {col.title}
+              {menu?.items?.map((link) => (
+                <li className="mb-3" key={link.id}>
+                  <Link href={getPath(link.url)} className="footer-link text-white-50">
+                    {link.title}
                   </Link>
                 </li>
               ))}
-              {!collections?.length && (
+              {!menu?.items?.length && (
                 <>
                   <li className="mb-3"><Link href="/collections/dogs" className="footer-link text-white-50">Dogs</Link></li>
                   <li className="mb-3"><Link href="/collections/cats" className="footer-link text-white-50">Cats</Link></li>
@@ -108,19 +118,6 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
                   </Link>
                 </li>
               ))}
-              {/* Fallback extra links if any from footer menu */}
-              {menu?.items && menu.items.length > 0 && !menu.items[0]?.items && menu.items.map((link) => {
-                if (!policyLinks.some(p => p.title === link.title)) {
-                  return (
-                    <li className="mb-3" key={link.id}>
-                      <Link href={new URL(link.url, "https://peteora.com").pathname} className="footer-link text-white-50">
-                        {link.title}
-                      </Link>
-                    </li>
-                  )
-                }
-                return null;
-              })}
             </ul>
           </div>
 

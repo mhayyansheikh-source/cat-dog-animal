@@ -14,6 +14,16 @@ export default function Header({ menu, shop, collections }) {
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
 
+  const getPath = (url) => {
+    if (!url) return "#";
+    try {
+      if (url.startsWith('/')) return url;
+      return new URL(url, "https://peteora.com").pathname;
+    } catch (e) {
+      return url;
+    }
+  };
+
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious();
     if (latest > previous && latest > 150) {
@@ -103,9 +113,9 @@ export default function Header({ menu, shop, collections }) {
           {/* Desktop Navigation Links */}
           <div className="collapse navbar-collapse d-none d-lg-block" id="navbarNav">
             <ul className="navbar-nav mx-auto mb-3 mb-lg-0 fw-semibold">
-              {menu?.items && menu.items.map((item) => (
+                {menu?.items && menu.items.map((item) => (
                   <li className="nav-item px-2" key={item.id}>
-                    <Link href={new URL(item.url, "https://peteora.com").pathname} className="nav-link premium-nav-link">
+                    <Link href={getPath(item.url)} className="nav-link premium-nav-link">
                       {item.title}
                     </Link>
                   </li>
