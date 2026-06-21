@@ -3,9 +3,19 @@ import { getShopPolicies, getShopInfo } from "@/utils/shopify";
 import { ShieldCheck, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-export const runtime = "edge";
+export async function generateStaticParams() {
+  return [
+    { handle: 'refund-policy' },
+    { handle: 'privacy-policy' },
+    { handle: 'terms-of-service' },
+    { handle: 'shipping-policy' },
+    { handle: 'contact-information' },
+    { handle: 'legal-notice' },
+  ];
+}
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   const { handle } = params;
   
   const titles = {
@@ -22,7 +32,8 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function PolicyPage({ params }) {
+export default async function PolicyPage(props) {
+  const params = await props.params;
   const { handle } = params;
   const policies = await getShopPolicies();
   const shopInfo = await getShopInfo();
