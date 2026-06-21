@@ -29,8 +29,6 @@ export default function ProductCard({ product }) {
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="card rounded-card h-100 shadow-sm border hover-scale"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}
     >
       {/* Top Banner Tag */}
@@ -45,7 +43,13 @@ export default function ProductCard({ product }) {
         )}
 
         {/* Product Image Wrapper */}
-        <Link href={`/product/${product.handle || product.id}`} className="d-block overflow-hidden position-relative" style={{ height: "240px", background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)" }}>
+        <Link 
+          href={`/product/${product.handle || product.id}`} 
+          className="d-block overflow-hidden position-relative" 
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          style={{ height: "240px", background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)" }}
+        >
           {(!defaultImage || (!defaultImage.startsWith("http") && !defaultImage.startsWith("/"))) ? (
             <div 
               className="w-100 h-100 d-flex align-items-center justify-content-center transition-all"
