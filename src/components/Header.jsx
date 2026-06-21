@@ -38,7 +38,7 @@ export default function Header({ menu, shop }) {
       <div 
         className="d-flex justify-content-center align-items-center py-2 px-3 gap-2" 
         style={{ 
-          backgroundColor: "var(--zesty-orange, #F5761A)", 
+          background: "linear-gradient(to right, #2c8c78 50%, #fe924d 50%)", 
           color: "white",
           fontSize: "14px",
           fontWeight: "700"

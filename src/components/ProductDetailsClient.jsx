@@ -7,7 +7,7 @@ import ShippingTimer from "@/components/ShippingTimer";
 import LiveScarcity from "@/components/LiveScarcity";
 import TrustBadges from "@/components/TrustBadges";
 import DirectCheckoutBar from "@/components/DirectCheckoutBar";
-import { ShoppingCart, Star, Sparkles, Check, ChevronDown, ChevronUp } from "lucide-react";
+import { ShoppingCart, Star, Sparkles, Check, ChevronDown, ChevronUp, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function ProductDetailsClient({ product }) {
