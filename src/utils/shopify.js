@@ -75,7 +75,8 @@ function normalizeProduct(node) {
       currencyCode: v.price?.currencyCode || "USD",
       compare_at_price: v.compareAtPrice?.amount || null,
       available: v.availableForSale,
-      sku: v.sku || ""
+      sku: v.sku || "",
+      image: v.image?.url || null
     };
   });
 
@@ -99,7 +100,7 @@ function normalizeProduct(node) {
 
 export async function getShopifyProducts() {
   const query = `
-    query getProducts {
+    query getProducts @inContext(country: US) {
       products(first: 50) {
         edges {
           node {
@@ -136,6 +137,9 @@ export async function getShopifyProducts() {
                   }
                   availableForSale
                   sku
+                  image {
+                    url
+                  }
                 }
               }
             }
@@ -154,7 +158,7 @@ export async function getShopifyProducts() {
 
 export async function getShopifyCollectionByHandle(handle, filter = [], sortKey = "COLLECTION_DEFAULT", reverse = false) {
   const query = `
-    query getCollectionByHandle($handle: String!, $filters: [ProductFilter!], $sortKey: ProductCollectionSortKeys!, $reverse: Boolean) {
+    query getCollectionByHandle($handle: String!, $filters: [ProductFilter!], $sortKey: ProductCollectionSortKeys!, $reverse: Boolean) @inContext(country: US) {
       collection(handle: $handle) {
         id
         title
@@ -206,8 +210,11 @@ export async function getShopifyCollectionByHandle(handle, filter = [], sortKey 
                       amount
                     }
                     availableForSale
-                    sku
+                  sku
+                  image {
+                    url
                   }
+                }
                 }
               }
             }
@@ -239,7 +246,7 @@ export async function getShopifyCollectionByHandle(handle, filter = [], sortKey 
 }
 export async function getShopifyProductByHandle(handle) {
   const query = `
-    query getProductByHandle($handle: String!) {
+    query getProductByHandle($handle: String!) @inContext(country: US) {
       productByHandle(handle: $handle) {
         id
         title
@@ -271,8 +278,11 @@ export async function getShopifyProductByHandle(handle) {
                 amount
               }
               availableForSale
-              sku
-            }
+                  sku
+                  image {
+                    url
+                  }
+                }
           }
         }
         metafields(identifiers: [{namespace: "custom", key: "faq_json"}, {namespace: "custom", key: "ingredients"}, {namespace: "custom", key: "bundle_items"}]) {
@@ -324,7 +334,7 @@ export async function createShopifyCheckout(lineItems) {
 
 export async function getPredictiveSearch(queryStr) {
   const query = `
-    query predictiveSearch($query: String!) {
+    query predictiveSearch($query: String!) @inContext(country: US) {
       predictiveSearch(query: $query) {
         products {
           id
@@ -442,7 +452,7 @@ export async function createCart() {
 
 export async function getCart(cartId) {
   const query = `
-    query getCart($id: ID!) {
+    query getCart($id: ID!) @inContext(country: US) {
       cart(id: $id) {
         ...cartDetails
       }
@@ -512,7 +522,7 @@ export async function removeCartLines(cartId, lineIds) {
 
 export async function getShopifyMenu(handle) {
   const query = `
-    query getMenu($handle: String!) {
+    query getMenu($handle: String!) @inContext(country: US) {
       menu(handle: $handle) {
         id
         title
@@ -542,7 +552,7 @@ export async function getShopifyMenu(handle) {
 
 export async function getShopifyProductRecommendations(productId) {
   const query = `
-    query productRecommendations($productId: ID!) {
+    query productRecommendations($productId: ID!) @inContext(country: US) {
       productRecommendations(productId: $productId) {
         id
         title
@@ -574,8 +584,11 @@ export async function getShopifyProductRecommendations(productId) {
                           amount
                         }
                         availableForSale
-                        sku
-                      }
+                  sku
+                  image {
+                    url
+                  }
+                }
                     }
                   }
       }
@@ -592,7 +605,7 @@ export async function getShopifyProductRecommendations(productId) {
 
 export async function getShopifyCollectionsWithProducts(limit = 10, productsPerCollection = 8) {
   const query = `
-    query getCollectionsWithProducts($limit: Int!, $productsLimit: Int!) {
+    query getCollectionsWithProducts($limit: Int!, $productsLimit: Int!) @inContext(country: US) {
       collections(first: $limit, sortKey: UPDATED_AT, reverse: true) {
         edges {
           node {
@@ -632,8 +645,11 @@ export async function getShopifyCollectionsWithProducts(limit = 10, productsPerC
                           amount
                         }
                         availableForSale
-                        sku
-                      }
+                  sku
+                  image {
+                    url
+                  }
+                }
                     }
                   }
                 }
@@ -694,7 +710,7 @@ export async function subscribeToNewsletter(email) {
 
 export async function getShopifyMetaobject(type, handle) {
   const query = `
-    query getMetaobject($handle: MetaobjectHandleInput!) {
+    query getMetaobject($handle: MetaobjectHandleInput!) @inContext(country: US) {
       metaobject(handle: $handle) {
         id
         handle
@@ -729,7 +745,7 @@ export async function getShopifyMetaobject(type, handle) {
 
 export async function getShopInfo() {
   const query = `
-    query getShopInfo {
+    query getShopInfo @inContext(country: US) {
       shop {
         name
         description
@@ -757,7 +773,7 @@ export async function getShopInfo() {
 
 export async function getShopPolicies() {
   const query = `
-    query getShopPolicies {
+    query getShopPolicies @inContext(country: US) {
       shop {
         privacyPolicy {
           title
