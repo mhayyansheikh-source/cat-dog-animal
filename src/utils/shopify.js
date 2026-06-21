@@ -65,6 +65,9 @@ function normalizeProduct(node) {
   }));
 
   const imagesMapped = (node.images?.edges || []).map(edge => edge.node.url);
+  const mediaMapped = (node.media?.edges || [])
+    .map(edge => edge.node)
+    .filter(node => node.mediaContentType === 'VIDEO' || node.mediaContentType === 'EXTERNAL_VIDEO');
   
   const variantsMapped = (node.variants?.edges || []).map(edge => {
     const v = edge.node;
@@ -91,6 +94,7 @@ function normalizeProduct(node) {
     currencyCode: variantsMapped[0]?.currencyCode || "USD",
     compare_at_price: variantsMapped[0]?.compare_at_price || null,
     images: imagesMapped,
+    media: mediaMapped,
     options: optionsMapped,
     variants: variantsMapped,
     body_html: node.descriptionHtml || "",
@@ -119,6 +123,25 @@ export async function getShopifyProducts() {
               edges {
                 node {
                   url
+                }
+              }
+            }
+            media(first: 10) {
+              edges {
+                node {
+                  mediaContentType
+                  ... on Video {
+                    sources {
+                      url
+                      format
+                      mimeType
+                    }
+                    previewImage { url }
+                  }
+                  ... on ExternalVideo {
+                    embeddedUrl
+                    previewImage { url }
+                  }
                 }
               }
             }
@@ -198,6 +221,25 @@ export async function getShopifyCollectionByHandle(handle, filter = [], sortKey 
                   }
                 }
               }
+            media(first: 10) {
+              edges {
+                node {
+                  mediaContentType
+                  ... on Video {
+                    sources {
+                      url
+                      format
+                      mimeType
+                    }
+                    previewImage { url }
+                  }
+                  ... on ExternalVideo {
+                    embeddedUrl
+                    previewImage { url }
+                  }
+                }
+              }
+            }
               variants(first: 20) {
                 edges {
                   node {
@@ -266,6 +308,25 @@ export async function getShopifyProductByHandle(handle) {
             }
           }
         }
+            media(first: 10) {
+              edges {
+                node {
+                  mediaContentType
+                  ... on Video {
+                    sources {
+                      url
+                      format
+                      mimeType
+                    }
+                    previewImage { url }
+                  }
+                  ... on ExternalVideo {
+                    embeddedUrl
+                    previewImage { url }
+                  }
+                }
+              }
+            }
         variants(first: 20) {
           edges {
             node {
@@ -572,6 +633,25 @@ export async function getShopifyProductRecommendations(productId) {
                       }
                     }
                   }
+            media(first: 10) {
+              edges {
+                node {
+                  mediaContentType
+                  ... on Video {
+                    sources {
+                      url
+                      format
+                      mimeType
+                    }
+                    previewImage { url }
+                  }
+                  ... on ExternalVideo {
+                    embeddedUrl
+                    previewImage { url }
+                  }
+                }
+              }
+            }
                   variants(first: 20) {
                     edges {
                       node {
@@ -633,6 +713,25 @@ export async function getShopifyCollectionsWithProducts(limit = 10, productsPerC
                       }
                     }
                   }
+            media(first: 10) {
+              edges {
+                node {
+                  mediaContentType
+                  ... on Video {
+                    sources {
+                      url
+                      format
+                      mimeType
+                    }
+                    previewImage { url }
+                  }
+                  ... on ExternalVideo {
+                    embeddedUrl
+                    previewImage { url }
+                  }
+                }
+              }
+            }
                   variants(first: 20) {
                     edges {
                       node {

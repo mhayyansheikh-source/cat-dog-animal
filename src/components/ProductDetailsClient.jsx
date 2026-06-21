@@ -13,8 +13,33 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function ProductDetailsClient({ product }) {
   const { addToCart } = useCart();
   
+  // Combine images and media into a unified gallery array
+  const galleryItems = [
+    ...(product.images || []).map(img => ({ type: 'IMAGE', url: img, preview: img })),
+    ...(product.media || []).map(m => {
+      if (m.mediaContentType === 'VIDEO') {
+        const source = m.sources?.find(s => s.format === 'mp4') || m.sources?.[0];
+        return { type: 'VIDEO', url: source?.url, preview: m.previewImage?.url };
+      } else if (m.mediaContentType === 'EXTERNAL_VIDEO') {
+        return { type: 'EXTERNAL_VIDEO', url: m.embeddedUrl, preview: m.previewImage?.url };
+      }
+      return null;
+    }).filter(Boolean)
+  ];
+
+  const uniqueGalleryItems = [];
+  const seenUrls = new Set();
+  galleryItems.forEach(item => {
+    const key = item.url || item.preview;
+    if (key && !seenUrls.has(key)) {
+      seenUrls.add(key);
+      uniqueGalleryItems.push(item);
+    }
+  });
+
   // Gallery state
-  const [activeImage, setActiveImage] = useState(product.images[0] || "");
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeItem = uniqueGalleryItems[activeIndex] || uniqueGalleryItems[0];
   
   // Variant states
   const [activeVariant, setActiveVariant] = useState(product.variants[0]);
@@ -47,10 +72,10 @@ export default function ProductDetailsClient({ product }) {
 
   const handleVariantSelect = (v) => {
     setActiveVariant(v);
-    if (v.image?.url) {
-      setActiveImage(v.image.url);
-    } else if (v.image) {
-      setActiveImage(v.image);
+    const vImageUrl = v.image?.url || v.image;
+    if (vImageUrl) {
+      const idx = uniqueGalleryItems.findIndex(item => item.preview === vImageUrl || item.url === vImageUrl);
+      if (idx !== -1) setActiveIndex(idx);
     }
   };
 
@@ -78,28 +103,52 @@ export default function ProductDetailsClient({ product }) {
               <div className="rounded-card p-0 mb-3 position-relative" style={{ height: "450px", overflow: "hidden", background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)" }}>
                 <AnimatePresence mode="wait">
                   <motion.div
-                    key={activeImage}
+                    key={activeIndex}
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 1.02 }}
                     transition={{ duration: 0.3 }}
-                    className="position-absolute w-100 h-100 top-0 start-0"
+                    className="position-absolute w-100 h-100 top-0 start-0 d-flex justify-content-center align-items-center"
                   >
-                    <Image
-                      src={activeImage}
-                      alt={product.title}
-                      fill
-                      priority={true}
-                      quality={90}
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      style={{ objectFit: "contain" }}
-                    />
+                    {activeItem?.type === 'IMAGE' && (
+                      <Image
+                        src={activeItem.url}
+                        alt={product.title}
+                        fill
+                        priority={true}
+                        quality={90}
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        style={{ objectFit: "contain" }}
+                      />
+                    )}
+                    {activeItem?.type === 'VIDEO' && (
+                      <video
+                        src={activeItem.url}
+                        poster={activeItem.preview}
+                        controls
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="w-100 h-100"
+                        style={{ objectFit: "contain", backgroundColor: "#000" }}
+                      />
+                    )}
+                    {activeItem?.type === 'EXTERNAL_VIDEO' && (
+                      <iframe
+                        src={activeItem.url.replace("watch?v=", "embed/")}
+                        title={product.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-100 h-100 border-0"
+                      />
+                    )}
                   </motion.div>
                 </AnimatePresence>
               </div>
 
               {/* Desktop Thumbnail Carousel */}
-              {product.images.length > 1 && (
+              {uniqueGalleryItems.length > 1 && (
                 <div 
                   className="d-flex gap-2 overflow-auto pb-2 hide-scrollbar"
                   style={{
@@ -109,30 +158,35 @@ export default function ProductDetailsClient({ product }) {
                     WebkitOverflowScrolling: "touch"
                   }}
                 >
-                  {product.images.map((img, idx) => (
+                  {uniqueGalleryItems.map((item, idx) => (
                     <button
                       key={idx}
-                      onClick={() => setActiveImage(img)}
+                      onClick={() => setActiveIndex(idx)}
                       className="btn p-0 border rounded overflow-hidden flex-shrink-0 position-relative"
                       style={{
                         width: "80px",
                         height: "80px",
-                        border: activeImage === img ? "2px solid var(--zesty-orange)" : "1px solid var(--pale-gray)",
+                        border: activeIndex === idx ? "2px solid var(--zesty-orange)" : "1px solid var(--pale-gray)",
                         transition: "border 0.3s ease",
                         background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)",
                         scrollSnapAlign: "start"
                       }}
-                      aria-label={`View image thumbnail ${idx + 1}`}
+                      aria-label={`View media thumbnail ${idx + 1}`}
                     >
                       <Image
-                        src={img}
+                        src={item.preview || item.url}
                         alt={`Thumbnail ${idx + 1}`}
                         fill
                         quality={60}
                         sizes="80px"
                         loading="lazy"
-                        style={{ objectFit: "contain" }}
+                        style={{ objectFit: "cover" }}
                       />
+                      {(item.type === 'VIDEO' || item.type === 'EXTERNAL_VIDEO') && (
+                        <div className="position-absolute top-50 start-50 translate-middle text-white" style={{ background: "rgba(0,0,0,0.5)", borderRadius: "50%", padding: "5px" }}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -151,10 +205,10 @@ export default function ProductDetailsClient({ product }) {
                   scrollbarWidth: "none" 
                 }}
               >
-                {product.images.map((img, idx) => (
+                {uniqueGalleryItems.map((item, idx) => (
                   <div 
                     key={idx} 
-                    className="rounded position-relative flex-shrink-0 overflow-hidden" 
+                    className="rounded position-relative flex-shrink-0 overflow-hidden d-flex justify-content-center align-items-center" 
                     style={{ 
                       scrollSnapAlign: "center", 
                       width: "100%", 
@@ -163,19 +217,41 @@ export default function ProductDetailsClient({ product }) {
                       background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)"
                     }}
                   >
-                    <Image
-                      src={img}
-                      alt={`${product.title} view ${idx + 1}`}
-                      fill
-                      priority={idx === 0}
-                      quality={idx === 0 ? 90 : 75}
-                      sizes="100vw"
-                      style={{ objectFit: "contain" }}
-                    />
+                    {item.type === 'IMAGE' && (
+                      <Image
+                        src={item.url}
+                        alt={`${product.title} view ${idx + 1}`}
+                        fill
+                        priority={idx === 0}
+                        quality={idx === 0 ? 90 : 75}
+                        sizes="100vw"
+                        style={{ objectFit: "contain" }}
+                      />
+                    )}
+                    {item.type === 'VIDEO' && (
+                      <video
+                        src={item.url}
+                        poster={item.preview}
+                        controls
+                        muted
+                        playsInline
+                        className="w-100 h-100"
+                        style={{ objectFit: "contain", backgroundColor: "#000" }}
+                      />
+                    )}
+                    {item.type === 'EXTERNAL_VIDEO' && (
+                      <iframe
+                        src={item.url.replace("watch?v=", "embed/")}
+                        title={product.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-100 h-100 border-0"
+                      />
+                    )}
                   </div>
                 ))}
               </div>
-              {product.images.length > 1 && (
+              {uniqueGalleryItems.length > 1 && (
                 <div className="text-center small text-muted mb-3 font-body">
                   <span style={{ fontSize: "20px" }}>↔</span> Swipe to see more
                 </div>
