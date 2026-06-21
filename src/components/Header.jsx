@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
-import { ShoppingCart, Search, Menu, X } from "lucide-react";
+import { ShoppingCart, Search, Menu, X, PawPrint, ChevronRight } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import PredictiveSearch from "@/components/PredictiveSearch";
 
@@ -87,10 +87,16 @@ export default function Header({ menu, shop }) {
             </button>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="btn p-2 border-0 z-3"
+              className="btn p-2 border-0 z-3 d-flex flex-column align-items-center justify-content-center"
               aria-label="Toggle navigation menu"
+              style={{ color: isMenuOpen ? "white" : "var(--forest-green)" }}
             >
-              {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
+              {isMenuOpen ? <X size={28} /> : (
+                <>
+                  <PawPrint size={26} strokeWidth={2.5} />
+                  <span style={{ fontSize: "10px", fontWeight: "bold", marginTop: "-2px" }}>MENU</span>
+                </>
+              )}
             </button>
           </div>
 
@@ -171,20 +177,67 @@ export default function Header({ menu, shop }) {
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
-            transition={{ type: "tween", duration: 0.3 }}
-            className="position-fixed top-0 start-0 h-100 bg-white shadow-lg z-2"
-            style={{ width: "80%", maxWidth: "300px", paddingTop: "80px" }}
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            className="position-fixed top-0 start-0 h-100 shadow-lg"
+            style={{ 
+              width: "85%", 
+              maxWidth: "360px", 
+              paddingTop: "80px",
+              background: "linear-gradient(145deg, var(--forest-green) 0%, #1a6b58 100%)",
+              zIndex: 1040
+            }}
           >
+            {/* Drawer Header with Logo Area (Optional, but looks premium) */}
+            <div className="px-4 pb-4 border-bottom border-light border-opacity-25 mb-4">
+               <h5 className="text-white font-heading fw-bold letter-spacing-wide mb-0 d-flex align-items-center gap-2">
+                 <PawPrint size={24} style={{ color: "var(--zesty-orange)" }} /> 
+                 EXPLORE PETEORA
+               </h5>
+            </div>
+
             {/* Mobile Navigation Links */}
-            <ul className="list-unstyled mb-0 font-body fs-5 p-4">
+            <ul className="list-unstyled mb-0 font-body px-3">
               {menu?.items && menu.items.map((item) => (
-                  <li className="mb-4" key={item.id}>
-                    <Link href={new URL(item.url, "https://peteora.com").pathname} onClick={() => setIsMenuOpen(false)} className="text-decoration-none text-charcoal-dark d-block">
-                      {item.title}
+                  <motion.li 
+                    whileHover={{ x: 10 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="mb-3" 
+                    key={item.id}
+                  >
+                    <Link 
+                      href={new URL(item.url, "https://peteora.com").pathname} 
+                      onClick={() => setIsMenuOpen(false)} 
+                      className="d-flex align-items-center justify-content-between text-decoration-none text-white p-3 rounded-4"
+                      style={{ 
+                        backgroundColor: "rgba(255, 255, 255, 0.05)",
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        backdropFilter: "blur(5px)"
+                      }}
+                    >
+                      <span className="fs-5 fw-bold">{item.title}</span>
+                      <ChevronRight size={20} style={{ color: "var(--zesty-orange)" }} />
                     </Link>
-                  </li>
+                  </motion.li>
                 ))}
             </ul>
+
+            {/* Bottom Promo/Action in Menu */}
+            <div className="position-absolute bottom-0 w-100 p-4">
+              <div 
+                className="rounded-4 p-3 text-center"
+                style={{ backgroundColor: "rgba(245, 118, 26, 0.15)", border: "1px solid var(--zesty-orange)" }}
+              >
+                <p className="text-white small fw-bold mb-2">🐾 Join the Peteora Family!</p>
+                <Link 
+                  href="/collections/bundles" 
+                  onClick={() => setIsMenuOpen(false)}
+                  className="btn btn-sm w-100 text-white fw-bold rounded-pill"
+                  style={{ backgroundColor: "var(--zesty-orange)" }}
+                >
+                  Shop Bundles & Save
+                </Link>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
