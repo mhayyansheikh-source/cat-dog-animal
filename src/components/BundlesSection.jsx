@@ -4,47 +4,7 @@ import React from "react";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 
-const DOG_BUNDLE = {
-  emoji: "🐕",
-  label: "Dog Starter Bundle",
-  bg: "var(--orange-light)",
-  tag: "Save 25%",
-  tagStyle: { backgroundColor: "var(--teal-light)", color: "var(--teal-dark)" },
-  title: "Puppy Wellness Kit",
-  desc: "Everything your dog needs to thrive — from joint health to shiny coat support.",
-  items: [
-    "Hip & Joint Chews (60ct)",
-    "Omega-3 Fish Oil (8oz)",
-    "Probiotic Bites (90ct)",
-    "Multivitamin Chews (60ct)",
-  ],
-  newPrice: "$59.99",
-  oldPrice: "$79.99",
-  href: "/collections/dogs",
-  btnStyle: { backgroundColor: "var(--orange)", color: "white" },
-  btnHover: "#C45A0E",
-};
 
-const CAT_BUNDLE = {
-  emoji: "🐈",
-  label: "Cat Starter Bundle",
-  bg: "var(--teal-light)",
-  tag: "Save 20%",
-  tagStyle: { backgroundColor: "var(--orange-light)", color: "var(--orange-dark)" },
-  title: "Kitty Health Pack",
-  desc: "A complete routine for your cat's immunity, gut, and skin health in one bundle.",
-  items: [
-    "Immune Support Chews (60ct)",
-    "Digestive Mousse (Pack of 6)",
-    "Salmon Oil Drops (4oz)",
-    "Calming Diffuser Starter Kit",
-  ],
-  newPrice: "$49.99",
-  oldPrice: "$64.99",
-  href: "/collections/cats",
-  btnStyle: { backgroundColor: "var(--teal)", color: "white" },
-  btnHover: "#0F5E52",
-};
 
 function BundleCard({ bundle }) {
   return (
@@ -194,9 +154,11 @@ function BundleCard({ bundle }) {
 }
 
 export default function BundlesSection({ dynamicProducts }) {
-  // If dynamicProducts is provided and has items, we map them.
-  // Otherwise, we fallback to the default static mock bundles.
   const hasDynamic = dynamicProducts && dynamicProducts.length > 0;
+  
+  if (!hasDynamic) {
+    return null; // Return null if no live bundles are found
+  }
 
   const renderDynamicBundles = () => {
     return dynamicProducts.map((product, idx) => {
@@ -284,14 +246,7 @@ export default function BundlesSection({ dynamicProducts }) {
             gap: "24px",
           }}
         >
-          {hasDynamic ? (
-            renderDynamicBundles()
-          ) : (
-            <>
-              <BundleCard bundle={DOG_BUNDLE} />
-              <BundleCard bundle={CAT_BUNDLE} />
-            </>
-          )}
+          {renderDynamicBundles()}
         </div>
       </div>
     </section>
