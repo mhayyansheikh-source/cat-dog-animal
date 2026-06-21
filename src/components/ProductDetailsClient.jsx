@@ -188,11 +188,11 @@ export default function ProductDetailsClient({ product }) {
           
           <div className="d-flex align-items-baseline gap-2 mb-3">
             <span className="fs-3 fw-bold text-zesty-orange">
-              {new Intl.NumberFormat('en-US', { style: 'currency', currency: product.currencyCode || 'USD' }).format(activeVariant.price)}
+              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(activeVariant.price)}
             </span>
             {activeVariant.compare_at_price && (
               <span className="text-decoration-line-through text-muted fs-5">
-                {new Intl.NumberFormat('en-US', { style: 'currency', currency: product.currencyCode || 'USD' }).format(activeVariant.compare_at_price)}
+                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(activeVariant.compare_at_price)}
               </span>
             )}
             <span className="small text-muted font-body ms-2">(Local sales tax calculated at checkout)</span>
@@ -244,7 +244,7 @@ export default function ProductDetailsClient({ product }) {
                   </div>
                   <div className="text-end">
                     <strong className="fs-5">
-                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: product.currencyCode || 'USD' }).format(basePrice)}
+                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(basePrice)}
                     </strong>
                     <span className="d-block small text-muted">/unit</span>
                   </div>
@@ -264,7 +264,7 @@ export default function ProductDetailsClient({ product }) {
                   </div>
                   <div className="text-end">
                     <strong className="fs-5 text-success">
-                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: product.currencyCode || 'USD' }).format(getBulkCardPrice(2))}
+                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(getBulkCardPrice(2))}
                     </strong>
                     <span className="d-block small text-muted">/unit</span>
                   </div>
@@ -291,7 +291,7 @@ export default function ProductDetailsClient({ product }) {
                   </div>
                   <div className="text-end">
                     <strong className="fs-5 text-success">
-                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: product.currencyCode || 'USD' }).format(getBulkCardPrice(3))}
+                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(getBulkCardPrice(3))}
                     </strong>
                     <span className="d-block small text-muted">/unit</span>
                   </div>

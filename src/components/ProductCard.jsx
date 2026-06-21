@@ -140,11 +140,11 @@ export default function ProductCard({ product }) {
           <div className="d-flex align-items-center justify-content-between mt-3 pt-2 border-top">
             <div className="d-flex align-items-baseline gap-2">
               <span className="fs-5 fw-bold" style={{ color: "var(--orange)" }}>
-                {new Intl.NumberFormat('en-US', { style: 'currency', currency: product.currencyCode || 'USD' }).format(selectedVariant.price)}
+                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(selectedVariant.price)}
               </span>
               {selectedVariant.compare_at_price && (
                 <span className="text-decoration-line-through text-muted small">
-                  {new Intl.NumberFormat('en-US', { style: 'currency', currency: product.currencyCode || 'USD' }).format(selectedVariant.compare_at_price)}
+                  {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(selectedVariant.compare_at_price)}
                 </span>
               )}
             </div>
