@@ -3,6 +3,8 @@ import { getShopPolicies, getShopInfo } from "@/utils/shopify";
 import { ShieldCheck, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
+export const runtime = "edge";
+
 export async function generateMetadata({ params }) {
   const { handle } = params;
   
