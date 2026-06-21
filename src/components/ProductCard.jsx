@@ -12,7 +12,7 @@ export default function ProductCard({ product }) {
   const [isHovered, setIsHovered] = useState(false);
 
   // Setup product images
-  const defaultImage = product.images[0] || "";
+  const defaultImage = selectedVariant?.image?.url || selectedVariant?.image || product.images[0] || "";
   const hoverImage = product.images[1] || defaultImage; // Fallback to same if only 1 image
 
   const handleVariantChange = (variantId) => {

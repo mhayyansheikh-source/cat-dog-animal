@@ -90,6 +90,7 @@ export default function ProductDetailsClient({ product }) {
                       alt={product.title}
                       fill
                       priority={true}
+                      quality={90}
                       sizes="(max-width: 768px) 100vw, 50vw"
                       style={{ objectFit: "contain" }}
                     />
@@ -118,6 +119,7 @@ export default function ProductDetailsClient({ product }) {
                         src={img}
                         alt={`Thumbnail ${idx + 1}`}
                         fill
+                        quality={60}
                         sizes="80px"
                         style={{ objectFit: "contain" }}
                       />
@@ -156,6 +158,7 @@ export default function ProductDetailsClient({ product }) {
                       alt={`${product.title} view ${idx + 1}`}
                       fill
                       priority={idx === 0}
+                      quality={idx === 0 ? 90 : 75}
                       sizes="100vw"
                       style={{ objectFit: "contain" }}
                     />
@@ -183,7 +186,7 @@ export default function ProductDetailsClient({ product }) {
 
           <h1 className="font-heading fw-bold mb-2" style={{ fontSize: "clamp(1.5rem, 4vw, 2.5rem)", lineHeight: "1.2" }}>{product.title}</h1>
           
-          <div className="d-flex align-items-baseline gap-2 mb-4">
+          <div className="d-flex align-items-baseline gap-2 mb-3">
             <span className="fs-3 fw-bold text-zesty-orange">
               {new Intl.NumberFormat('en-US', { style: 'currency', currency: product.currencyCode || 'USD' }).format(activeVariant.price)}
             </span>
@@ -195,78 +198,8 @@ export default function ProductDetailsClient({ product }) {
             <span className="small text-muted font-body ms-2">(Local sales tax calculated at checkout)</span>
           </div>
 
-          {/* Trust Badges */}
-          <div className="d-flex align-items-center gap-3 mb-4 flex-wrap">
-            <div className="d-flex align-items-center gap-1 text-muted small font-body"><ShieldCheck size={16} className="text-forest-green" /> Vet Recommended</div>
-            <div className="d-flex align-items-center gap-1 text-muted small font-body"><Sparkles size={16} className="text-forest-green" /> Premium Quality</div>
-            <div className="d-flex align-items-center gap-1 text-muted small font-body"><Check size={16} className="text-forest-green" /> Made in USA</div>
-          </div>
-
-          {/* React-based Accordions for Details & Ingredients */}
-          <div className="mb-4">
-            {/* Description Accordion */}
-            <div className="border-bottom pb-2 mb-2">
-              <button 
-                onClick={() => setOpenAccordion(openAccordion === "desc" ? null : "desc")}
-                className="w-100 bg-transparent border-0 d-flex justify-content-between align-items-center py-2 px-0 fw-bold font-heading text-charcoal-dark"
-                style={{ fontSize: "1.1rem" }}
-              >
-                Product Description
-                {openAccordion === "desc" ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-              </button>
-              <AnimatePresence>
-                {openAccordion === "desc" && (
-                  <motion.div 
-                    initial={{ height: 0, opacity: 0 }} 
-                    animate={{ height: "auto", opacity: 1 }} 
-                    exit={{ height: 0, opacity: 0 }}
-                    className="overflow-hidden"
-                  >
-                    <div 
-                      className="text-muted font-body pt-2 pb-3" 
-                      style={{ lineHeight: "1.7" }}
-                      dangerouslySetInnerHTML={{ 
-                        __html: (product.body_html || "")
-                          .replace(/<p><b>Competitor:<\/b>.*?<\/p>/gi, '')
-                          .replace(/<p><b>Supplier:<\/b>.*?<\/p>/gi, '') 
-                      }} 
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Ingredients Accordion */}
-            {ingredientsText && (
-              <div className="border-bottom pb-2 mb-2">
-                <button 
-                  onClick={() => setOpenAccordion(openAccordion === "ing" ? null : "ing")}
-                  className="w-100 bg-transparent border-0 d-flex justify-content-between align-items-center py-2 px-0 fw-bold font-heading text-charcoal-dark"
-                  style={{ fontSize: "1.1rem" }}
-                >
-                  Key Ingredients
-                  {openAccordion === "ing" ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                </button>
-                <AnimatePresence>
-                  {openAccordion === "ing" && (
-                    <motion.div 
-                      initial={{ height: 0, opacity: 0 }} 
-                      animate={{ height: "auto", opacity: 1 }} 
-                      exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="text-muted font-body pt-2 pb-3" style={{ lineHeight: "1.7" }}>
-                        {ingredientsText}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            )}
-          </div>
-
           {/* Scarcity Widget */}
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
+          <motion.div className="mb-4" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
             <LiveScarcity variantId={activeVariant.id} />
           </motion.div>
 
@@ -368,7 +301,7 @@ export default function ProductDetailsClient({ product }) {
           )}
 
           {/* Add to Cart Actions */}
-          <div className="mb-4">
+          <div className="mb-3">
             <motion.button
               whileHover={{ scale: activeVariant.available ? 1.02 : 1 }}
               whileTap={{ scale: activeVariant.available ? 0.98 : 1 }}
@@ -382,11 +315,76 @@ export default function ProductDetailsClient({ product }) {
             </motion.button>
           </div>
 
-          <ShippingTimer />
+          <div className="mb-2">
+            <ShippingTimer />
+          </div>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+          <motion.div className="mb-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
             <TrustBadges />
           </motion.div>
+
+          {/* React-based Accordions for Details & Ingredients */}
+          <div className="mb-5 bg-light rounded p-3 border">
+            {/* Description Accordion */}
+            <div className="border-bottom pb-2 mb-2">
+              <button 
+                onClick={() => setOpenAccordion(openAccordion === "desc" ? null : "desc")}
+                className="w-100 bg-transparent border-0 d-flex justify-content-between align-items-center py-2 px-0 fw-bold font-heading text-charcoal-dark"
+                style={{ fontSize: "1.1rem" }}
+              >
+                Product Description
+                {openAccordion === "desc" ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              </button>
+              <AnimatePresence>
+                {openAccordion === "desc" && (
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }} 
+                    animate={{ height: "auto", opacity: 1 }} 
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div 
+                      className="text-muted font-body pt-2 pb-3" 
+                      style={{ lineHeight: "1.7" }}
+                      dangerouslySetInnerHTML={{ 
+                        __html: (product.body_html || "")
+                          .replace(/<p><b>Competitor:<\/b>.*?<\/p>/gi, '')
+                          .replace(/<p><b>Supplier:<\/b>.*?<\/p>/gi, '') 
+                      }} 
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Ingredients Accordion */}
+            {ingredientsText && (
+              <div className="pt-2">
+                <button 
+                  onClick={() => setOpenAccordion(openAccordion === "ing" ? null : "ing")}
+                  className="w-100 bg-transparent border-0 d-flex justify-content-between align-items-center py-2 px-0 fw-bold font-heading text-charcoal-dark"
+                  style={{ fontSize: "1.1rem" }}
+                >
+                  Key Ingredients
+                  {openAccordion === "ing" ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </button>
+                <AnimatePresence>
+                  {openAccordion === "ing" && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }} 
+                      animate={{ height: "auto", opacity: 1 }} 
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="text-muted font-body pt-2 pb-3" style={{ lineHeight: "1.7" }}>
+                        {ingredientsText}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+          </div>
 
           {/* Scraper-Friendly Comparison Table */}
           <section className="mt-5 text-start">
@@ -420,16 +418,6 @@ export default function ProductDetailsClient({ product }) {
               </table>
             </div>
           </section>
-
-          {/* Ingredients Metafield */}
-          {ingredientsText && (
-            <section className="mt-5 text-start mb-4">
-              <h4 className="font-heading mb-3 fw-bold" style={{ fontSize: "clamp(20px, 4vw, 24px)" }}>Active Ingredients</h4>
-              <div className="p-4 rounded border bg-light font-body text-muted">
-                {ingredientsText}
-              </div>
-            </section>
-          )}
 
           {/* Dynamic Factual FAQ */}
           <section className="mt-5 text-start mb-5">
