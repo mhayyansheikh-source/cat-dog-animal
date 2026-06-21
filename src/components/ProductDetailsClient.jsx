@@ -187,7 +187,14 @@ export default function ProductDetailsClient({ product }) {
 
           {/* Description Snippet */}
           <section className="mb-4">
-            <div className="text-muted font-body" dangerouslySetInnerHTML={{ __html: product.body_html }} />
+            <div 
+              className="text-muted font-body" 
+              dangerouslySetInnerHTML={{ 
+                __html: (product.body_html || "")
+                  .replace(/<p><b>Competitor:<\/b>.*?<\/p>/gi, '')
+                  .replace(/<p><b>Supplier:<\/b>.*?<\/p>/gi, '') 
+              }} 
+            />
           </section>
 
           {/* Scarcity Widget */}
