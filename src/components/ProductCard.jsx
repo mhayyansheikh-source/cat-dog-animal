@@ -11,7 +11,18 @@ export default function ProductCard({ product }) {
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Setup product images
+  // Setup product media
+  const videoMedia = (product.media || []).find(m => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO');
+  let mainVideo = null;
+  let mainExternalVideo = null;
+  if (videoMedia) {
+    if (videoMedia.mediaContentType === 'VIDEO') {
+      mainVideo = (videoMedia.sources?.find(s => s.format === 'mp4') || videoMedia.sources?.[0])?.url;
+    } else if (videoMedia.mediaContentType === 'EXTERNAL_VIDEO') {
+      mainExternalVideo = videoMedia.embeddedUrl?.replace("watch?v=", "embed/");
+    }
+  }
+
   const defaultImage = selectedVariant?.image?.url || selectedVariant?.image || product.images[0] || "";
   const hoverImage = product.images[1] || defaultImage; // Fallback to same if only 1 image
 
@@ -50,7 +61,40 @@ export default function ProductCard({ product }) {
           onMouseLeave={() => setIsHovered(false)}
           style={{ height: "240px", background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)" }}
         >
-          {(!defaultImage || (!defaultImage.startsWith("http") && !defaultImage.startsWith("/"))) ? (
+          {mainVideo ? (
+              <video
+                src={mainVideo}
+                poster={videoMedia?.previewImage?.url || defaultImage}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-100 h-100 object-fit-cover transition-all duration-500"
+                style={{
+                  transform: isHovered ? "scale(1.05)" : "scale(1)",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  transition: "all 0.4s ease-in-out"
+                }}
+              />
+          ) : mainExternalVideo ? (
+              <iframe
+                src={`${mainExternalVideo}?autoplay=1&mute=1&loop=1&controls=0`}
+                title={product.title}
+                className="w-100 h-100 object-fit-cover transition-all duration-500"
+                style={{
+                  pointerEvents: "none",
+                  transform: isHovered ? "scale(1.05)" : "scale(1)",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  transition: "all 0.4s ease-in-out"
+                }}
+                allow="autoplay; encrypted-media"
+                frameBorder="0"
+              />
+          ) : (!defaultImage || (!defaultImage.startsWith("http") && !defaultImage.startsWith("/"))) ? (
             <div 
               className="w-100 h-100 d-flex align-items-center justify-content-center transition-all"
               style={{ 

@@ -36,6 +36,15 @@ export default function ProductDetailsClient({ product }) {
       uniqueGalleryItems.push(item);
     }
   });
+  
+  // Reorder so that VIDEO or EXTERNAL_VIDEO comes first
+  uniqueGalleryItems.sort((a, b) => {
+    const aIsVideo = a.type === 'VIDEO' || a.type === 'EXTERNAL_VIDEO';
+    const bIsVideo = b.type === 'VIDEO' || b.type === 'EXTERNAL_VIDEO';
+    if (aIsVideo && !bIsVideo) return -1;
+    if (!aIsVideo && bIsVideo) return 1;
+    return 0;
+  });
 
   // Gallery state
   const [activeIndex, setActiveIndex] = useState(0);
