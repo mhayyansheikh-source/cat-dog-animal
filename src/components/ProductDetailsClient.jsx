@@ -69,7 +69,7 @@ export default function ProductDetailsClient({ product }) {
             
             {/* Desktop Gallery Viewer (Hidden on mobile) */}
             <div className="d-none d-md-block">
-              <div className="rounded-card p-4 mb-3 bg-white position-relative" style={{ height: "450px", overflow: "hidden" }}>
+              <div className="rounded-card p-0 mb-3 bg-white position-relative" style={{ height: "450px", overflow: "hidden" }}>
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeImage}
@@ -85,7 +85,7 @@ export default function ProductDetailsClient({ product }) {
                       fill
                       priority={true}
                       sizes="(max-width: 768px) 100vw, 50vw"
-                      style={{ objectFit: "contain", padding: "1.5rem" }}
+                      style={{ objectFit: "cover" }}
                     />
                   </motion.div>
                 </AnimatePresence>
@@ -112,7 +112,7 @@ export default function ProductDetailsClient({ product }) {
                         alt={`Thumbnail ${idx + 1}`}
                         fill
                         sizes="80px"
-                        style={{ objectFit: "contain", padding: "4px" }}
+                        style={{ objectFit: "cover" }}
                       />
                     </button>
                   ))}
@@ -135,7 +135,7 @@ export default function ProductDetailsClient({ product }) {
                 {product.images.map((img, idx) => (
                   <div 
                     key={idx} 
-                    className="rounded bg-white position-relative flex-shrink-0" 
+                    className="rounded bg-white position-relative flex-shrink-0 overflow-hidden" 
                     style={{ 
                       scrollSnapAlign: "center", 
                       width: "100%", 
@@ -149,7 +149,7 @@ export default function ProductDetailsClient({ product }) {
                       fill
                       priority={idx === 0}
                       sizes="100vw"
-                      style={{ objectFit: "contain", padding: "1rem" }}
+                      style={{ objectFit: "cover" }}
                     />
                   </div>
                 ))}
