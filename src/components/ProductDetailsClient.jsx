@@ -22,6 +22,7 @@ export default function ProductDetailsClient({ product }) {
 
   // FAQ states
   const [openFaq, setOpenFaq] = useState(null);
+  const [openAccordion, setOpenAccordion] = useState("desc");
 
   // Volume discount card selector
   const [selectedBulkQty, setSelectedBulkQty] = useState(1);
@@ -46,6 +47,11 @@ export default function ProductDetailsClient({ product }) {
 
   const handleVariantSelect = (v) => {
     setActiveVariant(v);
+    if (v.image?.url) {
+      setActiveImage(v.image.url);
+    } else if (v.image) {
+      setActiveImage(v.image);
+    }
   };
 
   const handleAddToCart = () => {
@@ -69,7 +75,7 @@ export default function ProductDetailsClient({ product }) {
             
             {/* Desktop Gallery Viewer (Hidden on mobile) */}
             <div className="d-none d-md-block">
-              <div className="rounded-card p-0 mb-3 bg-white position-relative" style={{ height: "450px", overflow: "hidden" }}>
+              <div className="rounded-card p-0 mb-3 position-relative" style={{ height: "450px", overflow: "hidden", background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)" }}>
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeImage}
@@ -85,7 +91,7 @@ export default function ProductDetailsClient({ product }) {
                       fill
                       priority={true}
                       sizes="(max-width: 768px) 100vw, 50vw"
-                      style={{ objectFit: "cover" }}
+                      style={{ objectFit: "contain" }}
                     />
                   </motion.div>
                 </AnimatePresence>
@@ -98,12 +104,13 @@ export default function ProductDetailsClient({ product }) {
                     <button
                       key={idx}
                       onClick={() => setActiveImage(img)}
-                      className="btn p-0 border rounded overflow-hidden flex-shrink-0 bg-white position-relative"
+                      className="btn p-0 border rounded overflow-hidden flex-shrink-0 position-relative"
                       style={{
                         width: "80px",
                         height: "80px",
                         border: activeImage === img ? "2px solid var(--zesty-orange)" : "1px solid var(--pale-gray)",
-                        transition: "border 0.3s ease"
+                        transition: "border 0.3s ease",
+                        background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)"
                       }}
                       aria-label={`View image thumbnail ${idx + 1}`}
                     >
@@ -112,7 +119,7 @@ export default function ProductDetailsClient({ product }) {
                         alt={`Thumbnail ${idx + 1}`}
                         fill
                         sizes="80px"
-                        style={{ objectFit: "cover" }}
+                        style={{ objectFit: "contain" }}
                       />
                     </button>
                   ))}
@@ -135,12 +142,13 @@ export default function ProductDetailsClient({ product }) {
                 {product.images.map((img, idx) => (
                   <div 
                     key={idx} 
-                    className="rounded bg-white position-relative flex-shrink-0 overflow-hidden" 
+                    className="rounded position-relative flex-shrink-0 overflow-hidden" 
                     style={{ 
                       scrollSnapAlign: "center", 
                       width: "100%", 
                       height: "350px",
-                      border: "1px solid #E5E7EB"
+                      border: "1px solid #E5E7EB",
+                      background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)"
                     }}
                   >
                     <Image
@@ -149,7 +157,7 @@ export default function ProductDetailsClient({ product }) {
                       fill
                       priority={idx === 0}
                       sizes="100vw"
-                      style={{ objectFit: "cover" }}
+                      style={{ objectFit: "contain" }}
                     />
                   </div>
                 ))}
@@ -187,17 +195,75 @@ export default function ProductDetailsClient({ product }) {
             <span className="small text-muted font-body ms-2">(Local sales tax calculated at checkout)</span>
           </div>
 
-          {/* Description Snippet */}
-          <section className="mb-4">
-            <div 
-              className="text-muted font-body" 
-              dangerouslySetInnerHTML={{ 
-                __html: (product.body_html || "")
-                  .replace(/<p><b>Competitor:<\/b>.*?<\/p>/gi, '')
-                  .replace(/<p><b>Supplier:<\/b>.*?<\/p>/gi, '') 
-              }} 
-            />
-          </section>
+          {/* Trust Badges */}
+          <div className="d-flex align-items-center gap-3 mb-4 flex-wrap">
+            <div className="d-flex align-items-center gap-1 text-muted small font-body"><ShieldCheck size={16} className="text-forest-green" /> Vet Recommended</div>
+            <div className="d-flex align-items-center gap-1 text-muted small font-body"><Sparkles size={16} className="text-forest-green" /> Premium Quality</div>
+            <div className="d-flex align-items-center gap-1 text-muted small font-body"><Check size={16} className="text-forest-green" /> Made in USA</div>
+          </div>
+
+          {/* React-based Accordions for Details & Ingredients */}
+          <div className="mb-4">
+            {/* Description Accordion */}
+            <div className="border-bottom pb-2 mb-2">
+              <button 
+                onClick={() => setOpenAccordion(openAccordion === "desc" ? null : "desc")}
+                className="w-100 bg-transparent border-0 d-flex justify-content-between align-items-center py-2 px-0 fw-bold font-heading text-charcoal-dark"
+                style={{ fontSize: "1.1rem" }}
+              >
+                Product Description
+                {openAccordion === "desc" ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              </button>
+              <AnimatePresence>
+                {openAccordion === "desc" && (
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }} 
+                    animate={{ height: "auto", opacity: 1 }} 
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div 
+                      className="text-muted font-body pt-2 pb-3" 
+                      style={{ lineHeight: "1.7" }}
+                      dangerouslySetInnerHTML={{ 
+                        __html: (product.body_html || "")
+                          .replace(/<p><b>Competitor:<\/b>.*?<\/p>/gi, '')
+                          .replace(/<p><b>Supplier:<\/b>.*?<\/p>/gi, '') 
+                      }} 
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Ingredients Accordion */}
+            {ingredientsText && (
+              <div className="border-bottom pb-2 mb-2">
+                <button 
+                  onClick={() => setOpenAccordion(openAccordion === "ing" ? null : "ing")}
+                  className="w-100 bg-transparent border-0 d-flex justify-content-between align-items-center py-2 px-0 fw-bold font-heading text-charcoal-dark"
+                  style={{ fontSize: "1.1rem" }}
+                >
+                  Key Ingredients
+                  {openAccordion === "ing" ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </button>
+                <AnimatePresence>
+                  {openAccordion === "ing" && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }} 
+                      animate={{ height: "auto", opacity: 1 }} 
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="text-muted font-body pt-2 pb-3" style={{ lineHeight: "1.7" }}>
+                        {ingredientsText}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+          </div>
 
           {/* Scarcity Widget */}
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>

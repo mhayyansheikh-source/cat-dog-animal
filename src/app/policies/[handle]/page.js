@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getShopPolicies, getShopInfo } from "@/utils/shopify";
-import { ShieldCheck, ArrowRight } from "lucide-react";
+import { ShieldCheck, ArrowRight, Undo2, Lock, FileText, Truck, Mail, Scale } from "lucide-react";
 import Link from "next/link";
 
 export async function generateStaticParams() {
@@ -78,25 +78,67 @@ export default async function PolicyPage(props) {
     };
   }
 
+  const policyLinks = [
+    { handle: 'refund-policy', title: 'Return and refund policy', icon: <Undo2 size={20} /> },
+    { handle: 'privacy-policy', title: 'Privacy policy', icon: <Lock size={20} /> },
+    { handle: 'terms-of-service', title: 'Terms of service', icon: <FileText size={20} /> },
+    { handle: 'shipping-policy', title: 'Shipping policy', icon: <Truck size={20} /> },
+    { handle: 'contact-information', title: 'Contact information', icon: <Mail size={20} /> },
+    { handle: 'legal-notice', title: 'Legal notice', icon: <Scale size={20} /> }
+  ];
+
   return (
-    <>
-      <div className="d-flex align-items-center gap-2 mb-4 pb-3 border-bottom">
-        <ShieldCheck className="text-forest-green" size={28} />
-        <h2 className="font-heading fs-3 fw-bold mb-0 text-charcoal-dark">
-          {policyData.title}
-        </h2>
-      </div>
+    <div className="container py-5 my-md-4">
+      <div className="row g-5">
+        {/* Sidebar */}
+        <div className="col-lg-3">
+          <div className="sticky-top" style={{ top: "100px", zIndex: 1 }}>
+            <h5 className="font-heading fw-bold text-charcoal-dark mb-4 text-uppercase letter-spacing-wide">Policy Directory</h5>
+            <div className="d-flex flex-column gap-2">
+              {policyLinks.map((link) => {
+                const isActive = handle === link.handle;
+                return (
+                  <Link
+                    key={link.handle}
+                    href={`/policies/${link.handle}`}
+                    className={`d-flex align-items-center gap-3 p-3 rounded text-decoration-none transition-all fw-bold font-body`}
+                    style={{
+                      backgroundColor: isActive ? "var(--forest-green)" : "transparent",
+                      color: isActive ? "white" : "var(--charcoal-dark)",
+                    }}
+                  >
+                    <span style={{ opacity: isActive ? 1 : 0.6 }}>{link.icon}</span>
+                    {link.title}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
 
-      <div 
-        className="policy-content font-body text-charcoal-dark"
-        style={{ lineHeight: "1.8" }}
-        dangerouslySetInnerHTML={{ __html: policyData.body }}
-      />
+        {/* Content */}
+        <div className="col-lg-8 offset-lg-1">
+          <div className="bg-white rounded-card p-4 p-md-5 border shadow-sm">
+            <div className="d-flex align-items-center gap-2 mb-4 pb-3 border-bottom">
+              <ShieldCheck className="text-forest-green" size={28} />
+              <h2 className="font-heading fs-3 fw-bold mb-0 text-charcoal-dark">
+                {policyData.title}
+              </h2>
+            </div>
 
-      <div className="mt-5 pt-4 border-top">
-        <Link href="/" className="btn btn-outline-forest-green d-inline-flex align-items-center gap-2 px-4 py-2 fw-bold">
-          Return to Store <ArrowRight size={18} />
-        </Link>
+            <div 
+              className="policy-content font-body text-charcoal-dark"
+              style={{ lineHeight: "1.8" }}
+              dangerouslySetInnerHTML={{ __html: policyData.body }}
+            />
+
+            <div className="mt-5 pt-4 border-top">
+              <Link href="/" className="btn btn-outline-forest-green d-inline-flex align-items-center gap-2 px-4 py-2 fw-bold">
+                Return to Store <ArrowRight size={18} />
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
 
       <style dangerouslySetInnerHTML={{__html: `
@@ -124,6 +166,6 @@ export default async function PolicyPage(props) {
           color: #4a5568;
         }
       `}} />
-    </>
+    </div>
   );
 }

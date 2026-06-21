@@ -45,7 +45,7 @@ export default function ProductCard({ product }) {
         )}
 
         {/* Product Image Wrapper */}
-        <Link href={`/product/${product.handle || product.id}`} className="d-block overflow-hidden position-relative" style={{ height: "240px", backgroundColor: "#f9f9f9" }}>
+        <Link href={`/product/${product.handle || product.id}`} className="d-block overflow-hidden position-relative" style={{ height: "240px", background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)" }}>
           {(!defaultImage || (!defaultImage.startsWith("http") && !defaultImage.startsWith("/"))) ? (
             <div 
               className="w-100 h-100 d-flex align-items-center justify-content-center transition-all"
@@ -63,7 +63,7 @@ export default function ProductCard({ product }) {
               <img
                 src={defaultImage}
                 alt={product.title}
-                className="w-100 h-100 object-fit-cover transition-all duration-500"
+                className="w-100 h-100 object-fit-contain transition-all duration-500"
                 style={{
                   opacity: isHovered ? 0 : 1,
                   transform: isHovered ? "scale(1)" : "scale(1.05)",
@@ -77,7 +77,7 @@ export default function ProductCard({ product }) {
               <img
                 src={hoverImage}
                 alt={`${product.title} lifestyle`}
-                className="w-100 h-100 object-fit-cover transition-all duration-500"
+                className="w-100 h-100 object-fit-contain transition-all duration-500"
                 style={{
                   opacity: isHovered ? 1 : 0,
                   transform: isHovered ? "scale(1.05)" : "scale(1.1)",
