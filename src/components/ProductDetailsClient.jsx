@@ -83,7 +83,16 @@ export default function ProductDetailsClient({ product }) {
     setActiveVariant(v);
     const vImageUrl = v.image?.url || v.image;
     if (vImageUrl) {
-      const idx = uniqueGalleryItems.findIndex(item => item.preview === vImageUrl || item.url === vImageUrl);
+      const cleanUrl = (url) => {
+        if (!url) return "";
+        try { return new URL(url).pathname; } 
+        catch { return url.split('?')[0]; }
+      };
+      const vPath = cleanUrl(vImageUrl);
+      const idx = uniqueGalleryItems.findIndex(item => {
+        const itemUrl = item.preview || item.url || "";
+        return cleanUrl(itemUrl) === vPath;
+      });
       if (idx !== -1) setActiveIndex(idx);
     }
   };
