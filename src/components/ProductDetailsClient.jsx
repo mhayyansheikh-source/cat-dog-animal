@@ -173,13 +173,15 @@ export default function ProductDetailsClient({ product }) {
             </div>
           </div>
 
-          <h1 className="font-heading fw-bold mb-2 display-6" style={{ fontSize: "clamp(24px, 5vw, 40px)" }}>{product.title}</h1>
+          <h1 className="font-heading fw-bold mb-2" style={{ fontSize: "clamp(1.5rem, 4vw, 2.5rem)", lineHeight: "1.2" }}>{product.title}</h1>
           
           <div className="d-flex align-items-baseline gap-2 mb-4">
-            <span className="fs-3 fw-bold text-zesty-orange">${activeVariant.price}</span>
+            <span className="fs-3 fw-bold text-zesty-orange">
+              {new Intl.NumberFormat('en-US', { style: 'currency', currency: product.currencyCode || 'USD' }).format(activeVariant.price)}
+            </span>
             {activeVariant.compare_at_price && (
               <span className="text-decoration-line-through text-muted fs-5">
-                ${activeVariant.compare_at_price}
+                {new Intl.NumberFormat('en-US', { style: 'currency', currency: product.currencyCode || 'USD' }).format(activeVariant.compare_at_price)}
               </span>
             )}
             <span className="small text-muted font-body ms-2">(Local sales tax calculated at checkout)</span>
@@ -242,7 +244,9 @@ export default function ProductDetailsClient({ product }) {
                     <span className="small text-muted font-body">Perfect for trying it out</span>
                   </div>
                   <div className="text-end">
-                    <strong className="fs-5">${basePrice.toFixed(2)}</strong>
+                    <strong className="fs-5">
+                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: product.currencyCode || 'USD' }).format(basePrice)}
+                    </strong>
                     <span className="d-block small text-muted">/unit</span>
                   </div>
                 </motion.div>
@@ -260,7 +264,9 @@ export default function ProductDetailsClient({ product }) {
                     <span className="small text-success font-body">Recommended - ensure you don't run out</span>
                   </div>
                   <div className="text-end">
-                    <strong className="fs-5 text-success">${getBulkCardPrice(2).toFixed(2)}</strong>
+                    <strong className="fs-5 text-success">
+                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: product.currencyCode || 'USD' }).format(getBulkCardPrice(2))}
+                    </strong>
                     <span className="d-block small text-muted">/unit</span>
                   </div>
                 </motion.div>
@@ -285,7 +291,9 @@ export default function ProductDetailsClient({ product }) {
                     <span className="small text-success font-body">Maximum savings for your pet</span>
                   </div>
                   <div className="text-end">
-                    <strong className="fs-5 text-success">${getBulkCardPrice(3).toFixed(2)}</strong>
+                    <strong className="fs-5 text-success">
+                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: product.currencyCode || 'USD' }).format(getBulkCardPrice(3))}
+                    </strong>
                     <span className="d-block small text-muted">/unit</span>
                   </div>
                 </motion.div>

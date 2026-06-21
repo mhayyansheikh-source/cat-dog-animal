@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import dynamic from "next/dynamic";
 import PageTransition from "@/components/PageTransition";
 import ToastProvider from "@/components/ToastProvider";
-import { getShopifyMenu } from "@/utils/shopify";
+import { getShopifyMenu, getShopInfo } from "@/utils/shopify";
 
 const Footer = dynamic(() => import("@/components/Footer"), { ssr: true });
 const CartDrawer = dynamic(() => import("@/components/CartDrawer"));
@@ -22,43 +22,56 @@ const playfair = Playfair_Display({
   weight: ["700", "800"],
 });
 
-export const metadata = {
-  title: "Peteora - Premium Pet Products for Dogs & Cats",
-  description: "Premium supplements, treats, food, and accessories for happy, healthy cats and dogs. Science-backed ingredients, loved by pets worldwide.",
-  keywords: "peteora, dog supplements, cat supplements, cat scratcher, pet accessories, interactive toys",
-  alternates: {
-    canonical: "https://peteora.com",
-  },
-  openGraph: {
-    title: "Peteora - Premium Pet Health, Wellness & Play",
-    description: "Premium supplements, treats, food, and accessories for happy, healthy cats and dogs. Science-backed ingredients.",
-    url: "https://peteora.com",
-    siteName: "Peteora",
-    locale: "en_US",
-    type: "website",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  icons: {
-    icon: "/icon.png",
-    shortcut: "/icon.png",
-    apple: "/icon.png",
-  }
-};
+export async function generateMetadata() {
+  const shop = await getShopInfo();
+  const siteName = shop?.name || "Peteora";
+  const description = shop?.description || "Premium supplements, treats, food, and accessories for happy, healthy cats and dogs. Science-backed ingredients, loved by pets worldwide.";
+  const url = shop?.primaryDomain?.url || "https://peteora.com";
+
+  return {
+    title: `${siteName} - Premium Pet Products for Dogs & Cats`,
+    description,
+    keywords: "peteora, dog supplements, cat supplements, cat scratcher, pet accessories, interactive toys",
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title: `${siteName} - Premium Pet Health, Wellness & Play`,
+      description,
+      url,
+      siteName,
+      locale: "en_US",
+      type: "website",
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+    icons: {
+      icon: "/icon.png",
+      shortcut: "/icon.png",
+      apple: "/icon.png",
+    }
+  };
+}
 
 export default async function RootLayout({ children }) {
   const mainMenu = await getShopifyMenu('main-menu');
   const footerMenu = await getShopifyMenu('footer');
 
+  const shop = await getShopInfo();
+  const siteName = shop?.name || "Peteora";
+  const siteUrl = shop?.primaryDomain?.url || "https://peteora.com";
+  const logoUrl = shop?.brand?.logo?.image?.url || `${siteUrl}/icon.png`;
+  const siteDesc = shop?.description || "Premium supplements, treats, food, and accessories for happy, healthy cats and dogs.";
+
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "Peteora",
-    "url": "https://peteora.com",
-    "logo": "https://peteora.com/icon.png",
-    "description": "Premium supplements, treats, food, and accessories for happy, healthy cats and dogs.",
+    "name": siteName,
+    "url": siteUrl,
+    "logo": logoUrl,
+    "description": siteDesc,
     "contactPoint": {
       "@type": "ContactPoint",
       "email": "shoppingmaniaglobalstore@gmail.com",
@@ -77,13 +90,13 @@ export default async function RootLayout({ children }) {
       <body className="min-h-full d-flex flex-column bg-white text-charcoal-dark">
         <ToastProvider />
         <CartProvider>
-          <Header menu={mainMenu} />
+          <Header menu={mainMenu} shop={shop} />
           <main className="flex-grow-1">
             <PageTransition>
               {children}
             </PageTransition>
           </main>
-          <Footer menu={footerMenu} />
+          <Footer menu={footerMenu} shop={shop} />
           <CartDrawer />
         </CartProvider>
       </body>

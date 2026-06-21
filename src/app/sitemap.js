@@ -1,7 +1,7 @@
 import { getShopifyProducts } from "@/utils/shopify";
 
 export default async function sitemap() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://peteora.com";
 
   // Static routes
   const staticRoutes = [

@@ -7,7 +7,7 @@ import { ShoppingCart, Search, Menu, X } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import PredictiveSearch from "@/components/PredictiveSearch";
 
-export default function Header({ menu }) {
+export default function Header({ menu, shop }) {
   const { setIsCartOpen, cartCount } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -54,7 +54,11 @@ export default function Header({ menu }) {
         <div className="container">
           {/* Logo Brand Signature */}
           <Link href="/" className="navbar-brand d-flex align-items-center text-decoration-none">
-            <img src="/peteora.png" alt="Peteora Logo" style={{ height: "45px", width: "auto" }} />
+            {shop?.brand?.logo?.image?.url ? (
+              <img src={shop.brand.logo.image.url} alt={shop?.name || "Logo"} style={{ height: "45px", width: "auto" }} />
+            ) : (
+              <img src="/peteora.png" alt="Peteora Logo" style={{ height: "45px", width: "auto" }} />
+            )}
           </Link>
 
           {/* Toggle buttons for mobile */}
@@ -93,24 +97,13 @@ export default function Header({ menu }) {
           {/* Desktop Navigation Links */}
           <div className="collapse navbar-collapse d-none d-lg-block" id="navbarNav">
             <ul className="navbar-nav mx-auto mb-3 mb-lg-0 fw-semibold">
-              {menu?.items ? (
-                menu.items.map((item) => (
+              {menu?.items && menu.items.map((item) => (
                   <li className="nav-item px-2" key={item.id}>
-                    <Link href={new URL(item.url, "http://localhost").pathname} className="nav-link premium-nav-link">
+                    <Link href={new URL(item.url, "https://peteora.com").pathname} className="nav-link premium-nav-link">
                       {item.title}
                     </Link>
                   </li>
-                ))
-              ) : (
-                <>
-                  <li className="nav-item px-2"><Link href="/" className="nav-link premium-nav-link">Home</Link></li>
-                  <li className="nav-item px-2"><Link href="/collections/dogs" className="nav-link premium-nav-link">🐶 Dogs</Link></li>
-                  <li className="nav-item px-2"><Link href="/collections/cats" className="nav-link premium-nav-link">🐱 Cats</Link></li>
-                  <li className="nav-item px-2"><Link href="/collections/accessories" className="nav-link premium-nav-link">Accessories</Link></li>
-                  <li className="nav-item px-2"><Link href="/collections/bundles" className="nav-link premium-nav-link">Bundles</Link></li>
-                  <li className="nav-item px-2"><Link href="/collections/replacement-parts" className="nav-link premium-nav-link">Parts</Link></li>
-                </>
-              )}
+                ))}
             </ul>
 
             {/* Right Side Tools matched to design */}
@@ -184,24 +177,13 @@ export default function Header({ menu }) {
           >
             {/* Mobile Navigation Links */}
             <ul className="list-unstyled mb-0 font-body fs-5 p-4">
-              {menu?.items ? (
-                menu.items.map((item) => (
+              {menu?.items && menu.items.map((item) => (
                   <li className="mb-4" key={item.id}>
-                    <Link href={new URL(item.url, "http://localhost").pathname} onClick={() => setIsMenuOpen(false)} className="text-decoration-none text-charcoal-dark d-block">
+                    <Link href={new URL(item.url, "https://peteora.com").pathname} onClick={() => setIsMenuOpen(false)} className="text-decoration-none text-charcoal-dark d-block">
                       {item.title}
                     </Link>
                   </li>
-                ))
-              ) : (
-                <>
-                  <li className="mb-4"><Link href="/" onClick={() => setIsMenuOpen(false)} className="text-decoration-none text-charcoal-dark d-block">Home</Link></li>
-                  <li className="mb-4"><Link href="/collections/dogs" onClick={() => setIsMenuOpen(false)} className="text-decoration-none text-charcoal-dark d-block">🐶 For Dogs</Link></li>
-                  <li className="mb-4"><Link href="/collections/cats" onClick={() => setIsMenuOpen(false)} className="text-decoration-none text-charcoal-dark d-block">🐱 For Cats</Link></li>
-                  <li className="mb-4"><Link href="/collections/accessories" onClick={() => setIsMenuOpen(false)} className="text-decoration-none text-charcoal-dark d-block">Accessories</Link></li>
-                  <li className="mb-4"><Link href="/collections/bundles" onClick={() => setIsMenuOpen(false)} className="text-decoration-none text-charcoal-dark d-block">Value Bundles</Link></li>
-                  <li className="mb-4"><Link href="/collections/replacement-parts" onClick={() => setIsMenuOpen(false)} className="text-decoration-none text-charcoal-dark d-block">Replacement Parts</Link></li>
-                </>
-              )}
+                ))}
             </ul>
           </motion.div>
         )}

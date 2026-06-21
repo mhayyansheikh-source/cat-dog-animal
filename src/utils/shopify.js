@@ -72,6 +72,7 @@ function normalizeProduct(node) {
       id: v.id, // Shopify GID Base64 string
       title: v.title,
       price: v.price?.amount || "0.00",
+      currencyCode: v.price?.currencyCode || "USD",
       compare_at_price: v.compareAtPrice?.amount || null,
       available: v.availableForSale,
       sku: v.sku || ""
@@ -86,6 +87,7 @@ function normalizeProduct(node) {
     product_type: node.productType,
     tags: node.tags || [],
     price: variantsMapped[0]?.price || "0.00",
+    currencyCode: variantsMapped[0]?.currencyCode || "USD",
     compare_at_price: variantsMapped[0]?.compare_at_price || null,
     images: imagesMapped,
     options: optionsMapped,
@@ -126,9 +128,11 @@ export async function getShopifyProducts() {
                   title
                   price {
                     amount
+                    currencyCode
                   }
                   compareAtPrice {
                     amount
+                    currencyCode
                   }
                   availableForSale
                   sku
@@ -338,6 +342,7 @@ export async function getPredictiveSearch(queryStr) {
               node {
                 price {
                   amount
+                  currencyCode
                 }
               }
             }
@@ -356,7 +361,8 @@ export async function getPredictiveSearch(queryStr) {
     title: node.title,
     handle: node.handle,
     image: node.images.edges[0]?.node?.url || null,
-    price: node.variants.edges[0]?.node?.price?.amount || "0.00"
+    price: node.variants.edges[0]?.node?.price?.amount || "0.00",
+    currencyCode: node.variants.edges[0]?.node?.price?.currencyCode || "USD"
   }));
 }
 
@@ -717,6 +723,70 @@ export async function getShopifyMetaobject(type, handle) {
     return fieldsMap;
   } catch (error) {
     console.error(`Failed to fetch metaobject ${type}/${handle}`, error);
+    return null;
+  }
+}
+
+export async function getShopInfo() {
+  const query = `
+    query getShopInfo {
+      shop {
+        name
+        description
+        primaryDomain {
+          url
+        }
+        brand {
+          logo {
+            image {
+              url
+            }
+          }
+        }
+      }
+    }
+  `;
+  try {
+    const data = await shopifyFetch({ query });
+    return data?.shop || null;
+  } catch (error) {
+    console.error("Failed to fetch shop info:", error);
+    return null;
+  }
+}
+
+export async function getShopPolicies() {
+  const query = `
+    query getShopPolicies {
+      shop {
+        privacyPolicy {
+          title
+          body
+          url
+        }
+        refundPolicy {
+          title
+          body
+          url
+        }
+        shippingPolicy {
+          title
+          body
+          url
+        }
+        termsOfService {
+          title
+          body
+          url
+        }
+      }
+    }
+  `;
+  try {
+    const data = await shopifyFetch({ query });
+    return data?.shop || null;
+  } catch (error) {
+    console.error("Failed to fetch shop policies:", error);
     return null;
   }
 }
