@@ -75,8 +75,8 @@ export default function ProductDetailsClient({ product }) {
 
   const ingredientsText = getMetafield("ingredients");
   
-  // Use 'bundle_items' metafield as an indicator for showing volume discounts (can be adapted as needed)
-  const hasBulkDiscount = !!getMetafield("bundle_items");
+  // Always show bulk discount options for every product to boost AOV
+  const hasBulkDiscount = true;
 
   const toggleFaq = (index) => {
     setOpenFaq(openFaq === index ? null : index);
