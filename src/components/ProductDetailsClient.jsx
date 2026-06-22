@@ -370,9 +370,10 @@ export default function ProductDetailsClient({ product }) {
               </span>
               <div className="d-flex flex-column gap-3">
                 <motion.button
+                  type="button"
                   whileHover={{ scale: activeVariant.available ? 1.01 : 1 }}
                   whileTap={{ scale: activeVariant.available ? 0.99 : 1 }}
-                  onClick={() => addToCart(product, activeVariant, 1)}
+                  onClick={(e) => { e.preventDefault(); addToCart(product, activeVariant, 1); }}
                   disabled={!activeVariant.available}
                   className="btn btn-outline-secondary d-flex align-items-center justify-content-between p-3 position-relative w-100 text-start"
                   style={{ minHeight: "72px", border: "1px solid #dee2e6", borderRadius: "12px" }}
@@ -393,9 +394,10 @@ export default function ProductDetailsClient({ product }) {
                 </motion.button>
 
                 <motion.button
+                  type="button"
                   whileHover={{ scale: activeVariant.available ? 1.01 : 1 }}
                   whileTap={{ scale: activeVariant.available ? 0.99 : 1 }}
-                  onClick={() => addToCart(product, activeVariant, 2)}
+                  onClick={(e) => { e.preventDefault(); addToCart(product, activeVariant, 2); }}
                   disabled={!activeVariant.available}
                   className="btn btn-outline-success d-flex align-items-center justify-content-between p-3 position-relative w-100 text-start"
                   style={{ minHeight: "72px", border: "2px solid #198e7a", borderRadius: "12px", backgroundColor: "rgba(25, 142, 122, 0.03)" }}
@@ -422,9 +424,10 @@ export default function ProductDetailsClient({ product }) {
                 </motion.button>
 
                 <motion.button
+                  type="button"
                   whileHover={{ scale: activeVariant.available ? 1.02 : 1 }}
                   whileTap={{ scale: activeVariant.available ? 0.98 : 1 }}
-                  onClick={() => addToCart(product, activeVariant, 3)}
+                  onClick={(e) => { e.preventDefault(); addToCart(product, activeVariant, 3); }}
                   disabled={!activeVariant.available}
                   className="btn btn-outline-warning d-flex align-items-center justify-content-between p-3 position-relative w-100 text-start shadow-sm"
                   style={{ minHeight: "72px", border: "2px solid var(--orange)", borderRadius: "12px", backgroundColor: "rgba(254, 146, 77, 0.05)" }}
@@ -454,9 +457,10 @@ export default function ProductDetailsClient({ product }) {
           ) : (
             <div className="mb-3">
               <motion.button
+                type="button"
                 whileHover={{ scale: activeVariant.available ? 1.02 : 1 }}
                 whileTap={{ scale: activeVariant.available ? 0.98 : 1 }}
-                onClick={() => addToCart(product, activeVariant, 1)}
+                onClick={(e) => { e.preventDefault(); addToCart(product, activeVariant, 1); }}
                 disabled={!activeVariant.available}
                 className={`w-100 rounded-pill-cta fs-5 d-flex align-items-center justify-content-center gap-2 shadow ${!activeVariant.available ? "btn-secondary opacity-75" : "btn-zesty-primary"}`}
                 style={{ minHeight: "56px" }}
