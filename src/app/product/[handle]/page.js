@@ -4,6 +4,7 @@ import CartDrawer from "@/components/CartDrawer";
 import ProductCard from "@/components/ProductCard";
 import { notFound } from "next/navigation";
 
+export const runtime = "edge";
 
 // Dynamic metadata generator for search crawler indexing
 export async function generateMetadata({ params }) {

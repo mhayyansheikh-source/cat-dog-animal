@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { getCartAction, addCartLinesAction, updateCartLinesAction, removeCartLinesAction } from "@/app/actions";
+import { checkoutAction } from "@/app/actions";
 import { toast } from "react-hot-toast";
 
 const CartContext = createContext();
@@ -15,8 +15,9 @@ export function CartProvider({ children }) {
   const refreshCart = useCallback(async () => {
     setIsSyncing(true);
     try {
-      const liveCart = await getCartAction();
-      setCart(liveCart);
+      const res = await fetch('/api/cart');
+      const data = await res.json();
+      setCart(data.cart);
     } catch (error) {
       console.error("Failed to load cart:", error);
     } finally {
@@ -32,7 +33,12 @@ export function CartProvider({ children }) {
     setIsCartOpen(true);
     setIsSyncing(true);
     try {
-      const response = await addCartLinesAction([{ merchandiseId: variant.id, quantity }]);
+      const res = await fetch('/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lines: [{ merchandiseId: variant.id, quantity }] })
+      });
+      const response = await res.json();
       
       if (response?.error) {
         throw new Error(response.error);
@@ -55,7 +61,12 @@ export function CartProvider({ children }) {
   const removeFromCart = async (lineId) => {
     setIsSyncing(true);
     try {
-      const response = await removeCartLinesAction([lineId]);
+      const res = await fetch('/api/cart', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lineIds: [lineId] })
+      });
+      const response = await res.json();
       
       if (response?.error) throw new Error(response.error);
       
@@ -78,7 +89,12 @@ export function CartProvider({ children }) {
     }
     setIsSyncing(true);
     try {
-      const response = await updateCartLinesAction([{ id: lineId, quantity: newQuantity }]);
+      const res = await fetch('/api/cart', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lines: [{ id: lineId, quantity: newQuantity }] })
+      });
+      const response = await res.json();
       
       if (response?.error) throw new Error(response.error);
       

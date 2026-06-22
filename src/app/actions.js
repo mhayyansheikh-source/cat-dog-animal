@@ -35,61 +35,6 @@ export async function createCartAction() {
   }
 }
 
-export async function getCartAction() {
-  const cookieStore = await cookies();
-  const cartId = cookieStore.get("shopify_cart_id")?.value;
-  if (!cartId) return null;
-  return await getCart(cartId);
-}
-
-export async function addCartLinesAction(lines) {
-  try {
-    const cookieStore = await cookies();
-    let cartId = cookieStore.get("shopify_cart_id")?.value;
-    
-    if (!cartId) {
-      const cart = await createCartAction();
-      if (cart?.error) return cart;
-      cartId = cart?.id;
-    }
-    if (!cartId) return { error: "Could not create cart" };
-    
-    try {
-      return await addCartLines(cartId, lines);
-    } catch (graphQLError) {
-      // If the cart ID is invalid/expired, Shopify throws an error. We recreate it.
-      console.warn("Cart expired or invalid. Creating a new one...");
-      const cart = await createCartAction();
-      if (cart?.error) return cart;
-      return await addCartLines(cart.id, lines);
-    }
-  } catch (error) {
-    console.error("Server Action addCartLinesAction failed:", error);
-    return { error: error.message };
-  }
-}
-
-export async function updateCartLinesAction(lines) {
-  try {
-    const cookieStore = await cookies();
-    const cartId = cookieStore.get("shopify_cart_id")?.value;
-    if (!cartId) return { error: "Cart not found" };
-    return await updateCartLines(cartId, lines);
-  } catch (error) {
-    return { error: error.message };
-  }
-}
-
-export async function removeCartLinesAction(lineIds) {
-  try {
-    const cookieStore = await cookies();
-    const cartId = cookieStore.get("shopify_cart_id")?.value;
-    if (!cartId) return { error: "Cart not found" };
-    return await removeCartLines(cartId, lineIds);
-  } catch (error) {
-    return { error: error.message };
-  }
-}
 
 export async function subscribeAction(email) {
   try {
