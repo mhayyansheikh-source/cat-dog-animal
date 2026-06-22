@@ -9,13 +9,22 @@ import { motion } from "framer-motion";
 export default function ProductCard({ product }) {
   const { addToCart } = useCart();
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
+  const [userSelectedVariant, setUserSelectedVariant] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+
+  const handleVariantChange = (variantId) => {
+    const variant = product.variants.find(v => v.id === variantId);
+    if (variant) {
+      setSelectedVariant(variant);
+      setUserSelectedVariant(true);
+    }
+  };
 
   // Setup product media
   const videoMedia = (product.media || []).find(m => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO');
   let mainVideo = null;
   let mainExternalVideo = null;
-  if (videoMedia) {
+  if (videoMedia && !userSelectedVariant) {
     if (videoMedia.mediaContentType === 'VIDEO') {
       mainVideo = (videoMedia.sources?.find(s => s.format === 'mp4') || videoMedia.sources?.[0])?.url;
     } else if (videoMedia.mediaContentType === 'EXTERNAL_VIDEO') {
@@ -26,12 +35,6 @@ export default function ProductCard({ product }) {
   const defaultImage = selectedVariant?.image?.url || selectedVariant?.image || product.images[0] || "";
   const hoverImage = product.images[1] || defaultImage; // Fallback to same if only 1 image
 
-  const handleVariantChange = (variantId) => {
-    const matched = product.variants.find(v => v.id === variantId);
-    if (matched) {
-      setSelectedVariant(matched);
-    }
-  };
 
   return (
     <motion.div

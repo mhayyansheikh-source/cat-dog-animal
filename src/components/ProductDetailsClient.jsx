@@ -13,9 +13,13 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function ProductDetailsClient({ product }) {
   const { addToCart } = useCart();
   
+  // Additional images added dynamically when variants are clicked
+  const [extraImages, setExtraImages] = useState([]);
+
   // Combine images and media into a unified gallery array
   const galleryItems = [
     ...(product.images || []).map(img => ({ type: 'IMAGE', url: img, preview: img })),
+    ...extraImages,
     ...(product.media || []).map(m => {
       if (m.mediaContentType === 'VIDEO') {
         const source = m.sources?.find(s => s.format === 'mp4') || m.sources?.[0];
@@ -93,7 +97,13 @@ export default function ProductDetailsClient({ product }) {
         const itemUrl = item.preview || item.url || "";
         return cleanUrl(itemUrl) === vPath;
       });
-      if (idx !== -1) setActiveIndex(idx);
+      if (idx !== -1) {
+        setActiveIndex(idx);
+      } else {
+        // Variant image not in default gallery, add it
+        setExtraImages(prev => [...prev, { type: 'IMAGE', url: vImageUrl, preview: vImageUrl }]);
+        setActiveIndex(uniqueGalleryItems.length); // Point to newly added item
+      }
     }
   };
 
