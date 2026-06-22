@@ -13,7 +13,7 @@ export default function ProductCard({ product }) {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleVariantChange = (variantId) => {
-    const variant = product.variants.find(v => v.id === variantId);
+    const variant = product.variants.find(v => v.id.toString() === variantId.toString());
     if (variant) {
       setSelectedVariant(variant);
       setUserSelectedVariant(true);
@@ -116,7 +116,7 @@ export default function ProductCard({ product }) {
                 alt={product.title}
                 loading="lazy"
                 decoding="async"
-                className="w-100 h-100 object-fit-contain transition-all duration-500"
+                className="w-100 h-100 object-fit-cover transition-all duration-500"
                 style={{
                   opacity: isHovered ? 0 : 1,
                   transform: isHovered ? "scale(1)" : "scale(1.05)",
@@ -132,7 +132,7 @@ export default function ProductCard({ product }) {
                 alt={`${product.title} lifestyle`}
                 loading="lazy"
                 decoding="async"
-                className="w-100 h-100 object-fit-contain transition-all duration-500"
+                className="w-100 h-100 object-fit-cover transition-all duration-500"
                 style={{
                   opacity: isHovered ? 1 : 0,
                   transform: isHovered ? "scale(1.05)" : "scale(1.1)",
@@ -176,63 +176,29 @@ export default function ProductCard({ product }) {
         </div>
 
         <div>
-          {/* Variant Selector swatches (if multiple) */}
-          {/* Variant Selector swatches (if multiple) */}
-          {product.options && product.options.length > 0 && product.options[0].name !== "Title" && product.variants.length > 1 ? (
-            <div className="d-flex flex-column gap-2 my-3">
-              {product.options.map((option, optIdx) => {
-                const currentParts = selectedVariant.title.split(' / ');
-                const activeValue = currentParts[optIdx];
-                return (
-                  <div key={option.name} className="d-flex flex-wrap gap-1 align-items-center">
-                    <span className="small text-muted fw-bold me-1" style={{ fontSize: "10px", textTransform: "uppercase" }}>{option.name}:</span>
-                    {option.values.map(val => {
-                      const isActive = activeValue === val;
-                      const targetParts = [...currentParts];
-                      targetParts[optIdx] = val;
-                      const exactMatch = product.variants.find(v => v.title.split(' / ').every((p, i) => p === targetParts[i]));
-                      const isAvailable = exactMatch ? exactMatch.available : true;
-                      return (
-                        <button
-                          key={val}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            let newMatched = exactMatch || product.variants.find(v => v.title.split(' / ')[optIdx] === val && v.available) || product.variants.find(v => v.title.split(' / ')[optIdx] === val);
-                            if (newMatched) handleVariantChange(newMatched.id);
-                          }}
-                          className={`btn p-0 m-0 rounded-pill overflow-hidden transition-all`}
-                          style={{
-                            minWidth: "28px",
-                            height: "28px",
-                            border: isActive ? "2px solid var(--orange)" : "1px solid #dee2e6",
-                            background: isActive ? "var(--orange-light)" : "#fff",
-                            color: isActive ? "var(--orange-dark)" : "#6c757d",
-                            fontSize: "11px",
-                            padding: "0 8px",
-                            fontWeight: isActive ? "bold" : "normal",
-                            opacity: isAvailable ? 1 : 0.5,
-                            textDecoration: isAvailable ? "none" : "line-through",
-                          }}
-                        >
-                          {val}
-                        </button>
-                      );
-                    })}
-                  </div>
-                );
-              })}
-            </div>
-          ) : product.variants.length > 1 && (
-            <div className="d-flex gap-1 flex-wrap my-3">
-              {product.variants.map((v) => (
-                <button
-                  key={v.id}
-                  onClick={(e) => { e.preventDefault(); handleVariantChange(v.id); }}
-                  className={`variant-swatch ${selectedVariant.id === v.id ? "active" : ""}`}
-                >
-                  {v.title}
-                </button>
-              ))}
+          {/* Variant Selector dropdown */}
+          {product.variants.length > 1 && (
+            <div className="my-3">
+              <select
+                className="form-select form-select-sm shadow-none w-100"
+                value={selectedVariant.id}
+                onChange={(e) => handleVariantChange(e.target.value)}
+                style={{
+                  borderRadius: "8px",
+                  border: "1px solid #dee2e6",
+                  fontSize: "0.85rem",
+                  cursor: "pointer",
+                  backgroundColor: "#f8f9fa",
+                  padding: "6px 12px",
+                  color: "var(--bs-body-color)"
+                }}
+              >
+                {product.variants.map((v) => (
+                  <option key={v.id} value={v.id} disabled={!v.available}>
+                    {v.title} {!v.available && "(Out of Stock)"}
+                  </option>
+                ))}
+              </select>
             </div>
           )}
 

@@ -155,7 +155,7 @@ export default function ProductDetailsClient({ product }) {
                         fetchPriority="high"
                         quality={90}
                         sizes="(max-width: 768px) 100vw, 50vw"
-                        style={{ objectFit: "contain" }}
+                        style={{ objectFit: "cover" }}
                       />
                     )}
                     {activeItem?.type === 'VIDEO' && (
@@ -168,7 +168,7 @@ export default function ProductDetailsClient({ product }) {
                         loop
                         playsInline
                         className="w-100 h-100"
-                        style={{ objectFit: "contain", backgroundColor: "#000" }}
+                        style={{ objectFit: "cover", backgroundColor: "#000" }}
                       />
                     )}
                     {activeItem?.type === 'EXTERNAL_VIDEO' && (
@@ -476,8 +476,10 @@ export default function ProductDetailsClient({ product }) {
                       style={{ lineHeight: "1.7" }}
                       dangerouslySetInnerHTML={{ 
                         __html: (product.body_html || "")
-                          .replace(/<p><b>Competitor:<\/b>.*?<\/p>/gi, '')
-                          .replace(/<p><b>Supplier:<\/b>.*?<\/p>/gi, '') 
+                          .replace(/<p>[^<]*Competitor:.*?<\/p>/gi, '')
+                          .replace(/<p>[^<]*Supplier:.*?<\/p>/gi, '')
+                          .replace(/Competitor:.*?$/gim, '')
+                          .replace(/Supplier:.*?$/gim, '')
                       }} 
                     />
                   </motion.div>
