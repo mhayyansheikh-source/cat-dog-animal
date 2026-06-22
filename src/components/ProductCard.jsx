@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
-import { ShoppingCart, Heart, ShieldCheck } from "lucide-react";
+import { ShoppingCart, Heart, ShieldCheck, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function ProductCard({ product }) {
@@ -62,7 +62,7 @@ export default function ProductCard({ product }) {
           className="d-block overflow-hidden position-relative" 
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          style={{ height: "240px", background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)" }}
+          style={{ height: "240px", background: "transparent" }}
         >
           {mainVideo ? (
               <video
@@ -162,17 +162,31 @@ export default function ProductCard({ product }) {
             </h6>
           </Link>
 
-          {/* Product Type Label */}
-          <span
-            className="d-inline-block px-2.5 py-1 rounded-pill font-body mb-2 fw-bold"
-            style={{
-              fontSize: "0.75rem",
-              backgroundColor: product.product_type === "Dog" ? "var(--orange-light)" : product.product_type === "Cat" ? "var(--teal-light)" : "var(--gray-light)",
-              color: product.product_type === "Dog" ? "var(--orange-dark)" : product.product_type === "Cat" ? "var(--teal-dark)" : "var(--gray)",
-            }}
-          >
-            {product.product_type === "Dog" ? "🐶 Dog Formula" : product.product_type === "Cat" ? "🐱 Cat Formula" : "🐾 Pet Formula"}
-          </span>
+          {/* Dynamic Product Category Badge */}
+          {product.product_type ? (
+            <motion.span
+              whileHover={{ scale: 1.05 }}
+              className="d-inline-flex align-items-center px-2 py-1 rounded-pill font-body mb-2 fw-bold"
+              style={{
+                fontSize: "0.75rem",
+                background: "linear-gradient(135deg, rgba(254, 146, 77, 0.15) 0%, rgba(25, 142, 122, 0.15) 100%)",
+                color: "var(--charcoal-dark)",
+                border: "1px solid rgba(254, 146, 77, 0.3)",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.02)"
+              }}
+            >
+              <Sparkles size={12} className="me-1" style={{ color: "var(--orange)" }} />
+              {product.product_type}
+            </motion.span>
+          ) : (
+            <motion.span
+              whileHover={{ scale: 1.05 }}
+              className="d-inline-flex align-items-center px-2 py-1 rounded-pill font-body mb-2 fw-bold text-muted"
+              style={{ fontSize: "0.75rem", backgroundColor: "#f8f9fa", border: "1px solid #dee2e6" }}
+            >
+              🐾 Pet Essential
+            </motion.span>
+          )}
         </div>
 
         <div>

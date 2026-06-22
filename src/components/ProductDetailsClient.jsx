@@ -134,7 +134,7 @@ export default function ProductDetailsClient({ product }) {
                   aspectRatio: "1 / 1",
                   maxHeight: "600px",
                   overflow: "hidden", 
-                  background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)" 
+                  background: "transparent" 
                 }}
               >
                 <AnimatePresence mode="wait">
@@ -205,7 +205,7 @@ export default function ProductDetailsClient({ product }) {
                         height: "80px",
                         border: activeIndex === idx ? "2px solid var(--zesty-orange)" : "1px solid var(--pale-gray)",
                         transition: "border 0.3s ease",
-                        background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)",
+                        background: "transparent",
                         scrollSnapAlign: "start"
                       }}
                       aria-label={`View media thumbnail ${idx + 1}`}
@@ -235,7 +235,21 @@ export default function ProductDetailsClient({ product }) {
         {/* Right Column: Checkout Config & Details */}
         <div className="col-lg-6 text-start">
           <div className="d-flex align-items-center gap-2 mb-2">
-            <span className="badge bg-forest-green text-white fw-bold">✓ PREMIUM QUALITY</span>
+            {product.product_type ? (
+              <motion.span
+                whileHover={{ scale: 1.05 }}
+                className="badge d-inline-flex align-items-center gap-1 text-charcoal-dark fw-bold py-1 px-3 rounded-pill shadow-sm"
+                style={{
+                  background: "linear-gradient(135deg, rgba(254, 146, 77, 0.15) 0%, rgba(25, 142, 122, 0.15) 100%)",
+                  border: "1px solid rgba(254, 146, 77, 0.3)",
+                }}
+              >
+                <Sparkles size={14} style={{ color: "var(--orange)" }} />
+                {product.product_type}
+              </motion.span>
+            ) : (
+              <span className="badge bg-forest-green text-white fw-bold py-1 px-3 rounded-pill shadow-sm">✓ PREMIUM QUALITY</span>
+            )}
             <div className="d-flex align-items-center gap-1 text-warning star-rating small">
               ★ ★ ★ ★ ★ <span className="text-muted font-body" style={{ fontSize: "0.75rem" }}>(4.9/5 Rating)</span>
             </div>
