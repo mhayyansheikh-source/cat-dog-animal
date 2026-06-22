@@ -46,13 +46,23 @@ export async function addCartLinesAction(lines) {
   try {
     const cookieStore = await cookies();
     let cartId = cookieStore.get("shopify_cart_id")?.value;
+    
     if (!cartId) {
       const cart = await createCartAction();
       if (cart?.error) return cart;
       cartId = cart?.id;
     }
     if (!cartId) return { error: "Could not create cart" };
-    return await addCartLines(cartId, lines);
+    
+    try {
+      return await addCartLines(cartId, lines);
+    } catch (graphQLError) {
+      // If the cart ID is invalid/expired, Shopify throws an error. We recreate it.
+      console.warn("Cart expired or invalid. Creating a new one...");
+      const cart = await createCartAction();
+      if (cart?.error) return cart;
+      return await addCartLines(cart.id, lines);
+    }
   } catch (error) {
     console.error("Server Action addCartLinesAction failed:", error);
     return { error: error.message };
