@@ -114,6 +114,8 @@ export default function ProductCard({ product }) {
               <img
                 src={defaultImage}
                 alt={product.title}
+                loading="lazy"
+                decoding="async"
                 className="w-100 h-100 object-fit-contain transition-all duration-500"
                 style={{
                   opacity: isHovered ? 0 : 1,
@@ -128,6 +130,8 @@ export default function ProductCard({ product }) {
               <img
                 src={hoverImage}
                 alt={`${product.title} lifestyle`}
+                loading="lazy"
+                decoding="async"
                 className="w-100 h-100 object-fit-contain transition-all duration-500"
                 style={{
                   opacity: isHovered ? 1 : 0,

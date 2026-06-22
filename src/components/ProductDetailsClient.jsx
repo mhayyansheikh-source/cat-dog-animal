@@ -126,9 +126,17 @@ export default function ProductDetailsClient({ product }) {
         <div className="col-lg-6">
           <div className="sticky-top" style={{ top: "100px", zIndex: 1 }}>
             
-            {/* Desktop Gallery Viewer (Hidden on mobile) */}
-            <div className="d-none d-md-block">
-              <div className="rounded-card p-0 mb-3 position-relative" style={{ height: "450px", overflow: "hidden", background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)" }}>
+            {/* Unified Responsive Gallery Viewer */}
+            <div>
+              <div 
+                className="rounded-card p-0 mb-3 position-relative w-100" 
+                style={{ 
+                  aspectRatio: "1 / 1",
+                  maxHeight: "600px",
+                  overflow: "hidden", 
+                  background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)" 
+                }}
+              >
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeIndex}
@@ -144,6 +152,7 @@ export default function ProductDetailsClient({ product }) {
                         alt={product.title}
                         fill
                         priority={true}
+                        fetchPriority="high"
                         quality={90}
                         sizes="(max-width: 768px) 100vw, 50vw"
                         style={{ objectFit: "contain" }}
@@ -175,10 +184,10 @@ export default function ProductDetailsClient({ product }) {
                 </AnimatePresence>
               </div>
 
-              {/* Desktop Thumbnail Carousel */}
+              {/* Responsive Thumbnail Carousel */}
               {uniqueGalleryItems.length > 1 && (
                 <div 
-                  className="d-flex gap-2 overflow-auto pb-2 hide-scrollbar"
+                  className="d-flex gap-2 overflow-auto pb-2 hide-scrollbar w-100"
                   style={{
                     msOverflowStyle: "none",
                     scrollbarWidth: "none",
@@ -220,72 +229,6 @@ export default function ProductDetailsClient({ product }) {
                 </div>
               )}
             </div>
-
-            {/* Mobile Swipeable Gallery (Hidden on desktop) */}
-            <div className="d-block d-md-none">
-              <div 
-                className="d-flex overflow-auto" 
-                style={{ 
-                  scrollSnapType: "x mandatory", 
-                  gap: "10px", 
-                  paddingBottom: "15px",
-                  msOverflowStyle: "none", 
-                  scrollbarWidth: "none" 
-                }}
-              >
-                {uniqueGalleryItems.map((item, idx) => (
-                  <div 
-                    key={idx} 
-                    className="rounded position-relative flex-shrink-0 overflow-hidden d-flex justify-content-center align-items-center" 
-                    style={{ 
-                      scrollSnapAlign: "center", 
-                      width: "100%", 
-                      height: "350px",
-                      border: "1px solid #E5E7EB",
-                      background: "linear-gradient(to right, #fe924d 50%, #198e7a 50%)"
-                    }}
-                  >
-                    {item.type === 'IMAGE' && (
-                      <Image
-                        src={item.url}
-                        alt={`${product.title} view ${idx + 1}`}
-                        fill
-                        priority={idx === 0}
-                        quality={idx === 0 ? 90 : 75}
-                        sizes="100vw"
-                        style={{ objectFit: "contain" }}
-                      />
-                    )}
-                    {item.type === 'VIDEO' && (
-                      <video
-                        src={item.url}
-                        poster={item.preview}
-                        controls
-                        muted
-                        playsInline
-                        className="w-100 h-100"
-                        style={{ objectFit: "contain", backgroundColor: "#000" }}
-                      />
-                    )}
-                    {item.type === 'EXTERNAL_VIDEO' && (
-                      <iframe
-                        src={item.url.replace("watch?v=", "embed/")}
-                        title={product.title}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        className="w-100 h-100 border-0"
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-              {uniqueGalleryItems.length > 1 && (
-                <div className="text-center small text-muted mb-3 font-body">
-                  <span style={{ fontSize: "20px" }}>↔</span> Swipe to see more
-                </div>
-              )}
-            </div>
-
           </div>
         </div>
 

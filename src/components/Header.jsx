@@ -65,9 +65,9 @@ export default function Header({ menu, shop, collections }) {
           {/* Logo Brand Signature */}
           <Link href="/" className="navbar-brand d-flex align-items-center text-decoration-none">
             {shop?.brand?.logo?.image?.url ? (
-              <img src={shop.brand.logo.image.url} alt={shop?.name || "Logo"} style={{ height: "45px", width: "auto" }} />
+              <img src={shop.brand.logo.image.url} alt={shop?.name || "Logo"} style={{ height: "45px", width: "auto" }} fetchPriority="high" decoding="async" />
             ) : (
-              <img src="/peteora.png" alt="Peteora Logo" style={{ height: "45px", width: "auto" }} />
+              <img src="/peteora.png" alt="Peteora Logo" style={{ height: "45px", width: "auto" }} fetchPriority="high" decoding="async" />
             )}
           </Link>
 
