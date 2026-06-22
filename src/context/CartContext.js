@@ -43,7 +43,6 @@ export function CartProvider({ children }) {
       } else if (response?.cart) {
         toast.success(`${product.title} added to cart`);
         setCart(response.cart);
-        await refreshCart(); // Full refresh to get all line item details correctly
       }
     } catch (error) {
       console.error("Add to cart error:", error);
@@ -64,7 +63,6 @@ export function CartProvider({ children }) {
         toast.error(response.userErrors[0].message);
       } else if (response?.cart) {
         setCart(response.cart);
-        await refreshCart();
       }
     } catch (error) {
       console.error("Remove from cart error:", error);
@@ -88,7 +86,6 @@ export function CartProvider({ children }) {
         toast.error(response.userErrors[0].message);
       } else if (response?.cart) {
         setCart(response.cart);
-        await refreshCart();
       }
     } catch (error) {
       console.error("Update quantity error:", error);
@@ -99,8 +96,6 @@ export function CartProvider({ children }) {
   };
 
   const clearCart = () => {
-    // Note: Storefront API doesn't have a direct clear cart, 
-    // we would just let the cookie expire or create a new cart.
     setCart(null);
   };
 
@@ -121,8 +116,27 @@ export function CartProvider({ children }) {
 
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cart?.cost?.subtotalAmount?.amount ? parseFloat(cart.cost.subtotalAmount.amount) : 0;
-  const total = cart?.cost?.totalAmount?.amount ? parseFloat(cart.cost.totalAmount.amount) : 0;
-  const discountAmount = subtotal > 0 && total > 0 ? subtotal - total : 0;
+  
+  // Custom discount logic mimicking the ProductDetailsClient logic
+  // 3+ items = 15% off, 2 items = 10% off
+  let calculatedTotal = subtotal;
+  let discountAmount = 0;
+  
+  if (cartCount >= 3) {
+    calculatedTotal = subtotal * 0.85;
+  } else if (cartCount === 2) {
+    calculatedTotal = subtotal * 0.90;
+  }
+  
+  discountAmount = subtotal - calculatedTotal;
+
+  // Add $4.95 shipping if under $35
+  const shippingThreshold = 35.0;
+  if (calculatedTotal > 0 && calculatedTotal < shippingThreshold) {
+    calculatedTotal += 4.95;
+  }
+
+  const total = calculatedTotal;
   const checkoutUrl = cart?.checkoutUrl || null;
 
   return (
