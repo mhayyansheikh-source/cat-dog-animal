@@ -62,8 +62,7 @@ export default function ProductDetailsClient({ product }) {
   const [openFaq, setOpenFaq] = useState(null);
   const [openAccordion, setOpenAccordion] = useState("desc");
 
-  // Volume discount card selector
-  const [selectedBulkQty, setSelectedBulkQty] = useState(1);
+  // Volume discount cards are now direct Add To Cart buttons
 
   // Parse Metafields
   const getMetafield = (key) => product.metafields?.find(m => m && m.key === key)?.value;
@@ -107,15 +106,12 @@ export default function ProductDetailsClient({ product }) {
     }
   };
 
-  const handleAddToCart = () => {
-    addToCart(product, activeVariant, selectedBulkQty);
-  };
 
   const basePrice = parseFloat(activeVariant.price);
   const getBulkCardPrice = (qty) => {
     let rate = 1.0;
     if (qty === 2) rate = 0.90;
-    if (qty >= 3) rate = 0.80;
+    if (qty >= 3) rate = 0.85;
     return basePrice * rate;
   };
 
@@ -367,37 +363,42 @@ export default function ProductDetailsClient({ product }) {
           )}
 
           {/* Volume Bundle Cards - High Converting Dropshipping Feature */}
-          {hasBulkDiscount && (
+          {hasBulkDiscount ? (
             <div className="mb-4 text-start">
               <span className="d-block small text-muted fw-bold mb-2 font-body text-uppercase">
-                Choose Bundle Package & Save:
+                Choose Bundle Package & Add to Cart:
               </span>
-              <div className="d-flex flex-column gap-2">
-                <motion.div
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
-                  onClick={() => setSelectedBulkQty(1)}
-                  className={`volume-card d-flex align-items-center justify-content-between cursor-pointer ${selectedBulkQty === 1 ? "active" : ""}`}
-                  style={{ cursor: "pointer", minHeight: "72px" }}
+              <div className="d-flex flex-column gap-3">
+                <motion.button
+                  whileHover={{ scale: activeVariant.available ? 1.01 : 1 }}
+                  whileTap={{ scale: activeVariant.available ? 0.99 : 1 }}
+                  onClick={() => addToCart(product, activeVariant, 1)}
+                  disabled={!activeVariant.available}
+                  className="btn btn-outline-secondary d-flex align-items-center justify-content-between p-3 position-relative w-100 text-start"
+                  style={{ minHeight: "72px", border: "1px solid #dee2e6", borderRadius: "12px" }}
                 >
-                  <div>
-                    <strong className="d-block">Buy 1 Item</strong>
+                  <div className="d-flex flex-column">
+                    <strong className="d-block text-dark">Buy 1 Item</strong>
                     <span className="small text-muted font-body">Perfect for trying it out</span>
                   </div>
-                  <div className="text-end">
-                    <strong className="fs-5">
+                  <div className="d-flex flex-column align-items-end" style={{ paddingRight: "45px" }}>
+                    <strong className="fs-5 text-dark">
                       {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(basePrice)}
                     </strong>
                     <span className="d-block small text-muted">/unit</span>
                   </div>
-                </motion.div>
+                  <div className="position-absolute end-0 top-0 bottom-0 d-flex align-items-center justify-content-center bg-light px-3 border-start" style={{ borderTopRightRadius: "11px", borderBottomRightRadius: "11px" }}>
+                    <ShoppingCart size={20} className="text-muted" />
+                  </div>
+                </motion.button>
 
-                <motion.div
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
-                  onClick={() => setSelectedBulkQty(2)}
-                  className={`volume-card d-flex align-items-center justify-content-between cursor-pointer ${selectedBulkQty === 2 ? "active" : ""}`}
-                  style={{ cursor: "pointer", minHeight: "72px" }}
+                <motion.button
+                  whileHover={{ scale: activeVariant.available ? 1.01 : 1 }}
+                  whileTap={{ scale: activeVariant.available ? 0.99 : 1 }}
+                  onClick={() => addToCart(product, activeVariant, 2)}
+                  disabled={!activeVariant.available}
+                  className="btn btn-outline-success d-flex align-items-center justify-content-between p-3 position-relative w-100 text-start"
+                  style={{ minHeight: "72px", border: "2px solid #198e7a", borderRadius: "12px", backgroundColor: "rgba(25, 142, 122, 0.03)" }}
                 >
                   <motion.span 
                     animate={{ opacity: [0.8, 1, 0.8] }}
@@ -406,62 +407,65 @@ export default function ProductDetailsClient({ product }) {
                   >
                     ★ STOCK UP (10% OFF)
                   </motion.span>
-                  <div>
-                    <strong className="d-block">Buy 2 Items (Save 10% Off)</strong>
-                    <span className="small text-success font-body">Recommended - ensure you don't run out</span>
+                  <div className="d-flex flex-column mt-2">
+                    <strong className="d-block" style={{ color: "#198e7a" }}>Buy 2 Items</strong>
                   </div>
-                  <div className="text-end">
-                    <strong className="fs-5 text-success">
+                  <div className="d-flex flex-column align-items-end" style={{ paddingRight: "45px" }}>
+                    <strong className="fs-5" style={{ color: "#198e7a" }}>
                       {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(getBulkCardPrice(2))}
                     </strong>
-                    <span className="d-block small text-muted">/unit</span>
+                    <span className="d-block small" style={{ color: "#198e7a" }}>/unit</span>
                   </div>
-                </motion.div>
+                  <div className="position-absolute end-0 top-0 bottom-0 d-flex align-items-center justify-content-center px-3" style={{ backgroundColor: "#198e7a", color: "white", borderTopRightRadius: "10px", borderBottomRightRadius: "10px" }}>
+                    <ShoppingCart size={20} />
+                  </div>
+                </motion.button>
 
-                <motion.div
-                  animate={{ boxShadow: selectedBulkQty === 3 ? "0 0 15px rgba(245,118,26,0.3)" : "none" }}
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
-                  onClick={() => setSelectedBulkQty(3)}
-                  className={`volume-card d-flex align-items-center justify-content-between cursor-pointer ${selectedBulkQty === 3 ? "active" : ""}`}
-                  style={{ cursor: "pointer", minHeight: "72px" }}
+                <motion.button
+                  whileHover={{ scale: activeVariant.available ? 1.02 : 1 }}
+                  whileTap={{ scale: activeVariant.available ? 0.98 : 1 }}
+                  onClick={() => addToCart(product, activeVariant, 3)}
+                  disabled={!activeVariant.available}
+                  className="btn btn-outline-warning d-flex align-items-center justify-content-between p-3 position-relative w-100 text-start shadow-sm"
+                  style={{ minHeight: "72px", border: "2px solid var(--orange)", borderRadius: "12px", backgroundColor: "rgba(254, 146, 77, 0.05)" }}
                 >
                   <motion.span 
-                    animate={{ scale: [1, 1.05, 1], backgroundColor: ["#198e7a", "#fe924d", "#198e7a"] }} 
+                    animate={{ scale: [1, 1.05, 1], backgroundColor: ["#198e7a", "var(--orange)", "#198e7a"] }} 
                     transition={{ duration: 2, repeat: Infinity }} 
                     className="discount-badge text-white border-0"
                   >
-                    🏆 BEST VALUE (20% OFF)
+                    🏆 BEST VALUE (15% OFF)
                   </motion.span>
-                  <div>
-                    <strong className="d-block">Buy 3 Items (Save 20% Off)</strong>
-                    <span className="small text-success font-body">Maximum savings for your pet</span>
+                  <div className="d-flex flex-column mt-2">
+                    <strong className="d-block" style={{ color: "var(--orange)" }}>Buy 3 Items</strong>
                   </div>
-                  <div className="text-end">
-                    <strong className="fs-5 text-success">
+                  <div className="d-flex flex-column align-items-end" style={{ paddingRight: "45px" }}>
+                    <strong className="fs-5" style={{ color: "var(--orange)" }}>
                       {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(getBulkCardPrice(3))}
                     </strong>
-                    <span className="d-block small text-muted">/unit</span>
+                    <span className="d-block small" style={{ color: "var(--orange)" }}>/unit</span>
                   </div>
-                </motion.div>
+                  <div className="position-absolute end-0 top-0 bottom-0 d-flex align-items-center justify-content-center px-3" style={{ backgroundColor: "var(--orange)", color: "white", borderTopRightRadius: "10px", borderBottomRightRadius: "10px" }}>
+                    <ShoppingCart size={20} />
+                  </div>
+                </motion.button>
               </div>
             </div>
+          ) : (
+            <div className="mb-3">
+              <motion.button
+                whileHover={{ scale: activeVariant.available ? 1.02 : 1 }}
+                whileTap={{ scale: activeVariant.available ? 0.98 : 1 }}
+                onClick={() => addToCart(product, activeVariant, 1)}
+                disabled={!activeVariant.available}
+                className={`w-100 rounded-pill-cta fs-5 d-flex align-items-center justify-content-center gap-2 shadow ${!activeVariant.available ? "btn-secondary opacity-75" : "btn-zesty-primary"}`}
+                style={{ minHeight: "56px" }}
+              >
+                <ShoppingCart size={22} />
+                {activeVariant.available ? "ADD TO CART" : "OUT OF STOCK"}
+              </motion.button>
+            </div>
           )}
-
-          {/* Add to Cart Actions */}
-          <div className="mb-3">
-            <motion.button
-              whileHover={{ scale: activeVariant.available ? 1.02 : 1 }}
-              whileTap={{ scale: activeVariant.available ? 0.98 : 1 }}
-              onClick={handleAddToCart}
-              disabled={!activeVariant.available}
-              className={`w-100 rounded-pill-cta fs-5 d-flex align-items-center justify-content-center gap-2 shadow ${!activeVariant.available ? "btn-secondary opacity-75" : "btn-zesty-primary"}`}
-              style={{ minHeight: "56px" }}
-            >
-              <ShoppingCart size={22} />
-              {activeVariant.available ? "ADD TO CART" : "OUT OF STOCK"}
-            </motion.button>
-          </div>
 
           <div className="mb-2">
             <ShippingTimer />

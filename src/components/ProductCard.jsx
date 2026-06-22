@@ -227,7 +227,7 @@ export default function ProductCard({ product }) {
               🎁 Bundle & Save
             </span>
             <span className="fw-semibold d-block" style={{ fontSize: "0.75rem", lineHeight: "1.3", color: "var(--charcoal-dark)" }}>
-              Buy 2 get <strong style={{ color: "var(--orange)" }}>10% OFF</strong> • Buy 3 get <strong style={{ color: "var(--orange)" }}>20% OFF</strong>
+              Buy 2 get <strong style={{ color: "var(--orange)" }}>10% OFF</strong> • Buy 3 get <strong style={{ color: "var(--orange)" }}>15% OFF</strong>
             </span>
           </motion.div>
 
