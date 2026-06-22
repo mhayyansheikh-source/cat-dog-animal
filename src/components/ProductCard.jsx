@@ -170,12 +170,57 @@ export default function ProductCard({ product }) {
 
         <div>
           {/* Variant Selector swatches (if multiple) */}
-          {product.variants.length > 1 && (
+          {/* Variant Selector swatches (if multiple) */}
+          {product.options && product.options.length > 0 && product.options[0].name !== "Title" && product.variants.length > 1 ? (
+            <div className="d-flex flex-column gap-2 my-3">
+              {product.options.map((option, optIdx) => {
+                const currentParts = selectedVariant.title.split(' / ');
+                const activeValue = currentParts[optIdx];
+                return (
+                  <div key={option.name} className="d-flex flex-wrap gap-1 align-items-center">
+                    <span className="small text-muted fw-bold me-1" style={{ fontSize: "10px", textTransform: "uppercase" }}>{option.name}:</span>
+                    {option.values.map(val => {
+                      const isActive = activeValue === val;
+                      const targetParts = [...currentParts];
+                      targetParts[optIdx] = val;
+                      const exactMatch = product.variants.find(v => v.title.split(' / ').every((p, i) => p === targetParts[i]));
+                      const isAvailable = exactMatch ? exactMatch.available : true;
+                      return (
+                        <button
+                          key={val}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            let newMatched = exactMatch || product.variants.find(v => v.title.split(' / ')[optIdx] === val && v.available) || product.variants.find(v => v.title.split(' / ')[optIdx] === val);
+                            if (newMatched) handleVariantChange(newMatched.id);
+                          }}
+                          className={`btn p-0 m-0 rounded-pill overflow-hidden transition-all`}
+                          style={{
+                            minWidth: "28px",
+                            height: "28px",
+                            border: isActive ? "2px solid var(--orange)" : "1px solid #dee2e6",
+                            background: isActive ? "var(--orange-light)" : "#fff",
+                            color: isActive ? "var(--orange-dark)" : "#6c757d",
+                            fontSize: "11px",
+                            padding: "0 8px",
+                            fontWeight: isActive ? "bold" : "normal",
+                            opacity: isAvailable ? 1 : 0.5,
+                            textDecoration: isAvailable ? "none" : "line-through",
+                          }}
+                        >
+                          {val}
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
+          ) : product.variants.length > 1 && (
             <div className="d-flex gap-1 flex-wrap my-3">
               {product.variants.map((v) => (
                 <button
                   key={v.id}
-                  onClick={() => handleVariantChange(v.id)}
+                  onClick={(e) => { e.preventDefault(); handleVariantChange(v.id); }}
                   className={`variant-swatch ${selectedVariant.id === v.id ? "active" : ""}`}
                 >
                   {v.title}

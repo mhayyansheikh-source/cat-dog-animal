@@ -307,11 +307,82 @@ export default function ProductDetailsClient({ product }) {
             <LiveScarcity variantId={activeVariant.id} />
           </motion.div>
 
-          {/* Variant Selector Swatches */}
-          {product.variants.length > 1 && (
+          {/* Modern Animated Variant Selector */}
+          {product.options && product.options.length > 0 && product.options[0].name !== "Title" && product.variants.length > 1 ? (
+            <div className="mb-4">
+              {product.options.map((option, optIdx) => {
+                const currentParts = activeVariant.title.split(' / ');
+                const activeValue = currentParts[optIdx];
+                return (
+                  <div key={option.name} className="mb-3">
+                    <span className="d-flex align-items-center gap-2 small text-muted fw-bold mb-2 font-body text-uppercase">
+                      {option.name}: <span className="text-dark" style={{ color: "var(--forest-green)" }}>{activeValue}</span>
+                    </span>
+                    <div className="d-flex gap-2 flex-wrap">
+                      {option.values.map(val => {
+                        const isActive = activeValue === val;
+                        // Check if this specific combination is available
+                        const targetParts = [...currentParts];
+                        targetParts[optIdx] = val;
+                        const exactMatch = product.variants.find(v => v.title.split(' / ').every((p, i) => p === targetParts[i]));
+                        const isAvailable = exactMatch ? exactMatch.available : true;
+                        
+                        return (
+                          <motion.button
+                            whileHover={{ scale: 1.02, y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            key={val}
+                            onClick={() => {
+                              // Prioritize exact match, fallback to first available variant with this option
+                              let newMatched = exactMatch;
+                              if (!newMatched) {
+                                newMatched = product.variants.find(v => v.title.split(' / ')[optIdx] === val && v.available);
+                              }
+                              if (!newMatched) {
+                                newMatched = product.variants.find(v => v.title.split(' / ')[optIdx] === val);
+                              }
+                              if (newMatched) handleVariantSelect(newMatched);
+                            }}
+                            className={`btn position-relative overflow-hidden ${isActive ? "active-variant-btn" : "inactive-variant-btn"}`}
+                            style={{
+                              minHeight: "44px",
+                              border: isActive ? "2px solid var(--orange)" : "1px solid #e5e7eb",
+                              background: isActive ? "var(--orange-light)" : "#fff",
+                              color: isActive ? "var(--orange-dark)" : "#4b5563",
+                              borderRadius: "12px",
+                              fontWeight: "600",
+                              fontSize: "14px",
+                              padding: "8px 16px",
+                              opacity: isAvailable ? 1 : 0.5,
+                              textDecoration: isAvailable ? "none" : "line-through",
+                              transition: "all 0.3s ease",
+                              boxShadow: isActive ? "0 4px 12px rgba(254, 146, 77, 0.15)" : "none"
+                            }}
+                          >
+                            {val}
+                            {isActive && (
+                              <motion.div
+                                layoutId="activeVariantHighlight"
+                                className="position-absolute top-0 start-0 w-100 h-100"
+                                style={{
+                                  background: "var(--orange)",
+                                  opacity: 0.05,
+                                  borderRadius: "10px"
+                                }}
+                              />
+                            )}
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : product.variants.length > 1 && (
             <div className="mb-4">
               <span className="d-block small text-muted fw-bold mb-2 font-body text-uppercase">
-                Select Option / Flavor:
+                Select Option:
               </span>
               <div className="d-flex gap-2 flex-wrap">
                 {product.variants.map((v) => (
