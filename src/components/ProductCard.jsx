@@ -216,8 +216,23 @@ export default function ProductCard({ product }) {
             </div>
           )}
 
+          {/* Bundle Discount Banner */}
+          <motion.div 
+            className="w-100 py-2 px-1 mt-2 mb-3 rounded d-flex align-items-center justify-content-center flex-column text-center"
+            style={{ backgroundColor: "rgba(25, 142, 122, 0.08)", border: "1px dashed rgba(25, 142, 122, 0.4)", cursor: "default" }}
+            whileHover={{ scale: 1.02, backgroundColor: "rgba(25, 142, 122, 0.12)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+          >
+            <span className="fw-bold d-block mb-1" style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--teal-dark)" }}>
+              🎁 Bundle & Save
+            </span>
+            <span className="fw-semibold d-block" style={{ fontSize: "0.75rem", lineHeight: "1.3", color: "var(--charcoal-dark)" }}>
+              Buy 2 get <strong style={{ color: "var(--orange)" }}>10% OFF</strong> • Buy 3 get <strong style={{ color: "var(--orange)" }}>20% OFF</strong>
+            </span>
+          </motion.div>
+
           {/* Pricing Row & Add button */}
-          <div className="d-flex align-items-center justify-content-between mt-3 pt-2 border-top">
+          <div className="d-flex align-items-center justify-content-between mt-auto pt-2 border-top">
             <div className="d-flex align-items-baseline gap-2">
               <span className="fs-5 fw-bold" style={{ color: "var(--orange)" }}>
                 {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(selectedVariant.price)}

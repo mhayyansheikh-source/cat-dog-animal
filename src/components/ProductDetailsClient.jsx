@@ -115,7 +115,7 @@ export default function ProductDetailsClient({ product }) {
   const getBulkCardPrice = (qty) => {
     let rate = 1.0;
     if (qty === 2) rate = 0.90;
-    if (qty >= 3) rate = 0.85;
+    if (qty >= 3) rate = 0.80;
     return basePrice * rate;
   };
 
@@ -399,7 +399,13 @@ export default function ProductDetailsClient({ product }) {
                   className={`volume-card d-flex align-items-center justify-content-between cursor-pointer ${selectedBulkQty === 2 ? "active" : ""}`}
                   style={{ cursor: "pointer", minHeight: "72px" }}
                 >
-                  <span className="discount-badge">★ STOCK UP</span>
+                  <motion.span 
+                    animate={{ opacity: [0.8, 1, 0.8] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="discount-badge"
+                  >
+                    ★ STOCK UP (10% OFF)
+                  </motion.span>
                   <div>
                     <strong className="d-block">Buy 2 Items (Save 10% Off)</strong>
                     <span className="small text-success font-body">Recommended - ensure you don't run out</span>
@@ -421,14 +427,14 @@ export default function ProductDetailsClient({ product }) {
                   style={{ cursor: "pointer", minHeight: "72px" }}
                 >
                   <motion.span 
-                    animate={{ scale: [1, 1.05, 1] }} 
+                    animate={{ scale: [1, 1.05, 1], backgroundColor: ["#198e7a", "#fe924d", "#198e7a"] }} 
                     transition={{ duration: 2, repeat: Infinity }} 
-                    className="discount-badge bg-success"
+                    className="discount-badge text-white border-0"
                   >
-                    🏆 BEST VALUE
+                    🏆 BEST VALUE (20% OFF)
                   </motion.span>
                   <div>
-                    <strong className="d-block">Buy 3 Items (Save 15% Off)</strong>
+                    <strong className="d-block">Buy 3 Items (Save 20% Off)</strong>
                     <span className="small text-success font-body">Maximum savings for your pet</span>
                   </div>
                   <div className="text-end">
