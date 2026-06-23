@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { subscribeAction } from "@/app/actions";
+
 
 export default function NewsletterSection() {
   const [subscribed, setSubscribed] = useState(false);
@@ -14,14 +14,25 @@ export default function NewsletterSection() {
     if (email) {
       setLoading(true);
       setError(null);
-      const res = await subscribeAction(email);
-      setLoading(false);
-      
-      if (res.error) {
-        setError(res.error);
-      } else {
-        setSubscribed(true);
-        setEmail("");
+      try {
+        const res = await fetch("/api/newsletter", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+        
+        setLoading(false);
+        
+        if (!res.ok || data.error) {
+          setError(data.error || "Subscription failed.");
+        } else {
+          setSubscribed(true);
+          setEmail("");
+        }
+      } catch (err) {
+        setLoading(false);
+        setError("Network error. Please try again later.");
       }
     }
   };

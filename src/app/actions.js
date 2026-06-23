@@ -2,12 +2,7 @@
 
 import { 
   createShopifyCheckout, 
-  createCart, 
-  getCart, 
-  addCartLines, 
-  updateCartLines, 
-  removeCartLines,
-  subscribeToNewsletter
+  createCart
 } from "@/utils/shopify";
 import { cookies } from "next/headers";
 
@@ -35,18 +30,3 @@ export async function createCartAction() {
   }
 }
 
-
-export async function subscribeAction(email) {
-  try {
-    const result = await subscribeToNewsletter(email);
-    if (!result) return { error: "Subscription failed." };
-    
-    if (result.customerUserErrors?.length > 0) {
-      return { error: result.customerUserErrors[0].message };
-    }
-    
-    return { success: true, message: "Successfully subscribed!" };
-  } catch (error) {
-    return { error: error.message };
-  }
-}

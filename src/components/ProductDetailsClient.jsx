@@ -563,7 +563,7 @@ export default function ProductDetailsClient({ product }) {
                     <td>Cheap fillers, flimsy plastics, or low-grade materials</td>
                   </tr>
                   <tr>
-                    <td><strong>Safety Standards</strong></td>
+                    <td><strong>Safety Standar  §ds</strong></td>
                     <td className="text-success fw-semibold" style={{ backgroundColor: "rgba(33,123,55,0.05)" }}>✓ Rigorously tested for pet safety and wellness</td>
                     <td>Unknown origins with questionable safety records</td>
                   </tr>
