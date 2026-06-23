@@ -386,7 +386,7 @@ export default function ProductDetailsClient({ product }) {
                     <strong className="fs-5 text-dark">
                       {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(basePrice)}
                     </strong>
-                    <span className="d-block small text-muted">/unit</span>
+                    <span className="d-block small text-muted">Total</span>
                   </div>
                   <div className="position-absolute end-0 top-0 bottom-0 d-flex align-items-center justify-content-center bg-light px-3 border-start" style={{ borderTopRightRadius: "11px", borderBottomRightRadius: "11px" }}>
                     <ShoppingCart size={20} className="text-muted" />
@@ -414,9 +414,9 @@ export default function ProductDetailsClient({ product }) {
                   </div>
                   <div className="d-flex flex-column align-items-end" style={{ paddingRight: "45px" }}>
                     <strong className="fs-5" style={{ color: "#198e7a" }}>
-                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(getBulkCardPrice(2))}
+                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(getBulkCardPrice(2) * 2)}
                     </strong>
-                    <span className="d-block small" style={{ color: "#198e7a" }}>/unit</span>
+                    <span className="d-block small" style={{ color: "#198e7a" }}>Total</span>
                   </div>
                   <div className="position-absolute end-0 top-0 bottom-0 d-flex align-items-center justify-content-center px-3" style={{ backgroundColor: "#198e7a", color: "white", borderTopRightRadius: "10px", borderBottomRightRadius: "10px" }}>
                     <ShoppingCart size={20} />
@@ -444,9 +444,9 @@ export default function ProductDetailsClient({ product }) {
                   </div>
                   <div className="d-flex flex-column align-items-end" style={{ paddingRight: "45px" }}>
                     <strong className="fs-5" style={{ color: "var(--orange)" }}>
-                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(getBulkCardPrice(3))}
+                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(getBulkCardPrice(3) * 3)}
                     </strong>
-                    <span className="d-block small" style={{ color: "var(--orange)" }}>/unit</span>
+                    <span className="d-block small" style={{ color: "var(--orange)" }}>Total</span>
                   </div>
                   <div className="position-absolute end-0 top-0 bottom-0 d-flex align-items-center justify-content-center px-3" style={{ backgroundColor: "var(--orange)", color: "white", borderTopRightRadius: "10px", borderBottomRightRadius: "10px" }}>
                     <ShoppingCart size={20} />
