@@ -120,12 +120,13 @@ export default async function ProductPage({ params }) {
           <h3 className="mb-4 fw-bold" style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif" }}>
             You May Also Like
           </h3>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "24px" }}>
+          <div className="row g-4">
             {recommendations.map((rec, index) => (
-              <div key={rec.id} className="col-6 col-md-3">
+              <div key={rec.id} className="col-6 col-md-4 col-lg-3">
                 <ProductCard key={rec.id} product={rec} index={index} />
               </div>
-            ))}</div>
+            ))}
+          </div>
         </div>
       )}
 
