@@ -212,14 +212,15 @@ export default function Hero({ collections = [], heroMeta = null }) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="d-flex flex-wrap justify-content-center justify-content-lg-start gap-3 mb-5"
+              className="d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-3 mb-5"
             >
-              <Link href="/collections/dogs" className="text-decoration-none">
+              <Link href="/collections/dogs" className="text-decoration-none d-block w-100" style={{ maxWidth: "sm-auto" }}>
                 <motion.button
                   animate={{ y: [0, -5, 0] }}
                   transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  className="w-100 d-flex justify-content-center align-items-center"
                   style={{
                     background: "var(--orange)",
                     color: "white",
@@ -229,8 +230,7 @@ export default function Hero({ collections = [], heroMeta = null }) {
                     fontWeight: "800",
                     fontSize: "15px",
                     cursor: "pointer",
-                    display: "inline-flex",
-                    alignItems: "center",
+                    minHeight: "52px",
                     gap: "8px",
                     boxShadow: "0 4px 16px rgba(245,118,26,0.3)",
                   }}
@@ -239,12 +239,13 @@ export default function Hero({ collections = [], heroMeta = null }) {
                 </motion.button>
               </Link>
 
-              <Link href="/collections/cats" className="text-decoration-none">
+              <Link href="/collections/cats" className="text-decoration-none d-block w-100" style={{ maxWidth: "sm-auto" }}>
                 <motion.button
                   animate={{ y: [0, -5, 0] }}
                   transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
                   whileHover={{ scale: 1.05, backgroundColor: "var(--orange)", color: "white" }}
                   whileTap={{ scale: 0.95 }}
+                  className="w-100 d-flex justify-content-center align-items-center"
                   style={{
                     background: "transparent",
                     color: "var(--orange)",
@@ -254,8 +255,7 @@ export default function Hero({ collections = [], heroMeta = null }) {
                     fontWeight: "800",
                     fontSize: "15px",
                     cursor: "pointer",
-                    display: "inline-flex",
-                    alignItems: "center",
+                    minHeight: "52px",
                     gap: "8px",
                   }}
                 >

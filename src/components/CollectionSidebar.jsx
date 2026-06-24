@@ -46,8 +46,26 @@ export default function CollectionSidebar({ sidebarConfig }) {
     }
   };
 
+  const [isOpen, setIsOpen] = React.useState(false);
+
   return (
     <aside style={{ position: "sticky", top: "90px" }}>
+      {/* Mobile Toggle Button */}
+      <div className="d-block d-lg-none mb-3">
+        <button 
+          className="btn w-100 d-flex align-items-center justify-content-between p-3 rounded-4 shadow-sm font-heading fw-bold"
+          style={{ backgroundColor: "white", border: "1px solid #E5E7EB", minHeight: "52px" }}
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <span className="d-flex align-items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+            Filter & Categories
+          </span>
+          <span className="small text-zesty-orange">{isOpen ? "Hide" : "Show"}</span>
+        </button>
+      </div>
+
+      <div className={isOpen ? "d-block" : "d-none d-lg-block"}>
       <div
         style={{
           background: "white",
@@ -113,6 +131,7 @@ export default function CollectionSidebar({ sidebarConfig }) {
             );
           })}
         </ul>
+      </div>
       </div>
     </aside>
   );

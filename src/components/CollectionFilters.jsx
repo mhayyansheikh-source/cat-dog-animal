@@ -62,7 +62,7 @@ export default function CollectionFilters({ filters }) {
 
               return (
                 <li key={val.id} className="mb-2">
-                  <label className="d-flex align-items-center gap-2" style={{ cursor: "pointer" }}>
+                  <label className="d-flex align-items-center gap-2" style={{ cursor: "pointer", minHeight: "44px" }}>
                     <input
                       type="checkbox"
                       className="form-check-input mt-0"

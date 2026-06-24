@@ -68,57 +68,117 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
           </div>
 
           {/* Shop (Main Menu) */}
-          <div className="col-lg-2 col-md-3 col-6">
-            <h6 className="fw-bold mb-4 text-uppercase text-white letter-spacing-wide">Shop</h6>
-            <ul className="list-unstyled mb-0 font-body fs-6">
-              {mainMenu?.items?.map((link) => (
-                <li className="mb-3" key={link.id}>
-                  <Link href={getPath(link.url)} className="footer-link text-white-50">
-                    {link.title}
-                  </Link>
-                </li>
-              ))}
-              {!mainMenu?.items?.length && (
-                <>
-                  <li className="mb-3"><Link href="/" className="footer-link text-white-50">Home</Link></li>
-                  <li className="mb-3"><Link href="/collections/all" className="footer-link text-white-50">Shop All</Link></li>
-                </>
-              )}
-            </ul>
+          <div className="col-lg-2 col-md-3 col-12 mb-2 mb-md-0">
+            <details className="d-md-none border-bottom border-secondary pb-1">
+              <summary className="fw-bold text-uppercase text-white letter-spacing-wide py-3 d-flex justify-content-between align-items-center" style={{ outline: 'none', cursor: 'pointer' }}>
+                Shop <span className="text-white-50 fs-6">▼</span>
+              </summary>
+              <ul className="list-unstyled mb-0 font-body fs-6 pt-2 pb-2">
+                {mainMenu?.items?.map((link) => (
+                  <li className="mb-3" key={link.id}>
+                    <Link href={getPath(link.url)} className="footer-link text-white-50 d-block" style={{ minHeight: "44px" }}>
+                      {link.title}
+                    </Link>
+                  </li>
+                ))}
+                {!mainMenu?.items?.length && (
+                  <>
+                    <li className="mb-3"><Link href="/" className="footer-link text-white-50 d-block" style={{ minHeight: "44px" }}>Home</Link></li>
+                    <li className="mb-3"><Link href="/collections/all" className="footer-link text-white-50 d-block" style={{ minHeight: "44px" }}>Shop All</Link></li>
+                  </>
+                )}
+              </ul>
+            </details>
+            <div className="d-none d-md-block">
+              <h6 className="fw-bold mb-4 text-uppercase text-white letter-spacing-wide">Shop</h6>
+              <ul className="list-unstyled mb-0 font-body fs-6">
+                {mainMenu?.items?.map((link) => (
+                  <li className="mb-3" key={link.id}>
+                    <Link href={getPath(link.url)} className="footer-link text-white-50">
+                      {link.title}
+                    </Link>
+                  </li>
+                ))}
+                {!mainMenu?.items?.length && (
+                  <>
+                    <li className="mb-3"><Link href="/" className="footer-link text-white-50">Home</Link></li>
+                    <li className="mb-3"><Link href="/collections/all" className="footer-link text-white-50">Shop All</Link></li>
+                  </>
+                )}
+              </ul>
+            </div>
           </div>
 
           {/* Explore (Footer Menu) */}
-          <div className="col-lg-2 col-md-3 col-6">
-            <h6 className="fw-bold mb-4 text-uppercase text-white letter-spacing-wide">Explore</h6>
-            <ul className="list-unstyled mb-0 font-body fs-6">
-              {menu?.items?.map((link) => (
-                <li className="mb-3" key={link.id}>
-                  <Link href={getPath(link.url)} className="footer-link text-white-50">
-                    {link.title}
-                  </Link>
-                </li>
-              ))}
-              {!menu?.items?.length && (
-                <>
-                  <li className="mb-3"><Link href="/collections/dogs" className="footer-link text-white-50">Dogs</Link></li>
-                  <li className="mb-3"><Link href="/collections/cats" className="footer-link text-white-50">Cats</Link></li>
-                </>
-              )}
-            </ul>
+          <div className="col-lg-2 col-md-3 col-12 mb-2 mb-md-0">
+            <details className="d-md-none border-bottom border-secondary pb-1">
+              <summary className="fw-bold text-uppercase text-white letter-spacing-wide py-3 d-flex justify-content-between align-items-center" style={{ outline: 'none', cursor: 'pointer' }}>
+                Explore <span className="text-white-50 fs-6">▼</span>
+              </summary>
+              <ul className="list-unstyled mb-0 font-body fs-6 pt-2 pb-2">
+                {menu?.items?.map((link) => (
+                  <li className="mb-3" key={link.id}>
+                    <Link href={getPath(link.url)} className="footer-link text-white-50 d-block" style={{ minHeight: "44px" }}>
+                      {link.title}
+                    </Link>
+                  </li>
+                ))}
+                {!menu?.items?.length && (
+                  <>
+                    <li className="mb-3"><Link href="/collections/dogs" className="footer-link text-white-50 d-block" style={{ minHeight: "44px" }}>Dogs</Link></li>
+                    <li className="mb-3"><Link href="/collections/cats" className="footer-link text-white-50 d-block" style={{ minHeight: "44px" }}>Cats</Link></li>
+                  </>
+                )}
+              </ul>
+            </details>
+            <div className="d-none d-md-block">
+              <h6 className="fw-bold mb-4 text-uppercase text-white letter-spacing-wide">Explore</h6>
+              <ul className="list-unstyled mb-0 font-body fs-6">
+                {menu?.items?.map((link) => (
+                  <li className="mb-3" key={link.id}>
+                    <Link href={getPath(link.url)} className="footer-link text-white-50">
+                      {link.title}
+                    </Link>
+                  </li>
+                ))}
+                {!menu?.items?.length && (
+                  <>
+                    <li className="mb-3"><Link href="/collections/dogs" className="footer-link text-white-50">Dogs</Link></li>
+                    <li className="mb-3"><Link href="/collections/cats" className="footer-link text-white-50">Cats</Link></li>
+                  </>
+                )}
+              </ul>
+            </div>
           </div>
 
           {/* Policies & Customer Care */}
-          <div className="col-lg-3 col-md-6">
-            <h6 className="fw-bold mb-4 text-uppercase text-white letter-spacing-wide">Customer Care</h6>
-            <ul className="list-unstyled mb-0 font-body fs-6">
-              {policyLinks.map((link, idx) => (
-                <li className="mb-3" key={idx}>
-                  <Link href={link.url} className="footer-link text-white-50">
-                    {link.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          <div className="col-lg-3 col-md-6 col-12 mb-2 mb-md-0">
+            <details className="d-md-none border-bottom border-secondary pb-1">
+              <summary className="fw-bold text-uppercase text-white letter-spacing-wide py-3 d-flex justify-content-between align-items-center" style={{ outline: 'none', cursor: 'pointer' }}>
+                Customer Care <span className="text-white-50 fs-6">▼</span>
+              </summary>
+              <ul className="list-unstyled mb-0 font-body fs-6 pt-2 pb-2">
+                {policyLinks.map((link, idx) => (
+                  <li className="mb-3" key={idx}>
+                    <Link href={link.url} className="footer-link text-white-50 d-block" style={{ minHeight: "44px" }}>
+                      {link.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </details>
+            <div className="d-none d-md-block">
+              <h6 className="fw-bold mb-4 text-uppercase text-white letter-spacing-wide">Customer Care</h6>
+              <ul className="list-unstyled mb-0 font-body fs-6">
+                {policyLinks.map((link, idx) => (
+                  <li className="mb-3" key={idx}>
+                    <Link href={link.url} className="footer-link text-white-50">
+                      {link.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
         </div>

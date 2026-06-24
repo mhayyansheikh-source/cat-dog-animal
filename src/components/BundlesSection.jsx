@@ -9,6 +9,7 @@ import Link from "next/link";
 function BundleCard({ bundle }) {
   return (
     <div
+      className="bundle-card"
       style={{
         background: "white",
         border: "1px solid #E5E7EB",
@@ -239,15 +240,52 @@ export default function BundlesSection({ dynamicProducts }) {
         </div>
 
         {/* Bundle Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 480px), 1fr))",
-            gap: "24px",
-          }}
-        >
+        <div className="bundle-carousel">
           {renderDynamicBundles()}
         </div>
+        <style dangerouslySetInnerHTML={{__html: `
+          .bundle-carousel {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 16px;
+            padding-bottom: 16px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+          }
+          .bundle-carousel::-webkit-scrollbar {
+            display: none;
+          }
+          .bundle-card {
+            scroll-snap-align: start;
+            flex: 0 0 88vw;
+            max-width: 480px;
+          }
+          @media (min-width: 768px) {
+            .bundle-carousel {
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr));
+              gap: 24px;
+              overflow-x: visible;
+            }
+            .bundle-card {
+              flex: auto;
+              max-width: none;
+            }
+          }
+          @media (max-width: 575px) {
+            .bundle-card {
+              grid-template-columns: 1fr !important;
+            }
+            .bundle-card > div:first-child {
+              min-height: 160px !important;
+              padding: 20px 16px !important;
+            }
+            .bundle-card > div:last-child {
+              padding: 24px 20px !important;
+            }
+          }
+        `}} />
       </div>
     </section>
   );

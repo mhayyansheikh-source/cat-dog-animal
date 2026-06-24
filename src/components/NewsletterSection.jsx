@@ -59,7 +59,7 @@ export default function NewsletterSection() {
               ✓ Welcome to the pack! Check your inbox for your 15% discount code.
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="input-group mx-auto mb-3" style={{ maxWidth: "480px" }}>
+            <form onSubmit={handleSubmit} className="d-flex flex-column flex-sm-row mx-auto mb-3 gap-2" style={{ maxWidth: "480px" }}>
               <input 
                 type="email" 
                 className="form-control" 
@@ -68,22 +68,24 @@ export default function NewsletterSection() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 style={{ 
-                  borderRadius: "100px 0 0 100px", 
+                  borderRadius: "100px", 
                   paddingLeft: "1.25rem",
                   border: "none",
-                  height: "50px"
+                  height: "52px",
+                  flexGrow: 1
                 }} 
               />
               <button 
                 type="submit" 
-                className="btn text-white"
+                className="btn text-white px-4"
                 disabled={loading}
                 style={{ 
                   backgroundColor: "var(--charcoal)", 
-                  borderRadius: "0 100px 100px 0",
+                  borderRadius: "100px",
                   fontWeight: "700",
-                  padding: "0.5rem 1.75rem",
-                  border: "none"
+                  border: "none",
+                  height: "52px",
+                  whiteSpace: "nowrap"
                 }}
               >
                 {loading ? "..." : "Subscribe"}

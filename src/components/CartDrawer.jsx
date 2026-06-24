@@ -236,29 +236,30 @@ export default function CartDrawer() {
                         <div className="d-flex align-items-center gap-2">
                           <div
                             className="d-flex align-items-center border rounded-pill overflow-hidden bg-light"
-                            style={{ height: "30px", opacity: isSyncing ? 0.5 : 1, pointerEvents: isSyncing ? 'none' : 'auto' }}
+                            style={{ height: "36px", opacity: isSyncing ? 0.5 : 1, pointerEvents: isSyncing ? 'none' : 'auto' }}
                           >
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              className="btn btn-sm px-2 py-0 border-0 d-flex align-items-center"
+                              className="btn btn-sm px-3 border-0 d-flex align-items-center h-100"
                               aria-label="Decrease quantity"
                             >
-                              <Minus size={12} />
+                              <Minus size={14} />
                             </button>
                             <span className="px-2 small fw-bold">{item.quantity}</span>
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              className="btn btn-sm px-2 py-0 border-0 d-flex align-items-center"
+                              className="btn btn-sm px-3 border-0 d-flex align-items-center h-100"
                               aria-label="Increase quantity"
                             >
-                              <Plus size={12} />
+                              <Plus size={14} />
                             </button>
                           </div>
 
                           {/* Delete button */}
                           <button
                             onClick={() => removeFromCart(item.id)}
-                            className="btn btn-sm text-danger border-0 p-1 hover-scale"
+                            className="btn btn-sm text-danger border-0 p-2 hover-scale d-flex align-items-center justify-content-center"
+                            style={{ height: "36px", width: "36px" }}
                             aria-label="Remove item"
                             disabled={isSyncing}
                           >
@@ -304,7 +305,10 @@ export default function CartDrawer() {
 
             {/* Drawer Footer Summary & Checkout */}
             {cartItems.length > 0 && (
-              <div className="p-3 border-top bg-light">
+              <div 
+                className="p-3 border-top bg-light" 
+                style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))" }}
+              >
                 <div className="d-flex flex-column gap-2 text-start mb-3">
                   {/* Subtotal */}
                   <div className="d-flex justify-content-between align-items-center">
