@@ -53,16 +53,24 @@ export default async function Home() {
       <ProductTabs products={products} collections={collections} />
 
       {/* Trust Stats Numbers */}
-      <TrustStats statsMeta={statsMeta} />
+      <div className="cv-auto">
+        <TrustStats statsMeta={statsMeta} />
+      </div>
 
       {/* Value Combo Packs */}
-      <BundlesSection dynamicProducts={bundleProducts} />
+      <div className="cv-auto-large">
+        <BundlesSection dynamicProducts={bundleProducts} />
+      </div>
 
       {/* Customer Testimonials reviews */}
-      <ReviewsSection />
+      <div className="cv-auto-large">
+        <ReviewsSection />
+      </div>
 
       {/* Footer Newsletter Action banner */}
-      <NewsletterSection />
+      <div className="cv-auto">
+        <NewsletterSection />
+      </div>
     </>
   );
 }

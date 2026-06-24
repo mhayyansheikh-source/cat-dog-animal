@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getShopPolicies, getShopInfo } from "@/utils/shopify";
 import { ShieldCheck, ArrowRight, Undo2, Lock, FileText, Truck, Mail, Scale } from "lucide-react";
 import Link from "next/link";
+import * as motion from "framer-motion/client";
 
 export async function generateStaticParams() {
   return [
@@ -292,24 +293,37 @@ export default async function PolicyPage(props) {
 
   return (
     <>
-      <div className="d-flex align-items-center gap-2 mb-4 pb-3 border-bottom">
+      <motion.div 
+        className="d-flex align-items-center gap-2 mb-4 pb-3 border-bottom"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
         <ShieldCheck className="text-forest-green" size={28} />
         <h2 className="font-heading fs-3 fw-bold mb-0 text-charcoal-dark">
           {policyData.title}
         </h2>
-      </div>
+      </motion.div>
 
-      <div 
+      <motion.div 
         className="policy-content font-body text-charcoal-dark"
         style={{ lineHeight: "1.8" }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
         dangerouslySetInnerHTML={{ __html: policyData.body }}
       />
 
-      <div className="mt-5 pt-4 border-top">
-        <Link href="/" className="btn btn-outline-forest-green d-inline-flex align-items-center gap-2 px-4 py-2 fw-bold">
+      <motion.div 
+        className="mt-5 pt-4 border-top"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+      >
+        <Link href="/" className="btn btn-outline-forest-green d-inline-flex align-items-center gap-2 px-4 py-2 fw-bold hover-scale">
           Return to Store <ArrowRight size={18} />
         </Link>
-      </div>
+      </motion.div>
 
       <style dangerouslySetInnerHTML={{__html: `
         .policy-content h1, .policy-content h2, .policy-content h3 {

@@ -6,7 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { ShoppingCart, Heart, ShieldCheck, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, index = 0 }) {
   const { addToCart } = useCart();
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
   const [userSelectedVariant, setUserSelectedVariant] = useState(false);
@@ -41,7 +41,7 @@ export default function ProductCard({ product }) {
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.1 }}
       className="card rounded-card h-100 shadow-sm border hover-scale"
       style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}
     >

@@ -113,10 +113,11 @@ export default async function CollectionPage({ params, searchParams }) {
                   <p style={{ fontSize: "14px", color: "#6B7280", margin: 0 }}>Showing <strong style={{ color: "#2A2A2A" }}>{products.length}</strong> products</p>
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "24px" }}>
-                  {products.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
+                  {products.map((product, index) => (
+                    <div key={product.id} className="col-6 col-md-6 col-lg-4">
+                      <ProductCard key={product.id} product={product} index={index} />
+                    </div>
+                  ))}</div>
               </>
             ) : (
               <div style={{ textAlign: "center", padding: "80px 40px", background: "#F9FAFB", borderRadius: "16px", border: "1px solid #E5E7EB" }}>

@@ -121,10 +121,11 @@ export default async function ProductPage({ params }) {
             You May Also Like
           </h3>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "24px" }}>
-            {recommendations.map((rec) => (
-              <ProductCard key={rec.id} product={rec} />
-            ))}
-          </div>
+            {recommendations.map((rec, index) => (
+              <div key={rec.id} className="col-6 col-md-3">
+                <ProductCard key={rec.id} product={rec} index={index} />
+              </div>
+            ))}</div>
         </div>
       )}
 

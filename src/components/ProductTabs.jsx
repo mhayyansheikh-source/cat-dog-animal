@@ -114,9 +114,9 @@ export default function ProductTabs({ products = [], collections = [] }) {
             transition={{ duration: 0.25 }}
             className="row g-4 justify-content-center text-start"
           >
-            {displayProducts.map((product) => (
-              <div key={product.id} className="col-xl-3 col-lg-4 col-sm-6">
-                <ProductCard product={product} />
+            {displayProducts.map((product, index) => (
+              <div key={product.id} className="col-6 col-md-4 col-lg-3">
+                <ProductCard product={product} index={index} />
               </div>
             ))}
           </motion.div>

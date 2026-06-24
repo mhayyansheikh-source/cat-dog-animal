@@ -230,6 +230,16 @@ p, span, li, button, input, select, textarea, .font-body {
   transform: scale(1.03);
 }
 
+/* Performance: Content Visibility */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
+}
+.cv-auto-large {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1000px;
+}
+
 .star-rating {
   color: var(--primary-gold);
   display: inline-flex;
