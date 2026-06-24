@@ -236,18 +236,22 @@ export default function CartDrawer() {
                         <div className="d-flex align-items-center gap-2">
                           <div
                             className="d-flex align-items-center border rounded-pill overflow-hidden bg-light"
-                            style={{ height: "36px", opacity: isSyncing ? 0.5 : 1, pointerEvents: isSyncing ? 'none' : 'auto' }}
+                            style={{ height: "36px", opacity: isSyncing ? 0.5 : 1 }}
                           >
                             <button
-                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              type="button"
+                              disabled={isSyncing}
+                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateQuantity(item.id, item.quantity - 1); }}
                               className="btn btn-sm px-3 border-0 d-flex align-items-center h-100"
                               aria-label="Decrease quantity"
                             >
                               <Minus size={14} />
                             </button>
-                            <span className="px-2 small fw-bold">{item.quantity}</span>
+                            <span className="px-2 small fw-bold" style={{ minWidth: "24px", textAlign: "center" }}>{item.quantity}</span>
                             <button
-                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              type="button"
+                              disabled={isSyncing}
+                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateQuantity(item.id, item.quantity + 1); }}
                               className="btn btn-sm px-3 border-0 d-flex align-items-center h-100"
                               aria-label="Increase quantity"
                             >
@@ -257,7 +261,8 @@ export default function CartDrawer() {
 
                           {/* Delete button */}
                           <button
-                            onClick={() => removeFromCart(item.id)}
+                            type="button"
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeFromCart(item.id); }}
                             className="btn btn-sm text-danger border-0 p-2 hover-scale d-flex align-items-center justify-content-center"
                             style={{ height: "36px", width: "36px" }}
                             aria-label="Remove item"
