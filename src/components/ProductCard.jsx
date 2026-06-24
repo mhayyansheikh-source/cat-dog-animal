@@ -72,7 +72,7 @@ export default function ProductCard({ product }) {
                 muted
                 loop
                 playsInline
-                className="w-100 h-100 object-fit-contain transition-all duration-500"
+                className="w-100 h-100 object-fit-cover transition-all duration-500"
                 style={{
                   transform: isHovered ? "scale(1.05)" : "scale(1)",
                   position: "absolute",
@@ -85,7 +85,7 @@ export default function ProductCard({ product }) {
               <iframe
                 src={`${mainExternalVideo}?autoplay=1&mute=1&loop=1&controls=0`}
                 title={product.title}
-                className="w-100 h-100 object-fit-contain transition-all duration-500"
+                className="w-100 h-100 object-fit-cover transition-all duration-500"
                 style={{
                   pointerEvents: "none",
                   transform: isHovered ? "scale(1.05)" : "scale(1)",
