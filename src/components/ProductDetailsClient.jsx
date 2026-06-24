@@ -142,7 +142,7 @@ export default function ProductDetailsClient({ product }) {
                 className="rounded-card p-0 mb-3 position-relative w-100" 
                 style={{ 
                   aspectRatio: "1 / 1",
-                  maxHeight: "600px",
+                  maxHeight: "min(60vh, 600px)",
                   overflow: "hidden", 
                   background: "transparent" 
                 }}

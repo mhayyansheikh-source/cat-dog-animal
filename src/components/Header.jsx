@@ -46,66 +46,77 @@ export default function Header({ menu, shop, collections }) {
     >
       {/* Peteora Announcement Bar */}
       <div 
-        className="d-flex justify-content-center align-items-center py-2 px-3 gap-2" 
+        className="d-flex justify-content-center align-items-center py-2 px-3 gap-1 overflow-hidden" 
         style={{ 
-          background: "linear-gradient(to right, #2c8c78 50%, #fe924d 50%)", 
+          backgroundColor: "#198e7a", 
           color: "white",
-          fontSize: "14px",
-          fontWeight: "700"
+          fontSize: "13px",
+          fontWeight: "700",
+          whiteSpace: "nowrap"
         }}
       >
-        <span>🐾 Free Shipping on Orders Over $50 · Subscribe & Save 20% · </span>
-        <Link href={collections?.length > 0 ? `/collections/${collections[0].handle}` : "/collections/all"} className="text-white text-decoration-underline ms-1">
+        <span className="text-truncate">🐾 Free Shipping Over $50 <span className="d-none d-md-inline">· Subscribe & Save 20% ·</span></span>
+        <Link href={collections?.length > 0 ? `/collections/${collections[0].handle}` : "/collections/all"} className="text-white text-decoration-underline ms-1 flex-shrink-0">
           Shop Now
         </Link>
       </div>
 
       <nav className="navbar navbar-expand-lg navbar-light py-3">
-        <div className="container">
-          {/* Logo Brand Signature */}
-          <Link href="/" className="navbar-brand d-flex align-items-center text-decoration-none">
+        <div className="container d-flex align-items-center justify-content-between">
+          
+          {/* Mobile Menu Toggle (Left) */}
+          <div className="d-lg-none">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="btn p-1 border-0 d-flex flex-column align-items-center justify-content-center"
+              aria-label="Toggle navigation menu"
+              style={{ color: "var(--forest-green)" }}
+            >
+              {isMenuOpen ? <X size={28} /> : (
+                <div className="d-flex flex-column align-items-center">
+                  <Menu size={26} strokeWidth={2.5} />
+                </div>
+              )}
+            </button>
+          </div>
+
+          {/* Logo Brand Signature (Center on Mobile, Left on Desktop) */}
+          <Link href="/" className="navbar-brand d-flex align-items-center text-decoration-none mx-lg-0 mx-auto" style={{ maxWidth: "50%" }}>
             {shop?.brand?.logo?.image?.url ? (
-              <img src={shop.brand.logo.image.url} alt={shop?.name || "Logo"} style={{ height: "45px", width: "auto" }} fetchPriority="high" decoding="async" />
+              <img src={shop.brand.logo.image.url} alt={shop?.name || "Logo"} style={{ maxHeight: "38px", width: "auto", objectFit: "contain" }} fetchPriority="high" decoding="async" />
             ) : (
-              <img src="/peteora.png" alt="Peteora Logo" style={{ height: "45px", width: "auto" }} fetchPriority="high" decoding="async" />
+              <img src="/peteora.png" alt="Peteora Logo" style={{ maxHeight: "38px", width: "auto", objectFit: "contain" }} fetchPriority="high" decoding="async" />
             )}
           </Link>
 
-          {/* Toggle buttons for mobile */}
-          <div className="d-flex align-items-center gap-2 d-lg-none">
+          {/* Mobile Right Icons (Search & Cart) */}
+          <div className="d-flex align-items-center gap-3 d-lg-none">
+            <button 
+              onClick={() => setIsSearchOpen(true)}
+              className="btn p-0 border-0 bg-transparent text-charcoal-dark"
+            >
+              <Search size={22} strokeWidth={2.5} />
+            </button>
             <button
               onClick={() => setIsCartOpen(true)}
-              className="btn p-2 border-0 position-relative"
+              className="btn p-0 border-0 position-relative text-charcoal-dark"
               aria-label="Open cart"
             >
-              <ShoppingCart size={24} strokeWidth={2.5} />
+              <ShoppingCart size={22} strokeWidth={2.5} />
               {cartCount > 0 && (
                 <span 
                   className="position-absolute top-0 start-100 translate-middle badge rounded-circle d-flex align-items-center justify-content-center text-white" 
                   style={{ 
-                    fontSize: "0.625rem", 
-                    width: "18px", 
-                    height: "18px", 
-                    backgroundColor: "var(--zesty-orange, #F5761A)",
-                    marginTop: "8px",
+                    fontSize: "0.6rem", 
+                    width: "16px", 
+                    height: "16px", 
+                    backgroundColor: "var(--zesty-orange)",
+                    marginTop: "4px",
                     marginLeft: "-6px"
                   }}
                 >
                   {cartCount}
                 </span>
-              )}
-            </button>
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="btn p-2 border-0 z-3 d-flex flex-column align-items-center justify-content-center"
-              aria-label="Toggle navigation menu"
-              style={{ color: isMenuOpen ? "white" : "var(--forest-green)" }}
-            >
-              {isMenuOpen ? <X size={28} /> : (
-                <>
-                  <PawPrint size={26} strokeWidth={2.5} />
-                  <span style={{ fontSize: "10px", fontWeight: "bold", marginTop: "-2px" }}>MENU</span>
-                </>
               )}
             </button>
           </div>
