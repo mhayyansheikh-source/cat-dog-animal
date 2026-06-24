@@ -10,6 +10,20 @@ import DirectCheckoutBar from "@/components/DirectCheckoutBar";
 import { ShoppingCart, Star, Sparkles, Check, ChevronDown, ChevronUp, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const shopifyLoader = ({ src, width, quality }) => {
+  try {
+    const url = new URL(src);
+    url.searchParams.set('width', width.toString());
+    if (quality) url.searchParams.set('quality', quality.toString());
+    url.searchParams.set('format', 'webp');
+    return url.href;
+  } catch (e) {
+    return src;
+  }
+};
+
+const blurPlaceholder = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=";
+
 export default function ProductDetailsClient({ product }) {
   const { addToCart } = useCart();
   
@@ -144,14 +158,17 @@ export default function ProductDetailsClient({ product }) {
                   >
                     {activeItem?.type === 'IMAGE' && (
                       <Image
+                        loader={shopifyLoader}
                         src={activeItem.url}
                         alt={product.title}
                         fill
                         priority={true}
                         fetchPriority="high"
                         quality={90}
-                        sizes="(max-width: 768px) 100vw, 50vw"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         style={{ objectFit: "cover" }}
+                        placeholder="blur"
+                        blurDataURL={blurPlaceholder}
                       />
                     )}
                     {activeItem?.type === 'VIDEO' && (
@@ -159,12 +176,28 @@ export default function ProductDetailsClient({ product }) {
                         src={activeItem.url}
                         poster={activeItem.preview}
                         controls
-                        autoPlay
                         muted
                         loop
                         playsInline
+                        preload="none"
                         className="w-100 h-100"
                         style={{ objectFit: "cover", backgroundColor: "#000" }}
+                        ref={(el) => {
+                          if (el && typeof window !== 'undefined' && 'IntersectionObserver' in window) {
+                            const observer = new window.IntersectionObserver(
+                              ([entry]) => {
+                                if (entry.isIntersecting) {
+                                  el.play().catch(() => {});
+                                  observer.disconnect();
+                                }
+                              },
+                              { threshold: 0.1 }
+                            );
+                            observer.observe(el);
+                          } else if (el) {
+                            el.play().catch(() => {});
+                          }
+                        }}
                       />
                     )}
                     {activeItem?.type === 'EXTERNAL_VIDEO' && (
@@ -207,6 +240,7 @@ export default function ProductDetailsClient({ product }) {
                       aria-label={`View media thumbnail ${idx + 1}`}
                     >
                       <Image
+                        loader={shopifyLoader}
                         src={item.preview || item.url}
                         alt={`Thumbnail ${idx + 1}`}
                         fill
@@ -214,6 +248,8 @@ export default function ProductDetailsClient({ product }) {
                         sizes="80px"
                         loading="lazy"
                         style={{ objectFit: "cover" }}
+                        placeholder="blur"
+                        blurDataURL={blurPlaceholder}
                       />
                       {(item.type === 'VIDEO' || item.type === 'EXTERNAL_VIDEO') && (
                         <div className="position-absolute top-50 start-50 translate-middle text-white" style={{ background: "rgba(0,0,0,0.5)", borderRadius: "50%", padding: "5px" }}>
