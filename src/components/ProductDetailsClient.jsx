@@ -114,6 +114,12 @@ export default function ProductDetailsClient({ product }) {
       "tACKkJ0geq8",
       "tPjnaoQF95s"
     ];
+  } else if (product.handle === "quick-release-dog-harness-vest") {
+    youtubeShorts = [
+      "zU69mDYiJ2o",
+      "a3XF6zIM-M8",
+      "EtHofhA1zLw"
+    ];
   }
 
   // 2. Robust Future-Proofing: Override with Metafields if they exist
