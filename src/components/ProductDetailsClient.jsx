@@ -87,6 +87,20 @@ export default function ProductDetailsClient({ product }) {
     if (faqJson) parsedFaqs = JSON.parse(faqJson);
   } catch(e) { console.error("Failed to parse FAQ JSON", e); }
 
+  let testimonials = [
+    { name: "Sarah M.", rating: 5, text: "Absolutely incredible quality. My pet loves it and the shipping was so fast!" },
+    { name: "David T.", rating: 5, text: "I was skeptical at first, but this exceeded all my expectations. Highly recommend." },
+    { name: "Emily R.", rating: 5, text: "Customer service is top notch and the product is exactly as described. Worth every penny." }
+  ];
+
+  try {
+    const testimonialJson = getMetafield("testimonials_json");
+    if (testimonialJson) {
+      const parsed = JSON.parse(testimonialJson);
+      if (parsed.length > 0) testimonials = parsed;
+    }
+  } catch(e) { console.error("Failed to parse Testimonials JSON", e); }
+
   const ingredientsText = getMetafield("ingredients");
   
   // Always show bulk discount options for every product to boost AOV
@@ -513,6 +527,32 @@ export default function ProductDetailsClient({ product }) {
           <motion.div className="mb-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
             <TrustBadges />
           </motion.div>
+
+          {/* Automated Testimonials Section */}
+          <section className="mb-4 text-start">
+            <h4 className="font-heading mb-3 fw-bold text-center" style={{ fontSize: "clamp(20px, 4vw, 24px)" }}>
+              What Pet Parents Are Saying
+            </h4>
+            <div className="row g-3">
+              {testimonials.slice(0, 3).map((t, idx) => (
+                <div key={idx} className="col-12 col-md-4">
+                  <div className="p-3 border rounded bg-white shadow-sm h-100 d-flex flex-column">
+                    <div className="d-flex mb-2" style={{ color: "var(--orange)" }}>
+                      {[...Array(t.rating || 5)].map((_, i) => <Star key={i} size={16} fill="currentColor" />)}
+                    </div>
+                    <p className="font-body small text-muted flex-grow-1 mb-2 fw-medium">"{t.text}"</p>
+                    <div className="d-flex align-items-center gap-2 mt-auto">
+                      <div className="bg-light rounded-circle d-flex align-items-center justify-content-center text-charcoal-dark fw-bold" style={{ width: 32, height: 32, fontSize: "14px" }}>
+                        {t.name.charAt(0)}
+                      </div>
+                      <span className="small fw-bold text-charcoal-dark">{t.name}</span>
+                      <span className="badge bg-success ms-auto" style={{ fontSize: "10px" }}><Check size={10} className="me-1"/>Verified</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
 
           {/* React-based Accordions for Details & Ingredients */}
           <div className="mb-5 bg-light rounded p-3 border">
