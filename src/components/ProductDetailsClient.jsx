@@ -102,6 +102,28 @@ export default function ProductDetailsClient({ product }) {
   } catch(e) { console.error("Failed to parse Testimonials JSON", e); }
 
   const ingredientsText = getMetafield("ingredients");
+
+  // Dynamic YouTube Shorts Logic
+  let youtubeShorts = [];
+  
+  // 1. Check for specific product handle
+  if (product.handle === "breathable-pet-cat-carrier-backpack") {
+    youtubeShorts = [
+      "E07RjcNgIOA",
+      "Piaj11uRvsc",
+      "tACKkJ0geq8",
+      "tPjnaoQF95s"
+    ];
+  }
+
+  // 2. Robust Future-Proofing: Override with Metafields if they exist
+  try {
+    const shortsJson = getMetafield("youtube_shorts_json");
+    if (shortsJson) {
+      const parsed = JSON.parse(shortsJson);
+      if (parsed.length > 0) youtubeShorts = parsed;
+    }
+  } catch(e) { console.error("Failed to parse Shorts JSON", e); }
   
   // Always show bulk discount options for every product to boost AOV
   const hasBulkDiscount = true;
@@ -527,6 +549,48 @@ export default function ProductDetailsClient({ product }) {
           <motion.div className="mb-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
             <TrustBadges />
           </motion.div>
+
+          {/* Generative Engine Optimized YouTube Shorts Section */}
+          {youtubeShorts.length > 0 && (
+            <section 
+              className="mb-5 mt-2" 
+              aria-label="Product Demonstration Videos"
+            >
+              <h4 className="font-heading mb-3 fw-bold text-charcoal-dark" style={{ fontSize: "clamp(18px, 3vw, 22px)" }}>
+                See It In Action
+              </h4>
+              
+              {/* Fully Responsive Grid: 1 col on foldable, 2 col on mobile/tablet, 4 col on desktop/XXL */}
+              <div 
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+                  gap: "12px"
+                }}
+              >
+                {youtubeShorts.map((videoId, idx) => (
+                  <motion.div 
+                    key={idx}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.15, duration: 0.4 }}
+                    className="rounded-4 overflow-hidden shadow-sm position-relative bg-light"
+                    style={{ aspectRatio: "9/16", width: "100%" }}
+                  >
+                    <iframe
+                      src={`https://www.youtube.com/embed/${videoId}?autoplay=0&loop=1&playlist=${videoId}&controls=0&rel=0&modestbranding=1`}
+                      title={`Demonstration of ${product.title || "Pet Carrier"} - Video ${idx + 1}`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                      loading="lazy"
+                      className="position-absolute top-0 start-0 w-100 h-100 border-0"
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* React-based Accordions for Details & Ingredients */}
           <div className="mb-5 bg-light rounded p-3 border">
