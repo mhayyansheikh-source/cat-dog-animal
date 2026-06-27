@@ -88,9 +88,9 @@ export default function ProductDetailsClient({ product }) {
   } catch(e) { console.error("Failed to parse FAQ JSON", e); }
 
   let testimonials = [
-    { name: "Sarah M.", rating: 5, text: "Absolutely incredible quality. My pet loves it and the shipping was so fast!" },
-    { name: "David T.", rating: 5, text: "I was skeptical at first, but this exceeded all my expectations. Highly recommend." },
-    { name: "Emily R.", rating: 5, text: "Customer service is top notch and the product is exactly as described. Worth every penny." }
+    { name: "Sarah M.", rating: 5, text: `Absolutely incredible quality. My pet loves the ${product.title || "product"} and the shipping was so fast!` },
+    { name: "David T.", rating: 5, text: `I was skeptical at first, but this exceeded all my expectations. Highly recommend this for any pet owner.` },
+    { name: "Emily R.", rating: 5, text: `Customer service is top notch and it works exactly as described. Worth every penny.` }
   ];
 
   try {
@@ -528,30 +528,83 @@ export default function ProductDetailsClient({ product }) {
             <TrustBadges />
           </motion.div>
 
-          {/* Automated Testimonials Section */}
-          <section className="mb-4 text-start">
-            <h4 className="font-heading mb-3 fw-bold text-center" style={{ fontSize: "clamp(20px, 4vw, 24px)" }}>
-              What Pet Parents Are Saying
-            </h4>
-            <div className="row g-3">
+          {/* Automated & Animated Testimonials Section */}
+          <section className="mb-5 mt-4 text-start overflow-hidden">
+            <motion.h4 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="font-heading mb-4 fw-bold text-center" 
+              style={{ fontSize: "clamp(24px, 5vw, 32px)" }}
+            >
+              Loved by Pets & Parents
+            </motion.h4>
+            
+            <motion.div 
+              className="row g-4"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.2 }
+                }
+              }}
+            >
               {testimonials.slice(0, 3).map((t, idx) => (
-                <div key={idx} className="col-12 col-md-4">
-                  <div className="p-3 border rounded bg-white shadow-sm h-100 d-flex flex-column">
-                    <div className="d-flex mb-2" style={{ color: "var(--orange)" }}>
-                      {[...Array(t.rating || 5)].map((_, i) => <Star key={i} size={16} fill="currentColor" />)}
+                <motion.div 
+                  key={idx} 
+                  className="col-12 col-sm-12 col-md-4 col-lg-4"
+                  variants={{
+                    hidden: { opacity: 0, y: 40 },
+                    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } }
+                  }}
+                >
+                  <motion.div 
+                    whileHover={{ y: -8, boxShadow: "0 12px 24px rgba(0,0,0,0.08)" }}
+                    className="p-4 border-0 rounded-4 bg-white h-100 d-flex flex-column position-relative"
+                    style={{ 
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.03)",
+                      transition: "all 0.3s ease" 
+                    }}
+                  >
+                    <div className="position-absolute" style={{ top: "15px", right: "20px", opacity: 0.05 }}>
+                      <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z"/></svg>
                     </div>
-                    <p className="font-body small text-muted flex-grow-1 mb-2 fw-medium">"{t.text}"</p>
-                    <div className="d-flex align-items-center gap-2 mt-auto">
-                      <div className="bg-light rounded-circle d-flex align-items-center justify-content-center text-charcoal-dark fw-bold" style={{ width: 32, height: 32, fontSize: "14px" }}>
+
+                    <div className="d-flex mb-3 gap-1" style={{ color: "var(--orange)" }}>
+                      {[...Array(t.rating || 5)].map((_, i) => (
+                        <motion.div key={i} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5 + (i * 0.1) }}>
+                          <Star size={18} fill="currentColor" stroke="none" />
+                        </motion.div>
+                      ))}
+                    </div>
+                    
+                    <p className="font-body text-charcoal-dark flex-grow-1 mb-4" style={{ fontSize: "15px", lineHeight: "1.6" }}>
+                      "{t.text}"
+                    </p>
+                    
+                    <div className="d-flex align-items-center mt-auto border-top pt-3">
+                      <div 
+                        className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold me-3 shadow-sm flex-shrink-0" 
+                        style={{ width: 40, height: 40, fontSize: "16px", background: "linear-gradient(135deg, var(--orange) 0%, #ff6b6b 100%)" }}
+                      >
                         {t.name.charAt(0)}
                       </div>
-                      <span className="small fw-bold text-charcoal-dark">{t.name}</span>
-                      <span className="badge bg-success ms-auto" style={{ fontSize: "10px" }}><Check size={10} className="me-1"/>Verified</span>
+                      
+                      <div className="d-flex flex-column" style={{ minWidth: 0 }}>
+                        <span className="fw-bold text-charcoal-dark text-truncate" style={{ fontSize: "15px", display: "block" }}>{t.name}</span>
+                        <span className="d-flex align-items-center text-success fw-semibold" style={{ fontSize: "12px" }}>
+                          <Check size={12} className="me-1 flex-shrink-0" strokeWidth={3} /> Verified Buyer
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </section>
 
           {/* React-based Accordions for Details & Ingredients */}
