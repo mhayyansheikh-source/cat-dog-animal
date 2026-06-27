@@ -352,63 +352,110 @@ export default function ProductDetailsClient({ product }) {
                     <span className="d-flex align-items-center gap-2 small text-muted fw-bold mb-2 font-body text-uppercase">
                       {option.name}: <span className="text-dark" style={{ color: "var(--forest-green)" }}>{activeValue}</span>
                     </span>
-                    <div className="d-flex gap-2 flex-wrap">
-                      {option.values.map(val => {
-                        const isActive = activeValue === val;
-                        // Check if this specific combination is available
-                        const targetParts = [...currentParts];
-                        targetParts[optIdx] = val;
-                        const exactMatch = product.variants.find(v => v.title.split(' / ').every((p, i) => p === targetParts[i]));
-                        const isAvailable = exactMatch ? exactMatch.available : true;
-                        
-                        return (
-                          <motion.button
-                            whileHover={{ scale: 1.02, y: -2 }}
-                            whileTap={{ scale: 0.95 }}
-                            key={val}
-                            onClick={() => {
-                              // Prioritize exact match, fallback to first available variant with this option
-                              let newMatched = exactMatch;
-                              if (!newMatched) {
-                                newMatched = product.variants.find(v => v.title.split(' / ')[optIdx] === val && v.available);
-                              }
-                              if (!newMatched) {
-                                newMatched = product.variants.find(v => v.title.split(' / ')[optIdx] === val);
-                              }
-                              if (newMatched) handleVariantSelect(newMatched);
-                            }}
-                            className={`btn position-relative overflow-hidden ${isActive ? "active-variant-btn" : "inactive-variant-btn"}`}
-                            style={{
-                              minHeight: "44px",
-                              border: isActive ? "2px solid var(--orange)" : "1px solid #e5e7eb",
-                              background: isActive ? "var(--orange-light)" : "#fff",
-                              color: isActive ? "var(--orange-dark)" : "#4b5563",
-                              borderRadius: "12px",
-                              fontWeight: "600",
-                              fontSize: "14px",
-                              padding: "8px 16px",
-                              opacity: isAvailable ? 1 : 0.5,
-                              textDecoration: isAvailable ? "none" : "line-through",
-                              transition: "all 0.3s ease",
-                              boxShadow: isActive ? "0 4px 12px rgba(254, 146, 77, 0.15)" : "none"
-                            }}
-                          >
-                            {val}
-                            {isActive && (
-                              <motion.div
-                                layoutId="activeVariantHighlight"
-                                className="position-absolute top-0 start-0 w-100 h-100"
-                                style={{
-                                  background: "var(--orange)",
-                                  opacity: 0.05,
-                                  borderRadius: "10px"
-                                }}
-                              />
-                            )}
-                          </motion.button>
-                        );
-                      })}
-                    </div>
+                    
+                    {option.values.length > 5 ? (
+                      <div className="position-relative">
+                        <select
+                          className="form-select w-100 border-2 font-body"
+                          style={{ 
+                            borderColor: "var(--bs-gray-300)", 
+                            cursor: "pointer",
+                            height: "50px",
+                            borderRadius: "12px",
+                            fontWeight: "500",
+                            fontSize: "15px"
+                          }}
+                          value={activeValue}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const targetParts = [...currentParts];
+                            targetParts[optIdx] = val;
+                            const exactMatch = product.variants.find(v => v.title.split(' / ').every((p, i) => p === targetParts[i]));
+                            
+                            let newMatched = exactMatch;
+                            if (!newMatched) {
+                              newMatched = product.variants.find(v => v.title.split(' / ')[optIdx] === val && v.available);
+                            }
+                            if (!newMatched) {
+                              newMatched = product.variants.find(v => v.title.split(' / ')[optIdx] === val);
+                            }
+                            if (newMatched) handleVariantSelect(newMatched);
+                          }}
+                        >
+                          {option.values.map((val) => {
+                            // Check if this specific combination is available for dropdown styling (optional, but good practice)
+                            const targetParts = [...currentParts];
+                            targetParts[optIdx] = val;
+                            const exactMatch = product.variants.find(v => v.title.split(' / ').every((p, i) => p === targetParts[i]));
+                            const isAvailable = exactMatch ? exactMatch.available : true;
+                            
+                            return (
+                              <option key={val} value={val} disabled={!isAvailable}>
+                                {val} {!isAvailable ? "(Out of Stock)" : ""}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+                    ) : (
+                      <div className="d-flex gap-2 flex-wrap">
+                        {option.values.map(val => {
+                          const isActive = activeValue === val;
+                          // Check if this specific combination is available
+                          const targetParts = [...currentParts];
+                          targetParts[optIdx] = val;
+                          const exactMatch = product.variants.find(v => v.title.split(' / ').every((p, i) => p === targetParts[i]));
+                          const isAvailable = exactMatch ? exactMatch.available : true;
+                          
+                          return (
+                            <motion.button
+                              whileHover={{ scale: 1.02, y: -2 }}
+                              whileTap={{ scale: 0.95 }}
+                              key={val}
+                              onClick={() => {
+                                // Prioritize exact match, fallback to first available variant with this option
+                                let newMatched = exactMatch;
+                                if (!newMatched) {
+                                  newMatched = product.variants.find(v => v.title.split(' / ')[optIdx] === val && v.available);
+                                }
+                                if (!newMatched) {
+                                  newMatched = product.variants.find(v => v.title.split(' / ')[optIdx] === val);
+                                }
+                                if (newMatched) handleVariantSelect(newMatched);
+                              }}
+                              className={`btn position-relative overflow-hidden ${isActive ? "active-variant-btn" : "inactive-variant-btn"}`}
+                              style={{
+                                minHeight: "44px",
+                                border: isActive ? "2px solid var(--orange)" : "1px solid #e5e7eb",
+                                background: isActive ? "var(--orange-light)" : "#fff",
+                                color: isActive ? "var(--orange-dark)" : "#4b5563",
+                                borderRadius: "12px",
+                                fontWeight: "600",
+                                fontSize: "14px",
+                                padding: "8px 16px",
+                                opacity: isAvailable ? 1 : 0.5,
+                                textDecoration: isAvailable ? "none" : "line-through",
+                                transition: "all 0.3s ease",
+                                boxShadow: isActive ? "0 4px 12px rgba(254, 146, 77, 0.15)" : "none"
+                              }}
+                            >
+                              {val}
+                              {isActive && (
+                                <motion.div
+                                  layoutId="activeVariantHighlight"
+                                  className="position-absolute top-0 start-0 w-100 h-100"
+                                  style={{
+                                    background: "var(--orange)",
+                                    opacity: 0.05,
+                                    borderRadius: "10px"
+                                  }}
+                                />
+                              )}
+                            </motion.button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 );
               })}
