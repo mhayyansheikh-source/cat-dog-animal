@@ -576,15 +576,25 @@ export default function ProductDetailsClient({ product }) {
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.15, duration: 0.4 }}
                     className="rounded-4 overflow-hidden shadow-sm position-relative bg-light"
-                    style={{ aspectRatio: "9/16", width: "100%" }}
+                    style={{ 
+                      aspectRatio: "9/16", 
+                      width: "100%",
+                      pointerEvents: "none" 
+                    }}
                   >
                     <iframe
-                      src={`https://www.youtube.com/embed/${videoId}?autoplay=0&loop=1&playlist=${videoId}&controls=0&rel=0&modestbranding=1`}
+                      src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&rel=0&modestbranding=1&playsinline=1`}
                       title={`Demonstration of ${product.title || "Pet Carrier"} - Video ${idx + 1}`}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowFullScreen
                       loading="lazy"
-                      className="position-absolute top-0 start-0 w-100 h-100 border-0"
+                      className="position-absolute border-0"
+                      style={{
+                        width: "120%",
+                        height: "120%",
+                        top: "-10%",
+                        left: "-10%"
+                      }}
                     />
                   </motion.div>
                 ))}
