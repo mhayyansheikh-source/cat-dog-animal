@@ -139,12 +139,11 @@ export default function ProductDetailsClient({ product }) {
             {/* Unified Responsive Gallery Viewer */}
             <div>
               <div 
-                className="rounded-card p-0 mb-3 position-relative w-100" 
+                className="rounded-card p-0 mb-3 position-relative w-100 shimmer-placeholder" 
                 style={{ 
-                  aspectRatio: "1 / 1",
-                  maxHeight: "min(60vh, 600px)",
                   overflow: "hidden", 
-                  background: "transparent" 
+                  backgroundColor: "#ffffff",
+                  minHeight: "300px"
                 }}
               >
                 <AnimatePresence mode="wait">
@@ -154,21 +153,20 @@ export default function ProductDetailsClient({ product }) {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 1.02 }}
                     transition={{ duration: 0.3 }}
-                    className="position-absolute w-100 h-100 top-0 start-0 d-flex justify-content-center align-items-center"
+                    className="w-100 h-100 d-flex justify-content-center align-items-center"
                   >
                     {activeItem?.type === 'IMAGE' && (
                       <Image
                         loader={shopifyLoader}
                         src={activeItem.url}
                         alt={product.title}
-                        fill
-                        priority={true}
-                        fetchPriority="high"
+                        width={1000}
+                        height={1000}
+                        priority={activeIndex === 0}
+                        fetchPriority={activeIndex === 0 ? "high" : "auto"}
                         quality={90}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        style={{ objectFit: "cover" }}
-                        placeholder="blur"
-                        blurDataURL={blurPlaceholder}
+                        style={{ width: "100%", height: "auto", display: "block" }}
                       />
                     )}
                     {activeItem?.type === 'VIDEO' && (
@@ -180,8 +178,8 @@ export default function ProductDetailsClient({ product }) {
                         loop
                         playsInline
                         preload="none"
-                        className="w-100 h-100"
-                        style={{ objectFit: "cover", backgroundColor: "#000" }}
+                        className="w-100"
+                        style={{ height: "auto", backgroundColor: "#000", display: "block" }}
                         ref={(el) => {
                           if (el && typeof window !== 'undefined' && 'IntersectionObserver' in window) {
                             const observer = new window.IntersectionObserver(
@@ -206,7 +204,9 @@ export default function ProductDetailsClient({ product }) {
                         title={product.title}
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
-                        className="w-100 h-100 border-0"
+                        loading="lazy"
+                        className="w-100 border-0"
+                        style={{ aspectRatio: "16/9" }}
                       />
                     )}
                   </motion.div>
@@ -248,8 +248,7 @@ export default function ProductDetailsClient({ product }) {
                         sizes="80px"
                         loading="lazy"
                         style={{ objectFit: "cover" }}
-                        placeholder="blur"
-                        blurDataURL={blurPlaceholder}
+                        className="shimmer-placeholder"
                       />
                       {(item.type === 'VIDEO' || item.type === 'EXTERNAL_VIDEO') && (
                         <div className="position-absolute top-50 start-50 translate-middle text-white" style={{ background: "rgba(0,0,0,0.5)", borderRadius: "50%", padding: "5px" }}>

@@ -59,10 +59,10 @@ export default function ProductCard({ product, index = 0 }) {
         {/* Product Image Wrapper */}
         <Link 
           href={`/product/${product.handle || product.id}`} 
-          className="d-block overflow-hidden position-relative" 
+          className="d-block overflow-hidden position-relative shimmer-placeholder" 
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          style={{ height: "260px", backgroundColor: "#f9fafb", padding: "1.5rem" }}
+          style={{ backgroundColor: "#f9fafb", padding: "1.5rem" }}
         >
           {mainVideo ? (
               <video
@@ -72,35 +72,39 @@ export default function ProductCard({ product, index = 0 }) {
                 muted
                 loop
                 playsInline
-                className="w-100 h-100 object-fit-cover transition-all duration-500"
+                preload="none"
+                className="w-100 transition-all duration-500"
                 style={{
+                  height: "auto",
+                  objectFit: "contain",
                   transform: isHovered ? "scale(1.05)" : "scale(1)",
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  transition: "all 0.4s ease-in-out"
+                  transition: "all 0.4s ease-in-out",
+                  display: "block"
                 }}
               />
           ) : mainExternalVideo ? (
               <iframe
                 src={`${mainExternalVideo}?autoplay=1&mute=1&loop=1&controls=0`}
                 title={product.title}
-                className="w-100 h-100 object-fit-cover transition-all duration-500"
+                loading="lazy"
+                className="w-100 transition-all duration-500"
                 style={{
+                  height: "auto",
+                  aspectRatio: "16/9",
                   pointerEvents: "none",
                   transform: isHovered ? "scale(1.05)" : "scale(1)",
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  transition: "all 0.4s ease-in-out"
+                  transition: "all 0.4s ease-in-out",
+                  display: "block"
                 }}
                 allow="autoplay; encrypted-media"
                 frameBorder="0"
               />
           ) : (!defaultImage || (!defaultImage.startsWith("http") && !defaultImage.startsWith("/"))) ? (
             <div 
-              className="w-100 h-100 d-flex align-items-center justify-content-center transition-all"
+              className="w-100 d-flex align-items-center justify-content-center transition-all"
               style={{ 
+                height: "auto",
+                minHeight: "200px",
                 fontSize: "80px",
                 transform: isHovered ? "scale(1.1)" : "scale(1)",
                 transition: "transform 0.3s ease" 
@@ -116,15 +120,14 @@ export default function ProductCard({ product, index = 0 }) {
                 alt={product.title}
                 loading="lazy"
                 decoding="async"
-                className="w-100 h-100 transition-all duration-500"
+                className="w-100 transition-all duration-500"
                 style={{
+                  height: "auto",
                   objectFit: "contain",
                   opacity: isHovered ? 0 : 1,
                   transform: isHovered ? "scale(1)" : "scale(1.05)",
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  transition: "all 0.4s ease-in-out"
+                  transition: "all 0.4s ease-in-out",
+                  display: "block"
                 }}
               />
               {/* Lifestyle/Features Hover Image */}
@@ -133,14 +136,18 @@ export default function ProductCard({ product, index = 0 }) {
                 alt={`${product.title} lifestyle`}
                 loading="lazy"
                 decoding="async"
-                className="w-100 h-100 transition-all duration-500"
+                className="w-100 transition-all duration-500"
                 style={{
+                  height: "100%",
+                  width: "100%",
                   objectFit: "contain",
                   opacity: isHovered ? 1 : 0,
                   transform: isHovered ? "scale(1.05)" : "scale(1.1)",
                   position: "absolute",
                   top: 0,
                   left: 0,
+                  padding: "1.5rem",
+                  boxSizing: "border-box",
                   transition: "all 0.4s ease-in-out"
                 }}
               />
