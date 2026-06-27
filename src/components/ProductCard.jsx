@@ -75,7 +75,7 @@ export default function ProductCard({ product, index = 0 }) {
                 preload="none"
                 className="w-100 transition-all duration-500"
                 style={{
-                  height: "auto",
+                  aspectRatio: "1 / 1",
                   objectFit: "contain",
                   transform: isHovered ? "scale(1.05)" : "scale(1)",
                   transition: "all 0.4s ease-in-out",
@@ -83,14 +83,16 @@ export default function ProductCard({ product, index = 0 }) {
                 }}
               />
           ) : mainExternalVideo ? (
+            <div style={{ aspectRatio: "1 / 1", position: "relative", width: "100%", overflow: "hidden" }}>
               <iframe
                 src={`${mainExternalVideo}?autoplay=1&mute=1&loop=1&controls=0`}
                 title={product.title}
                 loading="lazy"
-                className="w-100 transition-all duration-500"
+                className="w-100 h-100 transition-all duration-500"
                 style={{
-                  height: "auto",
-                  aspectRatio: "16/9",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
                   pointerEvents: "none",
                   transform: isHovered ? "scale(1.05)" : "scale(1)",
                   transition: "all 0.4s ease-in-out",
@@ -99,6 +101,7 @@ export default function ProductCard({ product, index = 0 }) {
                 allow="autoplay; encrypted-media"
                 frameBorder="0"
               />
+            </div>
           ) : (!defaultImage || (!defaultImage.startsWith("http") && !defaultImage.startsWith("/"))) ? (
             <div 
               className="w-100 d-flex align-items-center justify-content-center transition-all"
