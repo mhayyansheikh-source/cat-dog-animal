@@ -4,6 +4,7 @@ import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
 import dynamic from "next/dynamic";
 import PageTransition from "@/components/PageTransition";
+import FlashSaleBar from "@/components/FlashSaleBar";
 import ToastProvider from "@/components/ToastProvider";
 import { getShopifyMenu, getShopInfo, getShopPolicies, getShopifyCollectionsWithProducts } from "@/utils/shopify";
 
@@ -99,6 +100,7 @@ export default async function RootLayout({ children }) {
       </head>
       <body className="min-h-full d-flex flex-column bg-white text-charcoal-dark">
         <ToastProvider />
+        <FlashSaleBar />
         <CartProvider>
           <Header menu={mainMenu} shop={shop} collections={collectionsData} />
           <main className="flex-grow-1">
