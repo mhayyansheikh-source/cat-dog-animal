@@ -13,6 +13,7 @@ export default function FlashSaleBar() {
   const [timeRemaining, setTimeRemaining] = useState(null);
   const [isVisible, setIsVisible] = useState(true);
   const [isDismissed, setIsDismissed] = useState(false);
+  const [isAtTop, setIsAtTop] = useState(true);
   const { scrollY } = useScroll();
   const router = useRouter();
 
@@ -53,6 +54,7 @@ export default function FlashSaleBar() {
 
   // Handle Scroll Direction
   useMotionValueEvent(scrollY, "change", (latest) => {
+    setIsAtTop(latest < 50);
     const previous = scrollY.getPrevious();
     if (latest > previous && latest > 50) {
       // Scrolling down
@@ -78,10 +80,19 @@ export default function FlashSaleBar() {
   const isEndingSoon = timeRemaining <= 5 * 60 * 1000; // Last 5 minutes
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ y: "-100%" }}
+    <>
+      {/* Spacer to push the sticky Header down when at the top of the page */}
+      <div 
+        style={{ 
+          height: isAtTop && isVisible ? '54px' : '0px', 
+          transition: 'height 0.3s ease-in-out' 
+        }} 
+      />
+
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            initial={{ y: "-100%" }}
           animate={{ y: 0 }}
           exit={{ y: "-100%" }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
@@ -141,5 +152,6 @@ export default function FlashSaleBar() {
         </motion.div>
       )}
     </AnimatePresence>
+    </>
   );
 }
