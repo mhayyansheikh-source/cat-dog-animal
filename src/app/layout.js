@@ -4,7 +4,7 @@ import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
 import dynamic from "next/dynamic";
 import PageTransition from "@/components/PageTransition";
-import FlashSaleBar from "@/components/FlashSaleBar";
+
 import ToastProvider from "@/components/ToastProvider";
 import { getShopifyMenu, getShopInfo, getShopPolicies, getShopifyCollectionsWithProducts } from "@/utils/shopify";
 
