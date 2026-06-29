@@ -251,8 +251,8 @@ export default function Hero({ collections = [], heroMeta = null, promoProducts 
 
   // Slides definition
   const slides = [
-    { id: 'cat-backpack', content: <ProductPromoSlide product={promoProducts?.catBackpack} fallbackTitle="Breathable Pet Cat Carrier Backpack" fallbackImage="https://placehold.co/600x600/FEF0E6/F5761A?text=Cat+Backpack" /> },
-    { id: 'dog-harness', content: <ProductPromoSlide product={promoProducts?.dogHarness} fallbackTitle="Quick Release Dog Harness Vest" fallbackImage="https://placehold.co/600x600/E0F5F2/1A8C7A?text=Dog+Harness" /> },
+    { id: 'cat-backpack', content: <ProductPromoSlide product={{ ...(promoProducts?.catBackpack || {}), image: "https://cdn.shopify.com/s/files/1/0992/1363/9976/files/imgi_204_715vHyNs3VL._AC_SL1500.webp?v=1782507867&width=1080&quality=90&format=webp" }} fallbackTitle="Breathable Pet Cat Carrier Backpack" fallbackImage="https://cdn.shopify.com/s/files/1/0992/1363/9976/files/imgi_204_715vHyNs3VL._AC_SL1500.webp?v=1782507867&width=1080&quality=90&format=webp" /> },
+    { id: 'dog-harness', content: <ProductPromoSlide product={{ ...(promoProducts?.dogHarness || {}), image: "https://cdn.shopify.com/s/files/1/0992/1363/9976/files/21.svg?v=1782599952&width=1080&quality=90&format=webp" }} fallbackTitle="Quick Release Dog Harness Vest" fallbackImage="https://cdn.shopify.com/s/files/1/0992/1363/9976/files/21.svg?v=1782599952&width=1080&quality=90&format=webp" /> },
     { id: 'fomo-sale', content: <FomoSalesSlide /> },
     { id: 'main', content: <MainHeroSlide collections={collections} heroMeta={heroMeta} /> }
   ];
