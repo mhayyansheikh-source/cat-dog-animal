@@ -6,7 +6,7 @@ import { testimonials } from "@/data/testimonials";
 
 export default function ReviewsSection() {
 
-  const MarqueeRow = ({ items, reverse = false }) => (
+  const MarqueeRow = ({ items, reverse =true }) => (
     <div style={{ display: "flex", overflow: "hidden", position: "relative", width: "100%", paddingBottom: "24px" }}>
       <motion.div
         animate={{ x: reverse ? ["-50%", "0%"] : ["0%", "-50%"] }}

@@ -251,9 +251,7 @@ export default function Hero({ collections = [], heroMeta = null, promoProducts 
 
   // Slides definition
   const slides = [
-    { id: 'cat-backpack', content: <ProductPromoSlide product={{ ...(promoProducts?.catBackpack || {}), image: "https://cdn.shopify.com/s/files/1/0992/1363/9976/files/imgi_204_715vHyNs3VL._AC_SL1500.webp?v=1782507867&width=1080&quality=90&format=webp" }} fallbackTitle="Breathable Pet Cat Carrier Backpack" fallbackImage="https://cdn.shopify.com/s/files/1/0992/1363/9976/files/imgi_204_715vHyNs3VL._AC_SL1500.webp?v=1782507867&width=1080&quality=90&format=webp" /> },
-    { id: 'dog-harness', content: <ProductPromoSlide product={{ ...(promoProducts?.dogHarness || {}), image: "https://cdn.shopify.com/s/files/1/0992/1363/9976/files/21.svg?v=1782599952&width=1080&quality=90&format=webp" }} fallbackTitle="Quick Release Dog Harness Vest" fallbackImage="https://cdn.shopify.com/s/files/1/0992/1363/9976/files/21.svg?v=1782599952&width=1080&quality=90&format=webp" /> },
-    { id: 'fomo-sale', content: <FomoSalesSlide /> },
+
     { id: 'main', content: <MainHeroSlide collections={collections} heroMeta={heroMeta} /> }
   ];
 
