@@ -7,7 +7,7 @@ import { ShoppingCart, Heart, ShieldCheck, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
-export default function ProductCard({ product, index = 0, isPriority = false }) {
+export default function ProductCard({ product, index = 0, isPriority = false, isMosaic = false }) {
   const { addToCart } = useCart();
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
   const [userSelectedVariant, setUserSelectedVariant] = useState(false);
@@ -44,7 +44,7 @@ export default function ProductCard({ product, index = 0, isPriority = false }) 
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.1 }}
-      className="card rounded-card h-100 shadow-sm border hover-scale"
+      className={`card rounded-card h-100 shadow-sm border hover-scale ${isMosaic ? 'mosaic-card' : ''}`}
       style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}
     >
       {/* Top Banner Tag */}

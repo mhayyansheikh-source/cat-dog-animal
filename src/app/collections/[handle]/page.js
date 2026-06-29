@@ -111,10 +111,10 @@ export default async function CollectionPage({ params, searchParams }) {
                 <div className="d-none d-lg-flex align-items-center justify-content-between mb-4 pb-3 border-bottom">
                   <p style={{ fontSize: "14px", color: "#6B7280", margin: 0 }}>Showing <strong style={{ color: "#2A2A2A" }}>{products.length}</strong> products</p>
                 </div>
-                <div className="row g-2 g-md-4">
+                <div className="row g-0 g-md-4">
                   {products.map((product, index) => (
                     <div key={product.id} className="col-6 col-md-4 col-lg-3">
-                      <ProductCard key={product.id} product={product} index={index} isPriority={index < 4} />
+                      <ProductCard key={product.id} product={product} index={index} isPriority={index < 4} isMosaic={true} />
                     </div>
                   ))}
                 </div>

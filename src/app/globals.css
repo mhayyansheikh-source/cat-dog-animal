@@ -339,6 +339,17 @@ p, span, li, button, input, select, textarea, .font-body {
   animation: shimmerSheen 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
+/* Mosaic Card - Seamless Mobile Grid */
+@media (max-width: 767px) {
+  .mosaic-card {
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid #E5E7EB !important;
+    border-right: 1px solid #E5E7EB !important;
+  }
+}
+
 /* Premium Dark Footer Styling */
 .premium-footer {
   background-color: var(--charcoal) !important;
