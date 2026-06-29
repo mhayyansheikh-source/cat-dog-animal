@@ -68,17 +68,12 @@ export default async function CollectionPage({ params, searchParams }) {
       {/* ── HERO BANNER ── */}
       <section
         style={{
-          background: "linear-gradient(135deg, #F9FAFB, #F3F4F6)",
-          backgroundImage: collection.image ? `url(${collection.image.url})` : "linear-gradient(135deg, #F9FAFB, #F3F4F6)",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          background: "linear-gradient(135deg, #F9FAFB, #E5E7EB)",
           borderBottom: "1px solid #E5E7EB",
           padding: "56px 24px 48px",
           textAlign: "center",
-          position: "relative"
         }}
       >
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(255,255,255,0.85)" }}></div>
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
           <nav aria-label="breadcrumb" style={{ marginBottom: "20px" }}>
             <ol style={{ display: "flex", justifyContent: "center", listStyle: "none", padding: 0, margin: 0, gap: "6px", fontSize: "13px", color: "#6B7280" }}>
