@@ -3,6 +3,7 @@ import { getShopifyProducts, getShopifyCollectionByHandle } from "@/utils/shopif
 import ProductCard from "@/components/ProductCard";
 import CartDrawer from "@/components/CartDrawer";
 import CollectionFilters from "@/components/CollectionFilters";
+import MobileFilterDrawer from "@/components/MobileFilterDrawer";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -109,13 +110,16 @@ export default async function CollectionPage({ params, searchParams }) {
           <div>
             {products.length > 0 ? (
               <>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px", paddingBottom: "16px", borderBottom: "1px solid #E5E7EB" }}>
+                {/* Mobile Filter Drawer (handles sticky top and showing product count on mobile) */}
+                <MobileFilterDrawer filters={collectionFilters} productCount={products.length} />
+
+                <div className="d-none d-lg-flex align-items-center justify-content-between mb-4 pb-3 border-bottom">
                   <p style={{ fontSize: "14px", color: "#6B7280", margin: 0 }}>Showing <strong style={{ color: "#2A2A2A" }}>{products.length}</strong> products</p>
                 </div>
                 <div className="row g-4">
                   {products.map((product, index) => (
                     <div key={product.id} className="col-6 col-md-4 col-lg-3">
-                      <ProductCard key={product.id} product={product} index={index} />
+                      <ProductCard key={product.id} product={product} index={index} isPriority={index < 4} />
                     </div>
                   ))}
                 </div>

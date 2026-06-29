@@ -4,13 +4,15 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { ShoppingCart, Heart, ShieldCheck, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
-export default function ProductCard({ product, index = 0 }) {
+export default function ProductCard({ product, index = 0, isPriority = false }) {
   const { addToCart } = useCart();
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
   const [userSelectedVariant, setUserSelectedVariant] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [showMobileVariants, setShowMobileVariants] = useState(false);
 
   const handleVariantChange = (variantId) => {
     const variant = product.variants.find(v => v.id.toString() === variantId.toString());
@@ -62,7 +64,7 @@ export default function ProductCard({ product, index = 0 }) {
           className="d-block overflow-hidden position-relative shimmer-placeholder" 
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          style={{ backgroundColor: "#f9fafb", padding: "1.5rem" }}
+          style={{ backgroundColor: "#f9fafb", aspectRatio: "1 / 1" }}
         >
           {mainVideo ? (
               <video
@@ -118,40 +120,33 @@ export default function ProductCard({ product, index = 0 }) {
           ) : (
             <>
               {/* Default Packaging Image */}
-              <img
+              <Image
                 src={defaultImage}
                 alt={product.title}
-                loading="lazy"
-                decoding="async"
-                className="w-100 transition-all duration-500"
+                fill
+                sizes="(max-width: 768px) 50vw, 25vw"
+                priority={isPriority}
+                className="transition-all duration-500"
                 style={{
-                  height: "auto",
                   objectFit: "contain",
                   opacity: isHovered ? 0 : 1,
                   transform: isHovered ? "scale(1)" : "scale(1.05)",
-                  transition: "all 0.4s ease-in-out",
-                  display: "block"
+                  padding: "1.5rem"
                 }}
               />
               {/* Lifestyle/Features Hover Image */}
-              <img
+              <Image
                 src={hoverImage}
                 alt={`${product.title} lifestyle`}
-                loading="lazy"
-                decoding="async"
-                className="w-100 transition-all duration-500"
+                fill
+                sizes="(max-width: 768px) 50vw, 25vw"
+                priority={isPriority}
+                className="transition-all duration-500"
                 style={{
-                  height: "100%",
-                  width: "100%",
                   objectFit: "contain",
                   opacity: isHovered ? 1 : 0,
                   transform: isHovered ? "scale(1.05)" : "scale(1.1)",
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  padding: "1.5rem",
-                  boxSizing: "border-box",
-                  transition: "all 0.4s ease-in-out"
+                  padding: "1.5rem"
                 }}
               />
             </>
@@ -204,7 +199,7 @@ export default function ProductCard({ product, index = 0 }) {
         <div>
           {/* Variant Selector dropdown */}
           {product.variants.length > 1 && (
-            <div className="my-3">
+            <div className="my-3 d-none d-md-block">
               <select
                 className="form-select form-select-sm shadow-none w-100"
                 value={selectedVariant.id}
@@ -230,7 +225,7 @@ export default function ProductCard({ product, index = 0 }) {
 
           {/* Bundle Discount Banner */}
           <motion.div 
-            className="w-100 py-2 px-1 mt-2 mb-3 rounded d-flex align-items-center justify-content-center flex-column text-center"
+            className="w-100 py-2 px-1 mt-2 mb-3 rounded d-none d-md-flex align-items-center justify-content-center flex-column text-center"
             style={{ backgroundColor: "rgba(25, 142, 122, 0.08)", border: "1px dashed rgba(25, 142, 122, 0.4)", cursor: "default" }}
             whileHover={{ scale: 1.02, backgroundColor: "rgba(25, 142, 122, 0.12)" }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -260,7 +255,14 @@ export default function ProductCard({ product, index = 0 }) {
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              onClick={() => addToCart(product, selectedVariant)}
+              onClick={(e) => {
+                e.preventDefault();
+                if (product.variants.length > 1 && typeof window !== 'undefined' && window.innerWidth < 768) {
+                  setShowMobileVariants(true);
+                } else {
+                  addToCart(product, selectedVariant);
+                }
+              }}
               className="btn d-flex align-items-center justify-content-center"
               style={{
                 width: "40px",
@@ -282,6 +284,83 @@ export default function ProductCard({ product, index = 0 }) {
           </div>
         </div>
       </div>
+
+      {/* Mobile Variant Selection Bottom Sheet */}
+      <AnimatePresence>
+        {showMobileVariants && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={(e) => { e.preventDefault(); setShowMobileVariants(false); }}
+              style={{
+                position: "fixed",
+                top: 0, left: 0, right: 0, bottom: 0,
+                backgroundColor: "rgba(0,0,0,0.5)",
+                zIndex: 1040
+              }}
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              style={{
+                position: "fixed",
+                bottom: 0, left: 0, right: 0,
+                backgroundColor: "white",
+                zIndex: 1050,
+                borderTopLeftRadius: "24px",
+                borderTopRightRadius: "24px",
+                padding: "24px",
+                boxShadow: "0 -10px 40px rgba(0,0,0,0.15)"
+              }}
+            >
+              <div className="d-flex justify-content-between align-items-center mb-4">
+                <h5 className="fw-bold mb-0" style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif" }}>Select Option</h5>
+                <button className="btn-close" onClick={(e) => { e.preventDefault(); setShowMobileVariants(false); }}></button>
+              </div>
+              <div className="d-flex align-items-center gap-3 mb-4 p-3 rounded" style={{ backgroundColor: "#f8f9fa" }}>
+                <div style={{ width: "64px", height: "64px", position: "relative", borderRadius: "8px", overflow: "hidden", backgroundColor: "#fff" }}>
+                  <Image src={defaultImage || "/placeholder.png"} alt={product.title} fill style={{ objectFit: "contain", padding: "4px" }} sizes="64px" />
+                </div>
+                <div>
+                  <h6 className="mb-1 fw-bold fs-6 text-dark" style={{ lineHeight: "1.2" }}>{product.title}</h6>
+                  <span className="fs-5 fw-bold" style={{ color: "var(--orange)" }}>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(selectedVariant.price)}</span>
+                </div>
+              </div>
+              
+              <div className="mb-4" style={{ maxHeight: "40vh", overflowY: "auto" }}>
+                {product.variants.map((v) => (
+                  <button
+                    key={v.id}
+                    onClick={(e) => { e.preventDefault(); handleVariantChange(v.id); }}
+                    disabled={!v.available}
+                    className={`btn w-100 mb-2 text-start d-flex justify-content-between align-items-center ${selectedVariant.id === v.id ? 'btn-dark' : 'btn-outline-dark'}`}
+                    style={{ padding: "12px 16px", borderRadius: "12px", border: selectedVariant.id === v.id ? "2px solid #212529" : "2px solid #e9ecef" }}
+                  >
+                    <span className="fw-semibold">{v.title}</span>
+                    {!v.available && <span className="text-muted small">Out of Stock</span>}
+                  </button>
+                ))}
+              </div>
+              <motion.button 
+                whileTap={{ scale: 0.95 }}
+                className="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-sm" 
+                style={{ backgroundColor: "var(--orange)", border: "none", fontSize: "16px" }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  addToCart(product, selectedVariant);
+                  setShowMobileVariants(false);
+                }}
+              >
+                Add to Cart
+              </motion.button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
