@@ -787,6 +787,7 @@ export async function subscribeToNewsletter(email) {
           field
           message
         }
+      }
     }
   `;
   
