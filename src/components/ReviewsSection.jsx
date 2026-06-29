@@ -5,15 +5,12 @@ import { motion } from "framer-motion";
 import { testimonials } from "@/data/testimonials";
 
 export default function ReviewsSection() {
-  // Split 100 testimonials into 2 rows of 50 for the marquee
-  const row1 = testimonials.slice(0, 50);
-  const row2 = testimonials.slice(50, 100);
 
   const MarqueeRow = ({ items, reverse = false }) => (
     <div style={{ display: "flex", overflow: "hidden", position: "relative", width: "100%", paddingBottom: "24px" }}>
       <motion.div
         animate={{ x: reverse ? ["-50%", "0%"] : ["0%", "-50%"] }}
-        transition={{ duration: 100, ease: "linear", repeat: Infinity }}
+        transition={{ duration: 400, ease: "linear", repeat: Infinity }}
         style={{ display: "flex", gap: "24px", minWidth: "max-content", paddingLeft: "24px" }}
       >
         {/* We duplicate the items array so the loop is seamless */}
@@ -131,8 +128,7 @@ export default function ReviewsSection() {
             pointerEvents: "none"
           }}></div>
 
-          <MarqueeRow items={row1} />
-          <MarqueeRow items={row2} reverse={true} />
+          <MarqueeRow items={testimonials} />
         </div>
       </div>
     </section>
