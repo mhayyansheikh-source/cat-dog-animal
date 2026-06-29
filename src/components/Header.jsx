@@ -57,7 +57,7 @@ export default function Header({ menu, shop, collections }) {
       animate={hidden ? "hidden" : "visible"}
       transition={{ duration: 0.35, ease: "easeInOut" }}
       className="premium-header border-bottom position-sticky top-0"
-      style={{ background: "rgba(255, 255, 255, 0.95)", backdropFilter: "blur(10px)", zIndex: 1030 }}
+      style={{ background: "rgba(255, 255, 255, 0.95)", backdropFilter: "blur(10px)" }}
     >
       {/* Peteora Announcement Bar */}
       <div 
