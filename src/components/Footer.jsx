@@ -7,12 +7,33 @@ import { Mail, Phone, MapPin, ExternalLink, ShieldCheck } from "lucide-react";
 export default function Footer({ menu, mainMenu, shop, policies, collections }) {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSubscribe = (e) => {
+  const handleSubscribe = async (e) => {
     e.preventDefault();
     if (email) {
-      setSubscribed(true);
-      setEmail("");
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch("/api/newsletter", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+        
+        setLoading(false);
+        if (!res.ok || data.error) {
+          setError(data.error || "Subscription failed.");
+        } else {
+          setSubscribed(true);
+          setEmail("");
+        }
+      } catch (err) {
+        setLoading(false);
+        setError("Network error. Please try again.");
+      }
     }
   };
 
@@ -52,7 +73,7 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
             <p className="text-white-50 font-body mb-4" style={{ fontSize: "0.95rem" }}>
               {shop?.description || "Premium supplements, treats, food, and accessories for happy, healthy cats and dogs. Science-backed ingredients, loved by pets worldwide."}
             </p>
-            <form onSubmit={handleSubscribe} className="position-relative">
+            <form onSubmit={handleSubscribe} className="position-relative mb-2">
               <input 
                 type="email" 
                 className="form-control rounded-pill bg-dark border-secondary text-white ps-4 pe-5 py-2" 
@@ -60,11 +81,14 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={loading}
               />
-              <button type="submit" className="btn position-absolute top-0 end-0 h-100 rounded-pill px-4 text-white fw-bold" style={{ backgroundColor: "var(--zesty-orange)" }}>
-                {subscribed ? "Joined!" : "Join"}
+              <button type="submit" disabled={loading} className="btn position-absolute top-0 end-0 h-100 rounded-pill px-4 text-white fw-bold" style={{ backgroundColor: "var(--zesty-orange)" }}>
+                {loading ? "..." : subscribed ? "Joined!" : "Join"}
               </button>
             </form>
+            {error && <p className="text-danger small mt-1 mb-0">{error}</p>}
+            {subscribed && <p className="text-success small mt-1 mb-0">✓ Welcome to the pack!</p>}
           </div>
 
           {/* Shop (Main Menu) */}
