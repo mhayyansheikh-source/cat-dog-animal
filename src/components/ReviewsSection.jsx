@@ -4,9 +4,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import { testimonials } from "@/data/testimonials";
 
-export default function ReviewsSection() {
 
-  const MarqueeRow = ({ items, reverse =true }) => (
+const MarqueeRow = ({ items, reverse = true }) => (
     <div style={{ display: "flex", overflow: "hidden", position: "relative", width: "100%", paddingBottom: "24px" }}>
       <motion.div
         animate={{ x: reverse ? ["-50%", "0%"] : ["0%", "-50%"] }}
@@ -37,7 +36,6 @@ export default function ReviewsSection() {
               {r.stars}
             </div>
 
-            {/* Review Text */}
             <p
               style={{
                 fontSize: "14px",
@@ -48,7 +46,7 @@ export default function ReviewsSection() {
                 flexGrow: 1,
               }}
             >
-              "{r.text}"
+              &quot;{r.text}&quot;
             </p>
 
             {/* Reviewer Info */}
@@ -81,6 +79,7 @@ export default function ReviewsSection() {
     </div>
   );
 
+export default function ReviewsSection() {
   return (
     <section
       className="py-5"
@@ -110,7 +109,7 @@ export default function ReviewsSection() {
             className="mx-auto"
             style={{ fontSize: "17px", color: "#6B7280", maxWidth: "600px" }}
           >
-            Don't just take our word for it. Here is what real pet parents from Austin to Boston are saying about their results.
+            Don&apos;t just take our word for it. Here is what real pet parents from Austin to Boston are saying about their results.
           </p>
         </div>
 

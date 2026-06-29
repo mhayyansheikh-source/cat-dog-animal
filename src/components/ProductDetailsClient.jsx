@@ -823,7 +823,7 @@ export default function ProductDetailsClient({ product }) {
                     </div>
                     
                     <p className="font-body text-charcoal-dark flex-grow-1 mb-4" style={{ fontSize: "15px", lineHeight: "1.6" }}>
-                      "{t.text}"
+                      &quot;{t.text}&quot;
                     </p>
                     
                     <div className="d-flex align-items-center mt-auto border-top pt-3">

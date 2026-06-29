@@ -12,22 +12,22 @@ export function CartProvider({ children }) {
   const [isSyncing, setIsSyncing] = useState(true);
 
   // Initialize cart from Shopify
-  const refreshCart = useCallback(async () => {
-    setIsSyncing(true);
-    try {
-      const res = await fetch('/api/cart');
-      const data = await res.json();
-      setCart(data.cart);
-    } catch (error) {
-      console.error("Failed to load cart:", error);
-    } finally {
-      setIsSyncing(false);
-    }
-  }, []);
-
   useEffect(() => {
-    refreshCart();
-  }, [refreshCart]);
+    let mounted = true;
+    const fetchCart = async () => {
+      try {
+        const res = await fetch('/api/cart');
+        const data = await res.json();
+        if (mounted) setCart(data.cart);
+      } catch (error) {
+        console.error("Failed to load cart:", error);
+      } finally {
+        if (mounted) setIsSyncing(false);
+      }
+    };
+    fetchCart();
+    return () => { mounted = false; };
+  }, []);
 
   const addToCart = async (product, variant, quantity = 1) => {
     setIsCartOpen(true);

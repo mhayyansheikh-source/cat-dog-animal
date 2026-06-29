@@ -53,7 +53,7 @@ export default function ProductTabs({ products = [], collections = [] }) {
             className="mx-auto"
             style={{ fontSize: "17px", color: "#6B7280", maxWidth: "560px", marginBottom: "32px" }}
           >
-            The products your fellow pet parents can't stop ordering.
+            The products your fellow pet parents can&apos;t stop ordering.
           </p>
 
           {/* Tab Pills */}
