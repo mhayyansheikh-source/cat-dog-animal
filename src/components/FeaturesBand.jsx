@@ -2,30 +2,31 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { FlaskConical, Leaf, Truck, ShieldCheck, Recycle } from "lucide-react";
 
 const features = [
   {
-    emoji: "🔬",
+    Icon: FlaskConical,
     title: "Science-Backed",
     desc: "Vet-formulated with clinical ingredients",
   },
   {
-    emoji: "🌿",
+    Icon: Leaf,
     title: "Natural Ingredients",
     desc: "No fillers, no artificial preservatives",
   },
   {
-    emoji: "🚀",
+    Icon: Truck,
     title: "Free Shipping",
     desc: "On all orders over $50",
   },
   {
-    emoji: "💯",
+    Icon: ShieldCheck,
     title: "Satisfaction Guarantee",
     desc: "30-day no-questions refund",
   },
   {
-    emoji: "♻️",
+    Icon: Recycle,
     title: "Eco Packaging",
     desc: "Sustainably sourced & recyclable",
   },
@@ -35,10 +36,10 @@ export default function FeaturesBand() {
   return (
     <div
       style={{
-        backgroundColor: "#1E1E1E",
+        backgroundColor: "var(--cream, #FDFAF5)",
         padding: "36px 0",
-        borderTop: "1px solid rgba(255,255,255,0.06)",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        borderTop: "1px solid var(--border, #E5E7EB)",
+        borderBottom: "1px solid var(--border, #E5E7EB)",
       }}
     >
       <div className="container">
@@ -68,24 +69,21 @@ export default function FeaturesBand() {
               }}
             >
               {/* Icon */}
-              <span
+              <div
                 style={{
-                  fontSize: "36px",
-                  display: "block",
-                  marginBottom: "10px",
-                  lineHeight: "1",
-                  filter: "drop-shadow(0 2px 6px rgba(255,255,255,0.1))",
+                  color: "var(--teal, #1A8C7A)",
+                  marginBottom: "12px",
                 }}
               >
-                {f.emoji}
-              </span>
+                <f.Icon size={36} strokeWidth={1.5} />
+              </div>
 
               {/* Title */}
               <span
                 style={{
                   fontWeight: "800",
                   fontSize: "14px",
-                  color: "#FFFFFF",
+                  color: "var(--charcoal, #2A2A2A)",
                   marginBottom: "4px",
                   fontFamily: "var(--font-nunito), 'Nunito', sans-serif",
                   letterSpacing: "0.01em",
@@ -98,7 +96,7 @@ export default function FeaturesBand() {
               <span
                 style={{
                   fontSize: "12.5px",
-                  color: "rgba(255,255,255,0.5)",
+                  color: "var(--gray, #6B7280)",
                   lineHeight: "1.45",
                   maxWidth: "160px",
                 }}
