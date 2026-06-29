@@ -307,16 +307,36 @@ p, span, li, button, input, select, textarea, .font-body {
   border-color: var(--zesty-orange);
   background-color: rgba(255, 122, 0, 0.05);
 }
+@keyframes shimmerSheen {
+  0% { transform: translateX(-150%) skewX(-25deg); }
+  100% { transform: translateX(150%) skewX(-25deg); }
+}
+
 .volume-card .discount-badge {
   position: absolute;
-  top: -10px;
-  right: 10px;
-  background-color: var(--zesty-orange);
+  top: -12px;
+  right: clamp(4px, 2vw, 16px);
+  background: linear-gradient(135deg, #FFB75E 0%, #ED8F03 100%);
   color: white;
-  font-size: 0.75rem;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-weight: bold;
+  font-size: clamp(0.7rem, 2vw, 0.8rem);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(237, 143, 3, 0.3);
+  overflow: hidden;
+  z-index: 2;
+}
+
+.volume-card .discount-badge::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  animation: shimmerSheen 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 /* Premium Dark Footer Styling */

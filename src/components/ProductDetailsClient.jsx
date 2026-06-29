@@ -7,7 +7,7 @@ import ShippingTimer from "@/components/ShippingTimer";
 import LiveScarcity from "@/components/LiveScarcity";
 import TrustBadges from "@/components/TrustBadges";
 import DirectCheckoutBar from "@/components/DirectCheckoutBar";
-import { ShoppingCart, Star, Sparkles, Check, ChevronDown, ChevronUp, ShieldCheck } from "lucide-react";
+import { ShoppingCart, Star, Sparkles, Check, ChevronDown, ChevronUp, ShieldCheck, Crown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const shopifyLoader = ({ src, width, quality }) => {
@@ -571,13 +571,9 @@ export default function ProductDetailsClient({ product }) {
                   className="btn btn-outline-warning d-flex align-items-center justify-content-between p-3 position-relative w-100 text-start shadow-sm"
                   style={{ minHeight: "72px", border: "2px solid var(--orange)", borderRadius: "12px", backgroundColor: "rgba(254, 146, 77, 0.05)" }}
                 >
-                  <motion.span 
-                    animate={{ scale: [1, 1.05, 1], backgroundColor: ["#198e7a", "var(--orange)", "#198e7a"] }} 
-                    transition={{ duration: 2, repeat: Infinity }} 
-                    className="discount-badge text-white border-0"
-                  >
-                    🏆 BEST VALUE (15% OFF)
-                  </motion.span>
+                  <span className="discount-badge text-white border-0 d-flex align-items-center gap-1">
+                    <Crown size={14} fill="currentColor" strokeWidth={2.5} /> BEST VALUE (15% OFF)
+                  </span>
                   <div className="d-flex flex-column mt-2">
                     <strong className="d-block" style={{ color: "var(--orange)" }}>Buy 3 Items</strong>
                   </div>
