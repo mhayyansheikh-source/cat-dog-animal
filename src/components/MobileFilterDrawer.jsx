@@ -14,7 +14,7 @@ export default function MobileFilterDrawer({ filters, productCount }) {
     <div className="d-lg-none w-100 mb-4">
       {/* Sticky Mobile Filter Button */}
       <div 
-        className="position-sticky bg-white w-100 py-3" 
+        className="position-sticky bg-white py-3" 
         style={{ top: "54px", zIndex: 1020, borderBottom: "1px solid #E5E7EB", margin: "-24px -24px 24px -24px", padding: "0 24px" }}
       >
         <div className="d-flex justify-content-between align-items-center">
