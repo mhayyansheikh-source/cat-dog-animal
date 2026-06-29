@@ -15,7 +15,12 @@ export async function POST(request) {
     }
     
     if (result.customerUserErrors?.length > 0) {
-      return Response.json({ error: result.customerUserErrors[0].message }, { status: 400 });
+      const errorMsg = result.customerUserErrors[0].message;
+      if (errorMsg.toLowerCase().includes("taken")) {
+        // If the email is already registered, treat it as a success for the newsletter form
+        return Response.json({ success: true, message: "Successfully subscribed!" });
+      }
+      return Response.json({ error: errorMsg }, { status: 400 });
     }
     
     return Response.json({ success: true, message: "Successfully subscribed!" });

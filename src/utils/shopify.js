@@ -787,13 +787,17 @@ export async function subscribeToNewsletter(email) {
           field
           message
         }
-      }
     }
   `;
+  
+  // Shopify Storefront API requires a password to create a customer.
+  // For a simple newsletter form, we generate a random dummy password.
+  const password = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8) + "Aa1!";
   
   const variables = {
     input: {
       email,
+      password,
       acceptsMarketing: true
     }
   };
@@ -802,7 +806,13 @@ export async function subscribeToNewsletter(email) {
     const data = await shopifyFetch({ query, variables });
     return data?.customerCreate;
   } catch (error) {
-    console.error("Failed to subscribe customer", error);
+    console.error("Failed to subscribe customer:", error);
+    
+    // If it's a GraphQL validation error about the password, we should log it
+    if (error.isGraphQL) {
+      console.error("GraphQL errors:", JSON.stringify(error.errors, null, 2));
+    }
+    
     return null;
   }
 }
