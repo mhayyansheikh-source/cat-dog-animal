@@ -312,7 +312,7 @@ p, span, li, button, input, select, textarea, .font-body {
   100% { transform: translateX(150%) skewX(-25deg); }
 }
 
-.volume-card .discount-badge {
+.discount-badge {
   position: absolute;
   top: -12px;
   right: clamp(4px, 2vw, 16px);
@@ -328,7 +328,7 @@ p, span, li, button, input, select, textarea, .font-body {
   z-index: 2;
 }
 
-.volume-card .discount-badge::after {
+.discount-badge::after {
   content: '';
   position: absolute;
   top: 0;
