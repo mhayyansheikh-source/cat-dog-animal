@@ -73,7 +73,7 @@ const ProductPromoSlide = ({ product, fallbackTitle, fallbackImage }) => {
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }}>
             <div style={{ position: "relative", width: "100%", maxWidth: "450px", aspectRatio: "1/1", margin: "0 auto", borderRadius: "24px", overflow: "hidden", boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}>
               {imageSrc ? (
-                <Image src={imageSrc} alt={title} fill style={{ objectFit: "cover" }} />
+                <Image src={imageSrc} alt={title} fill priority={true} sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover" }} />
               ) : (
                 <div style={{ width: "100%", height: "100%", background: "#E5E7EB", display: "flex", alignItems: "center", justifyContent: "center" }}>No Image Available</div>
               )}

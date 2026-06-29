@@ -14,13 +14,21 @@ const nunito = Nunito({
   variable: "--font-nunito",
   subsets: ["latin"],
   weight: ["400", "600", "700", "800", "900"],
+  display: "swap",
 });
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
   weight: ["700", "800"],
+  display: "swap",
 });
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#ffffff",
+};
 
 export async function generateMetadata() {
   const shop = await getShopInfo();

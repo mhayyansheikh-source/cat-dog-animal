@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { ShoppingCart, Search, Menu, X, PawPrint, ChevronRight } from "lucide-react";
@@ -13,6 +13,21 @@ export default function Header({ menu, shop, collections }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+    } else {
+      document.body.style.overflow = 'unset';
+      document.body.style.touchAction = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      document.body.style.touchAction = 'auto';
+    };
+  }, [isMenuOpen]);
 
   const getPath = (url) => {
     if (!url) return "#";
@@ -68,7 +83,7 @@ export default function Header({ menu, shop, collections }) {
           <div className="d-lg-none">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="btn p-1 border-0 d-flex flex-column align-items-center justify-content-center"
+              className="btn p-2 border-0 d-flex flex-column align-items-center justify-content-center"
               aria-label="Toggle navigation menu"
               style={{ color: "var(--forest-green)" }}
             >

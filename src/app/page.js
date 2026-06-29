@@ -1,8 +1,9 @@
 import React from "react";
 import nextDynamic from "next/dynamic";
 import Hero from "@/components/Hero";
-import FeaturesBand from "@/components/FeaturesBand";
-import TrustStats from "@/components/TrustStats";
+
+const FeaturesBand = nextDynamic(() => import("@/components/FeaturesBand"));
+const TrustStats = nextDynamic(() => import("@/components/TrustStats"));
 import { 
   getShopifyProducts, 
   getShopifyCollectionByHandle, 

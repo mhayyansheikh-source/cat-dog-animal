@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import ShippingTimer from "@/components/ShippingTimer";
@@ -75,6 +75,21 @@ export default function ProductDetailsClient({ product }) {
   // FAQ states
   const [openFaq, setOpenFaq] = useState(null);
   const [openAccordion, setOpenAccordion] = useState("desc");
+
+  // Sticky mobile CTA state
+  const [showStickyAdd, setShowStickyAdd] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 500) {
+        setShowStickyAdd(true);
+      } else {
+        setShowStickyAdd(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Volume discount cards are now direct Add To Cart buttons
 
@@ -882,6 +897,35 @@ export default function ProductDetailsClient({ product }) {
           </section>
         </div>
       </div>
+
+      {/* Mobile Sticky Add to Cart */}
+      <AnimatePresence>
+        {showStickyAdd && (
+          <motion.div
+            initial={{ y: 100 }}
+            animate={{ y: 0 }}
+            exit={{ y: 100 }}
+            className="d-md-none position-fixed bottom-0 start-0 w-100 bg-white p-3 shadow-lg border-top"
+            style={{ zIndex: 1050 }}
+          >
+            <div className="d-flex align-items-center justify-content-between mb-2">
+              <span className="fw-bold text-truncate" style={{ maxWidth: '70%', fontSize: '14px' }}>{product.title}</span>
+              <span className="fw-bold text-zesty-orange" style={{ fontSize: '14px' }}>
+                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(activeVariant.price)}
+              </span>
+            </div>
+            <button
+              onClick={(e) => { e.preventDefault(); addToCart(product, activeVariant, 1); }}
+              disabled={!activeVariant.available}
+              className={`w-100 btn fw-bold py-2 shadow-sm ${!activeVariant.available ? "btn-secondary" : "btn-zesty-primary"}`}
+              style={{ borderRadius: '12px' }}
+            >
+              <ShoppingCart size={18} className="me-2" />
+              {activeVariant.available ? "ADD TO CART" : "OUT OF STOCK"}
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <DirectCheckoutBar product={product} activeVariant={activeVariant} />
     </article>
