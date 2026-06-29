@@ -23,6 +23,11 @@ export default async function Home() {
   const products = await getShopifyProducts();
   const collections = await getShopifyCollectionsWithProducts(10, 8);
   
+  // Find promo products for the Hero carousel
+  const catBackpack = products.find(p => p.handle === 'breathable-pet-cat-carrier-backpack') || null;
+  const dogHarness = products.find(p => p.handle === 'quick-release-dog-harness-vest') || null;
+  const promoProducts = { catBackpack, dogHarness };
+  
   // Fetch Homepage Metaobject configuration (gracefully falls back if not created yet)
   const heroMeta = await getShopifyMetaobject("homepage_config", "hero") || null;
   const statsMeta = await getShopifyMetaobject("homepage_config", "stats") || null;
@@ -44,7 +49,7 @@ export default async function Home() {
   return (
     <>
       {/* Hero Section */}
-      <Hero collections={collections} heroMeta={heroMeta} />
+      <Hero collections={collections} heroMeta={heroMeta} promoProducts={promoProducts} />
 
       {/* Features Band Segment */}
       <FeaturesBand />
