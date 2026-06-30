@@ -57,7 +57,7 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
   ].filter(Boolean);
 
   return (
-    <footer className="premium-footer bg-light pt-5 pb-4 mt-auto">
+    <footer className="premium-footer pt-5 pb-4 mt-auto" style={{ backgroundColor: "var(--cream)" }}>
       <div className="container">
         <div className="row g-4 mb-5 justify-content-between">
           
@@ -70,20 +70,20 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
                 <img src="/peteora.png" alt="Peteora Logo" style={{ height: "45px", width: "auto" }} />
               )}
             </Link>
-            <p className="text-muted font-body mb-4" style={{ fontSize: "0.95rem" }}>
+            <p className="font-body mb-4" style={{ fontSize: "0.95rem", color: "var(--charcoal)", opacity: 0.8 }}>
               {shop?.description || "Premium supplements, treats, food, and accessories for happy, healthy cats and dogs. Science-backed ingredients, loved by pets worldwide."}
             </p>
             <form onSubmit={handleSubscribe} className="position-relative mb-2">
               <input 
                 type="email" 
-                className="form-control rounded-pill bg-white border-light text-dark ps-4 pe-5 py-2" 
+                className="form-control rounded-pill bg-white border-light  ps-4 pe-5 py-2" 
                 placeholder="Enter your email" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
               />
-              <button type="submit" disabled={loading} className="btn position-absolute top-0 end-0 h-100 rounded-pill px-4 text-dark fw-bold" style={{ backgroundColor: "var(--zesty-orange)" }}>
+              <button type="submit" disabled={loading} className="btn position-absolute top-0 end-0 h-100 rounded-pill px-4  fw-bold" style={{ backgroundColor: "var(--zesty-orange)" }}>
                 {loading ? "..." : subscribed ? "Joined!" : "Join"}
               </button>
             </form>
@@ -93,40 +93,40 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
 
           {/* Shop (Main Menu) */}
           <div className="col-lg-2 col-md-3 col-12 mb-2 mb-md-0">
-            <details className="d-md-none border-bottom border-light pb-1">
-              <summary className="fw-bold text-uppercase text-dark letter-spacing-wide py-3 d-flex justify-content-between align-items-center" style={{ outline: 'none', cursor: 'pointer' }}>
-                Shop <span className="text-muted fs-6">▼</span>
+            <details className="d-md-none pb-1" style={{ borderBottom: "1px solid rgba(42, 42, 42, 0.15)" }}>
+              <summary className="fw-bold text-uppercase  letter-spacing-wide py-3 d-flex justify-content-between align-items-center" style={{ outline: 'none', cursor: 'pointer', color: "var(--charcoal)" }}>
+                Shop <span className=" fs-6">▼</span>
               </summary>
               <ul className="list-unstyled mb-0 font-body fs-6 pt-2 pb-2">
                 {mainMenu?.items?.map((link) => (
                   <li className="mb-3" key={link.id}>
-                    <Link href={getPath(link.url)} className="footer-link text-muted d-block" style={{ minHeight: "44px" }}>
+                    <Link href={getPath(link.url)} className="footer-link d-block" style={{ color: "var(--charcoal)", opacity: 0.8, minHeight: "44px" }}>
                       {link.title}
                     </Link>
                   </li>
                 ))}
                 {!mainMenu?.items?.length && (
                   <>
-                    <li className="mb-3"><Link href="/" className="footer-link text-muted d-block" style={{ minHeight: "44px" }}>Home</Link></li>
-                    <li className="mb-3"><Link href="/collections/all" className="footer-link text-muted d-block" style={{ minHeight: "44px" }}>Shop All</Link></li>
+                    <li className="mb-3"><Link href="/" className="footer-link d-block" style={{ color: "var(--charcoal)", opacity: 0.8, minHeight: "44px" }}>Home</Link></li>
+                    <li className="mb-3"><Link href="/collections/all" className="footer-link d-block" style={{ color: "var(--charcoal)", opacity: 0.8, minHeight: "44px" }}>Shop All</Link></li>
                   </>
                 )}
               </ul>
             </details>
             <div className="d-none d-md-block">
-              <h6 className="fw-bold mb-4 text-uppercase text-dark letter-spacing-wide">Shop</h6>
+              <h6 className="fw-bold mb-4 text-uppercase  letter-spacing-wide" style={{ color: "var(--charcoal)" }}>Shop</h6>
               <ul className="list-unstyled mb-0 font-body fs-6">
                 {mainMenu?.items?.map((link) => (
                   <li className="mb-3" key={link.id}>
-                    <Link href={getPath(link.url)} className="footer-link text-muted">
+                    <Link href={getPath(link.url)} className="footer-link" style={{ color: "var(--charcoal)", opacity: 0.8 }}>
                       {link.title}
                     </Link>
                   </li>
                 ))}
                 {!mainMenu?.items?.length && (
                   <>
-                    <li className="mb-3"><Link href="/" className="footer-link text-muted">Home</Link></li>
-                    <li className="mb-3"><Link href="/collections/all" className="footer-link text-muted">Shop All</Link></li>
+                    <li className="mb-3"><Link href="/" className="footer-link" style={{ color: "var(--charcoal)", opacity: 0.8 }}>Home</Link></li>
+                    <li className="mb-3"><Link href="/collections/all" className="footer-link" style={{ color: "var(--charcoal)", opacity: 0.8 }}>Shop All</Link></li>
                   </>
                 )}
               </ul>
@@ -135,40 +135,40 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
 
           {/* Explore (Footer Menu) */}
           <div className="col-lg-2 col-md-3 col-12 mb-2 mb-md-0">
-            <details className="d-md-none border-bottom border-light pb-1">
-              <summary className="fw-bold text-uppercase text-dark letter-spacing-wide py-3 d-flex justify-content-between align-items-center" style={{ outline: 'none', cursor: 'pointer' }}>
-                Explore <span className="text-muted fs-6">▼</span>
+            <details className="d-md-none pb-1" style={{ borderBottom: "1px solid rgba(42, 42, 42, 0.15)" }}>
+              <summary className="fw-bold text-uppercase  letter-spacing-wide py-3 d-flex justify-content-between align-items-center" style={{ outline: 'none', cursor: 'pointer', color: "var(--charcoal)" }}>
+                Explore <span className=" fs-6">▼</span>
               </summary>
               <ul className="list-unstyled mb-0 font-body fs-6 pt-2 pb-2">
                 {menu?.items?.map((link) => (
                   <li className="mb-3" key={link.id}>
-                    <Link href={getPath(link.url)} className="footer-link text-muted d-block" style={{ minHeight: "44px" }}>
+                    <Link href={getPath(link.url)} className="footer-link d-block" style={{ color: "var(--charcoal)", opacity: 0.8, minHeight: "44px" }}>
                       {link.title}
                     </Link>
                   </li>
                 ))}
                 {!menu?.items?.length && (
                   <>
-                    <li className="mb-3"><Link href="/collections/dogs" className="footer-link text-muted d-block" style={{ minHeight: "44px" }}>Dogs</Link></li>
-                    <li className="mb-3"><Link href="/collections/cats" className="footer-link text-muted d-block" style={{ minHeight: "44px" }}>Cats</Link></li>
+                    <li className="mb-3"><Link href="/collections/dogs" className="footer-link d-block" style={{ color: "var(--charcoal)", opacity: 0.8, minHeight: "44px" }}>Dogs</Link></li>
+                    <li className="mb-3"><Link href="/collections/cats" className="footer-link d-block" style={{ color: "var(--charcoal)", opacity: 0.8, minHeight: "44px" }}>Cats</Link></li>
                   </>
                 )}
               </ul>
             </details>
             <div className="d-none d-md-block">
-              <h6 className="fw-bold mb-4 text-uppercase text-dark letter-spacing-wide">Explore</h6>
+              <h6 className="fw-bold mb-4 text-uppercase  letter-spacing-wide" style={{ color: "var(--charcoal)" }}>Explore</h6>
               <ul className="list-unstyled mb-0 font-body fs-6">
                 {menu?.items?.map((link) => (
                   <li className="mb-3" key={link.id}>
-                    <Link href={getPath(link.url)} className="footer-link text-muted">
+                    <Link href={getPath(link.url)} className="footer-link" style={{ color: "var(--charcoal)", opacity: 0.8 }}>
                       {link.title}
                     </Link>
                   </li>
                 ))}
                 {!menu?.items?.length && (
                   <>
-                    <li className="mb-3"><Link href="/collections/dogs" className="footer-link text-muted">Dogs</Link></li>
-                    <li className="mb-3"><Link href="/collections/cats" className="footer-link text-muted">Cats</Link></li>
+                    <li className="mb-3"><Link href="/collections/dogs" className="footer-link" style={{ color: "var(--charcoal)", opacity: 0.8 }}>Dogs</Link></li>
+                    <li className="mb-3"><Link href="/collections/cats" className="footer-link" style={{ color: "var(--charcoal)", opacity: 0.8 }}>Cats</Link></li>
                   </>
                 )}
               </ul>
@@ -177,14 +177,14 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
 
           {/* Policies & Customer Care */}
           <div className="col-lg-3 col-md-6 col-12 mb-2 mb-md-0">
-            <details className="d-md-none border-bottom border-light pb-1">
-              <summary className="fw-bold text-uppercase text-dark letter-spacing-wide py-3 d-flex justify-content-between align-items-center" style={{ outline: 'none', cursor: 'pointer' }}>
-                Customer Care <span className="text-muted fs-6">▼</span>
+            <details className="d-md-none pb-1" style={{ borderBottom: "1px solid rgba(42, 42, 42, 0.15)" }}>
+              <summary className="fw-bold text-uppercase  letter-spacing-wide py-3 d-flex justify-content-between align-items-center" style={{ outline: 'none', cursor: 'pointer', color: "var(--charcoal)" }}>
+                Customer Care <span className=" fs-6">▼</span>
               </summary>
               <ul className="list-unstyled mb-0 font-body fs-6 pt-2 pb-2">
                 {policyLinks.map((link, idx) => (
                   <li className="mb-3" key={idx}>
-                    <Link href={link.url} className="footer-link text-muted d-block" style={{ minHeight: "44px" }}>
+                    <Link href={link.url} className="footer-link d-block" style={{ color: "var(--charcoal)", opacity: 0.8, minHeight: "44px" }}>
                       {link.title}
                     </Link>
                   </li>
@@ -192,11 +192,11 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
               </ul>
             </details>
             <div className="d-none d-md-block">
-              <h6 className="fw-bold mb-4 text-uppercase text-dark letter-spacing-wide">Customer Care</h6>
+              <h6 className="fw-bold mb-4 text-uppercase  letter-spacing-wide" style={{ color: "var(--charcoal)" }}>Customer Care</h6>
               <ul className="list-unstyled mb-0 font-body fs-6">
                 {policyLinks.map((link, idx) => (
                   <li className="mb-3" key={idx}>
-                    <Link href={link.url} className="footer-link text-muted">
+                    <Link href={link.url} className="footer-link" style={{ color: "var(--charcoal)", opacity: 0.8 }}>
                       {link.title}
                     </Link>
                   </li>
@@ -211,14 +211,14 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
 
         {/* FDA Compliance & Health disclaimer - Mandatory for Pet wellness niches */}
         <div className="disclaimer-box mb-4">
-          <p className="small text-muted mb-0 font-body" style={{ fontSize: "0.785rem", lineHeight: "1.5" }}>
+          <p className="small  mb-0 font-body" style={{ fontSize: "0.785rem", lineHeight: "1.5" }}>
             <strong>* FDA & VETERINARY ADVISORY DISCLAIMER:</strong> The statements made regarding these products have not been evaluated by the Food and Drug Administration. These products are not intended to diagnose, treat, cure, or prevent any disease. The details presented on this store are for informational purposes only and are not a substitute for advice from your veterinarian. Always consult your veterinarian before starting any wellness program or dietary supplements for your pets.
           </p>
         </div>
 
         <div className="row align-items-center">
           <div className="col-12 text-center">
-            <p className="small text-muted mb-0">
+            <p className="small  mb-0">
               © {new Date().getFullYear()} {shop?.name || "Peteora"}. All rights reserved.
             </p>
           </div>
