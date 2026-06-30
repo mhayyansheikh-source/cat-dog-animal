@@ -10,11 +10,18 @@ export default function ProfilePage() {
 
   useEffect(() => {
     async function loadProfile() {
-      const res = await getProfileAction();
-      if (res.error) {
+      try {
+        const res = await getProfileAction();
+        if (res?.error) {
+          router.push('/account/login');
+        } else if (res?.customer) {
+          setCustomer(res.customer);
+        } else {
+          router.push('/account/login');
+        }
+      } catch (error) {
+        console.error("Error loading profile:", error);
         router.push('/account/login');
-      } else {
-        setCustomer(res.customer);
       }
     }
     loadProfile();

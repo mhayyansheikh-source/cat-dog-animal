@@ -11,11 +11,18 @@ export default function OrdersPage() {
 
   useEffect(() => {
     async function loadOrders() {
-      const res = await getOrdersAction();
-      if (res.error) {
+      try {
+        const res = await getOrdersAction();
+        if (res?.error) {
+          router.push('/account/login');
+        } else if (res?.orders) {
+          setOrders(res.orders);
+        } else {
+          setOrders([]);
+        }
+      } catch (error) {
+        console.error("Error loading orders:", error);
         router.push('/account/login');
-      } else {
-        setOrders(res.orders || []);
       }
     }
     loadOrders();
