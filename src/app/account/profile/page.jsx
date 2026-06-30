@@ -2,6 +2,8 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getCustomerDetails } from '@/utils/shopify';
 
+export const runtime = 'edge';
+
 export default async function ProfilePage() {
   const token = cookies().get('shopify_customer_token')?.value;
 

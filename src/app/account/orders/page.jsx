@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation';
 import Image from 'next/image';
 import { getCustomerOrders } from '@/utils/shopify';
 
+export const runtime = 'edge';
+
 export default async function OrdersPage() {
   const token = cookies().get('shopify_customer_token')?.value;
 
