@@ -38,10 +38,10 @@ export default function Hero() {
               transition={{ delay: 0.1 }}
               className="mb-4"
             >
-              <h1 className="font-heading fw-bold mb-1" style={{ fontSize: "clamp(48px, 6vw, 72px)", color: "var(--teal)", lineHeight: "1" }}>
+              <h1 className="font-heading fw-bold mb-1" style={{ fontSize: "clamp(36px, 8vw, 72px)", color: "var(--teal)", lineHeight: "1" }}>
                 SAVE $15
               </h1>
-              <h2 className="font-heading fw-bold" style={{ fontSize: "clamp(28px, 4vw, 42px)", color: "var(--charcoal)", lineHeight: "1.2" }}>
+              <h2 className="font-heading fw-bold" style={{ fontSize: "clamp(22px, 5vw, 42px)", color: "var(--charcoal)", lineHeight: "1.2" }}>
                 ON EVERY PET PRODUCTS
               </h2>
             </motion.div>
@@ -57,7 +57,7 @@ export default function Hero() {
                 <div className="rounded-circle d-flex align-items-center justify-content-center text-white" style={{ backgroundColor: "var(--teal)", width: "48px", height: "48px" }}>
                   <Truck size={24} />
                 </div>
-                <div className="fw-bold" style={{ fontSize: "20px", color: "var(--charcoal)" }}>
+                <div className="fw-bold" style={{ fontSize: "clamp(16px, 4vw, 20px)", color: "var(--charcoal)" }}>
                   PLUS, GET <span style={{ color: "var(--orange)" }}>FREE SHIPPING</span>
                   <span className="ms-2 px-2 py-1 rounded text-white" style={{ backgroundColor: "var(--teal)", fontSize: "14px", verticalAlign: "middle" }}>OVER $50</span>
                 </div>
@@ -81,7 +81,7 @@ export default function Hero() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="btn rounded-pill d-inline-flex align-items-center gap-2 shadow-lg"
-                  style={{ backgroundColor: "var(--orange)", color: "white", padding: "16px 40px", fontSize: "22px", fontWeight: "800", border: "none" }}
+                  style={{ backgroundColor: "var(--orange)", color: "white", padding: "clamp(12px, 2vw, 16px) clamp(24px, 5vw, 40px)", fontSize: "clamp(18px, 4vw, 22px)", fontWeight: "800", border: "none" }}
                 >
                   SHOP NOW
                   <span className="bg-white text-orange rounded-circle d-flex align-items-center justify-content-center ms-2" style={{ width: "32px", height: "32px", color: "var(--orange)" }}>
