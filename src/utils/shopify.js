@@ -884,6 +884,8 @@ export async function getShopInfo() {
   }
 }
 
+}
+
 export async function getShopPolicies() {
   const query = `
     query getShopPolicies @inContext(country: US) {
@@ -917,5 +919,161 @@ export async function getShopPolicies() {
   } catch (error) {
     console.error("Failed to fetch shop policies:", error);
     return null;
+  }
+}
+
+// ==========================================
+// CUSTOMER ACCOUNTS API
+// ==========================================
+
+export async function createCustomerAccessToken(email, password) {
+  const query = `
+    mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
+      customerAccessTokenCreate(input: $input) {
+        customerAccessToken {
+          accessToken
+          expiresAt
+        }
+        customerUserErrors {
+          code
+          field
+          message
+        }
+      }
+    }
+  `;
+  const variables = { input: { email, password } };
+  try {
+    const data = await shopifyFetch({ query, variables });
+    return data?.customerAccessTokenCreate || null;
+  } catch (error) {
+    console.error("Failed to create customer access token:", error);
+    return null;
+  }
+}
+
+export async function createCustomer(firstName, lastName, email, password) {
+  const query = `
+    mutation customerCreate($input: CustomerCreateInput!) {
+      customerCreate(input: $input) {
+        customer {
+          id
+          email
+          firstName
+          lastName
+        }
+        customerUserErrors {
+          code
+          field
+          message
+        }
+      }
+    }
+  `;
+  const variables = { input: { firstName, lastName, email, password } };
+  try {
+    const data = await shopifyFetch({ query, variables });
+    return data?.customerCreate || null;
+  } catch (error) {
+    console.error("Failed to create customer:", error);
+    return null;
+  }
+}
+
+export async function deleteCustomerAccessToken(customerAccessToken) {
+  const query = `
+    mutation customerAccessTokenDelete($customerAccessToken: String!) {
+      customerAccessTokenDelete(customerAccessToken: $customerAccessToken) {
+        deletedAccessToken
+        deletedCustomerAccessTokenId
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+  const variables = { customerAccessToken };
+  try {
+    const data = await shopifyFetch({ query, variables });
+    return data?.customerAccessTokenDelete || null;
+  } catch (error) {
+    console.error("Failed to delete customer access token:", error);
+    return null;
+  }
+}
+
+export async function getCustomerDetails(customerAccessToken) {
+  const query = `
+    query getCustomerDetails($customerAccessToken: String!) {
+      customer(customerAccessToken: $customerAccessToken) {
+        id
+        firstName
+        lastName
+        email
+        phone
+        defaultAddress {
+          address1
+          address2
+          city
+          province
+          country
+          zip
+        }
+      }
+    }
+  `;
+  const variables = { customerAccessToken };
+  try {
+    const data = await shopifyFetch({ query, variables });
+    return data?.customer || null;
+  } catch (error) {
+    console.error("Failed to fetch customer details:", error);
+    return null;
+  }
+}
+
+export async function getCustomerOrders(customerAccessToken) {
+  const query = `
+    query getCustomerOrders($customerAccessToken: String!) {
+      customer(customerAccessToken: $customerAccessToken) {
+        orders(first: 20, sortKey: PROCESSED_AT, reverse: true) {
+          edges {
+            node {
+              id
+              orderNumber
+              processedAt
+              financialStatus
+              fulfillmentStatus
+              totalPrice {
+                amount
+                currencyCode
+              }
+              lineItems(first: 5) {
+                edges {
+                  node {
+                    title
+                    quantity
+                    variant {
+                      image {
+                        url
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+  const variables = { customerAccessToken };
+  try {
+    const data = await shopifyFetch({ query, variables });
+    return data?.customer?.orders?.edges?.map(edge => edge.node) || [];
+  } catch (error) {
+    console.error("Failed to fetch customer orders:", error);
+    return [];
   }
 }
