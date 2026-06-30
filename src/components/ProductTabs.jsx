@@ -12,7 +12,9 @@ export default function ProductTabs({ products = [], collections = [] }) {
   // Build dynamic tabs
   const tabs = [{ id: "all", label: "All" }];
   collections.forEach(col => {
-    tabs.push({ id: col.handle, label: col.title });
+    if (col.handle !== "all") {
+      tabs.push({ id: col.handle, label: col.title });
+    }
   });
 
   // Filter products based on active tab
