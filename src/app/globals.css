@@ -360,13 +360,13 @@ p, span, li, button, input, select, textarea, .font-body {
 .premium-footer h5,
 .premium-footer h6,
 .premium-footer h4 {
-  color: var(--white) !important;
+  color: var(--charcoal) !important;
   font-family: var(--font-heading);
   letter-spacing: 0.5px;
 }
 
 .footer-link {
-  color: rgba(255, 255, 255, 0.55) !important;
+  color: var(--charcoal) !important;
   text-decoration: none !important;
   transition: all 0.2s ease-in-out;
   display: inline-block;
