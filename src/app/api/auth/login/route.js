@@ -52,7 +52,7 @@ export async function GET(request) {
   authUrl.searchParams.set('response_type', 'code');
   authUrl.searchParams.set('redirect_uri', redirectUri);
   authUrl.searchParams.set('state', state);
-  authUrl.searchParams.set('scope', 'openid email https://api.customers.com/auth/customer.graphql');
+  authUrl.searchParams.set('scope', 'openid email customer-account-api:full');
   authUrl.searchParams.set('code_challenge', codeChallenge);
   authUrl.searchParams.set('code_challenge_method', 'S256');
 
