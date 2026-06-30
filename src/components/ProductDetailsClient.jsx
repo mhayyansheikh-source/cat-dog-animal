@@ -525,6 +525,11 @@ export default function ProductDetailsClient({ product }) {
                     <strong className="fs-5 text-dark">
                       {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(basePrice)}
                     </strong>
+                    {activeVariant.compare_at_price && (
+                      <span className="text-decoration-line-through text-muted small">
+                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(activeVariant.compare_at_price)}
+                      </span>
+                    )}
                     <span className="d-block small text-muted">Total</span>
                   </div>
                   <div className="position-absolute end-0 top-0 bottom-0 d-flex align-items-center justify-content-center bg-light px-3 border-start" style={{ borderTopRightRadius: "11px", borderBottomRightRadius: "11px" }}>
@@ -555,6 +560,11 @@ export default function ProductDetailsClient({ product }) {
                     <strong className="fs-5" style={{ color: "#198e7a" }}>
                       {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(getBulkCardPrice(2) * 2)}
                     </strong>
+                    {activeVariant.compare_at_price && (
+                      <span className="text-decoration-line-through small" style={{ color: "#198e7a", opacity: 0.7 }}>
+                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(parseFloat(activeVariant.compare_at_price) * 2)}
+                      </span>
+                    )}
                     <span className="d-block small" style={{ color: "#198e7a" }}>Total</span>
                   </div>
                   <div className="position-absolute end-0 top-0 bottom-0 d-flex align-items-center justify-content-center px-3" style={{ backgroundColor: "#198e7a", color: "white", borderTopRightRadius: "10px", borderBottomRightRadius: "10px" }}>
@@ -581,6 +591,11 @@ export default function ProductDetailsClient({ product }) {
                     <strong className="fs-5" style={{ color: "var(--orange)" }}>
                       {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(getBulkCardPrice(3) * 3)}
                     </strong>
+                    {activeVariant.compare_at_price && (
+                      <span className="text-decoration-line-through small" style={{ color: "var(--orange)", opacity: 0.7 }}>
+                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(parseFloat(activeVariant.compare_at_price) * 3)}
+                      </span>
+                    )}
                     <span className="d-block small" style={{ color: "var(--orange)" }}>Total</span>
                   </div>
                   <div className="position-absolute end-0 top-0 bottom-0 d-flex align-items-center justify-content-center px-3" style={{ backgroundColor: "var(--orange)", color: "white", borderTopRightRadius: "10px", borderBottomRightRadius: "10px" }}>

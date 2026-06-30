@@ -71,12 +71,15 @@ function normalizeProduct(node) {
   
   const variantsMapped = (node.variants?.edges || []).map(edge => {
     const v = edge.node;
+    const basePrice = v.price?.amount || "0.00";
+    const markupPrice = (parseFloat(basePrice) + 15).toFixed(2);
+    
     return {
       id: v.id, // Shopify GID Base64 string
       title: v.title,
-      price: v.price?.amount || "0.00",
+      price: basePrice,
       currencyCode: v.price?.currencyCode || "USD",
-      compare_at_price: v.compareAtPrice?.amount || null,
+      compare_at_price: markupPrice,
       available: v.availableForSale,
       sku: v.sku || "",
       image: v.image?.url || null
