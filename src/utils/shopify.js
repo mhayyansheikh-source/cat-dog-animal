@@ -884,8 +884,6 @@ export async function getShopInfo() {
   }
 }
 
-}
-
 export async function getShopPolicies() {
   const query = `
     query getShopPolicies @inContext(country: US) {
