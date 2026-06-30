@@ -10,7 +10,7 @@ import { getShopifyMenu, getShopInfo, getShopPolicies, getShopifyCollectionsWith
 
 const Footer = dynamic(() => import("@/components/Footer"), { ssr: true });
 const CartDrawer = dynamic(() => import("@/components/CartDrawer"));
-const ConsentBanner = dynamic(() => import("@/components/ConsentBanner"), { ssr: false });
+import ConsentBanner from "@/components/ConsentBanner";
 
 const nunito = Nunito({
   variable: "--font-nunito",
