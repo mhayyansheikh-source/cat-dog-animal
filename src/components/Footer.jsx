@@ -57,7 +57,7 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
   ].filter(Boolean);
 
   return (
-    <footer className="premium-footer pt-5 pb-4 mt-auto" style={{ backgroundColor: "var(--cream)" }}>
+    <footer className="premium-footer pt-5 pb-4 mt-auto" style={{ backgroundColor: "#FDFAF5", color: "#2A2A2A" }}>
       <div className="container">
         <div className="row g-4 mb-5 justify-content-between">
           
