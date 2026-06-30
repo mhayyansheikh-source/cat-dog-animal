@@ -58,10 +58,14 @@ export async function generateMetadata() {
       follow: true,
     },
     icons: {
-      icon: "/icon.png",
-      shortcut: "/icon.png",
-      apple: "/icon.png",
-    }
+      icon: [
+        { url: "/peteora.png", type: "image/png" },
+      ],
+      shortcut: "/peteora.png",
+      apple: [
+        { url: "/apple-icon.png", type: "image/png" },
+      ],
+    },
   };
 }
 
