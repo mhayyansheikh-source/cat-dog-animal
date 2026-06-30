@@ -528,3 +528,31 @@ p, span, li, button, input, select, textarea, .font-body {
   background: linear-gradient(to right, #f6f7f8 4%, #edeef1 25%, #f6f7f8 36%);
   background-size: 1000px 100%;
 }
+
+/* Revamped Hero Section Shapes */
+.hero-revamped {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-shape-orange {
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, var(--orange) 0%, rgba(245, 118, 26, 0) 70%);
+  border-radius: 50%;
+  transform: translate(30%, -40%);
+  opacity: 0.15;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero-shape-teal {
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, var(--teal) 0%, rgba(26, 140, 122, 0) 70%);
+  border-radius: 50%;
+  transform: translate(-30%, 30%);
+  opacity: 0.15;
+  z-index: 0;
+  pointer-events: none;
+}
