@@ -1,18 +1,29 @@
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { getCustomerOrders } from '@/utils/shopify';
+import { getOrdersAction } from '@/app/actions/account';
 
-export const runtime = 'edge';
+export default function OrdersPage() {
+  const [orders, setOrders] = useState(null);
+  const router = useRouter();
 
-export default async function OrdersPage() {
-  const token = cookies().get('shopify_customer_token')?.value;
+  useEffect(() => {
+    async function loadOrders() {
+      const res = await getOrdersAction();
+      if (res.error) {
+        router.push('/account/login');
+      } else {
+        setOrders(res.orders || []);
+      }
+    }
+    loadOrders();
+  }, [router]);
 
-  if (!token) {
-    redirect('/account/login');
+  if (orders === null) {
+    return <div className="text-center p-5"><div className="spinner-border text-dark" role="status"></div></div>;
   }
-
-  const orders = await getCustomerOrders(token);
 
   return (
     <div>

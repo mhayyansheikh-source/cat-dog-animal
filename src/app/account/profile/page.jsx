@@ -1,20 +1,27 @@
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { getCustomerDetails } from '@/utils/shopify';
+'use client';
 
-export const runtime = 'edge';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { getProfileAction } from '@/app/actions/account';
 
-export default async function ProfilePage() {
-  const token = cookies().get('shopify_customer_token')?.value;
+export default function ProfilePage() {
+  const [customer, setCustomer] = useState(null);
+  const router = useRouter();
 
-  if (!token) {
-    redirect('/account/login');
-  }
-
-  const customer = await getCustomerDetails(token);
+  useEffect(() => {
+    async function loadProfile() {
+      const res = await getProfileAction();
+      if (res.error) {
+        router.push('/account/login');
+      } else {
+        setCustomer(res.customer);
+      }
+    }
+    loadProfile();
+  }, [router]);
 
   if (!customer) {
-    redirect('/account/login');
+    return <div className="text-center p-5"><div className="spinner-border text-dark" role="status"></div></div>;
   }
 
   return (

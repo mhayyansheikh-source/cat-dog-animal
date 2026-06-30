@@ -4,7 +4,9 @@ import { cookies } from 'next/headers';
 import { 
   createCustomerAccessToken, 
   createCustomer, 
-  deleteCustomerAccessToken 
+  deleteCustomerAccessToken,
+  getCustomerDetails,
+  getCustomerOrders
 } from '@/utils/shopify';
 
 const TOKEN_COOKIE = 'shopify_customer_token';
@@ -72,4 +74,22 @@ export async function logoutAction() {
   }
   
   return { success: true };
+}
+
+export async function getProfileAction() {
+  const token = cookies().get(TOKEN_COOKIE)?.value;
+  if (!token) return { error: "Not authenticated" };
+  
+  const customer = await getCustomerDetails(token);
+  if (!customer) return { error: "Failed to fetch profile" };
+  
+  return { success: true, customer };
+}
+
+export async function getOrdersAction() {
+  const token = cookies().get(TOKEN_COOKIE)?.value;
+  if (!token) return { error: "Not authenticated" };
+  
+  const orders = await getCustomerOrders(token);
+  return { success: true, orders };
 }
