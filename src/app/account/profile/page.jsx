@@ -12,18 +12,18 @@ export default function ProfilePage() {
       try {
         const res = await fetch('/api/account/me');
         if (res.status === 401) {
-          router.push('/account/login');
+          window.location.href = '/api/auth/login';
           return;
         }
         const data = await res.json();
         if (data.error) {
-          router.push('/account/login');
+          window.location.href = '/api/auth/login';
         } else {
           setCustomer(data.customer);
         }
       } catch (error) {
         console.error('Error loading profile:', error);
-        router.push('/account/login');
+        window.location.href = '/api/auth/login';
       }
     }
     loadProfile();

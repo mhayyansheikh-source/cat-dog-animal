@@ -27,6 +27,16 @@ const nextConfig = {
         permanent: false,
       },
       {
+        source: '/account/login',
+        destination: '/api/auth/login',
+        permanent: false,
+      },
+      {
+        source: '/account/register',
+        destination: '/api/auth/login',
+        permanent: false,
+      },
+      {
         source: '/:shopId(\\d+)/account/:path*',
         destination: '/account/:path*',
         permanent: false,

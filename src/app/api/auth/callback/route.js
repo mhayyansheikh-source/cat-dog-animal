@@ -49,7 +49,7 @@ export async function GET(request) {
 
     if (!tokenResponse.ok) {
       console.error('Token exchange failed:', tokenData);
-      return NextResponse.redirect(new URL('/account/login?error=token_failed', request.url));
+      return NextResponse.redirect(new URL('/?error=token_failed', request.url));
     }
 
     const { access_token, expires_in } = tokenData;
@@ -72,6 +72,6 @@ export async function GET(request) {
     return response;
   } catch (error) {
     console.error('Error in OAuth callback:', error);
-    return NextResponse.redirect(new URL('/account/login?error=server_error', request.url));
+    return NextResponse.redirect(new URL('/?error=server_error', request.url));
   }
 }

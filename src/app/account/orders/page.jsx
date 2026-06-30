@@ -13,18 +13,18 @@ export default function OrdersPage() {
       try {
         const res = await fetch('/api/account/orders');
         if (res.status === 401) {
-          router.push('/account/login');
+          window.location.href = '/api/auth/login';
           return;
         }
         const data = await res.json();
         if (data.error) {
-          router.push('/account/login');
+          window.location.href = '/api/auth/login';
         } else {
           setOrders(data.orders || []);
         }
       } catch (error) {
         console.error('Error loading orders:', error);
-        router.push('/account/login');
+        window.location.href = '/api/auth/login';
       }
     }
     loadOrders();
