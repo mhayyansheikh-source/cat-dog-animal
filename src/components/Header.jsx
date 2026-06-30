@@ -12,7 +12,6 @@ export default function Header({ menu, shop, collections, products }) {
   const { setIsCartOpen, cartCount } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
 
@@ -42,23 +41,11 @@ export default function Header({ menu, shop, collections, products }) {
   };
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    const previous = scrollY.getPrevious();
-    if (latest > previous && latest > 150) {
-      setHidden(true);
-    } else {
-      setHidden(false);
-    }
     setScrolled(latest > 50);
   });
 
   return (
-    <motion.header 
-      variants={{
-        visible: { y: 0 },
-        hidden: { y: "-100%" }
-      }}
-      animate={hidden ? "hidden" : "visible"}
-      transition={{ duration: 0.35, ease: "easeInOut" }}
+    <header 
       className="premium-header position-sticky top-0"
       style={{
         background: scrolled
@@ -297,6 +284,6 @@ export default function Header({ menu, shop, collections, products }) {
       {/* Predictive Search Overlay */}
       <PredictiveSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} collections={collections} />
 
-    </motion.header>
+    </header>
   );
 }
