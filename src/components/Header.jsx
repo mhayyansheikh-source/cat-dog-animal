@@ -295,7 +295,7 @@ export default function Header({ menu, shop, collections }) {
       </AnimatePresence>
 
       {/* Predictive Search Overlay */}
-      <PredictiveSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      <PredictiveSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} collections={collections} />
 
     </motion.header>
   );

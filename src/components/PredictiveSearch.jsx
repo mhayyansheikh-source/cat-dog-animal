@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Search, X, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function PredictiveSearch({ isOpen, onClose }) {
+export default function PredictiveSearch({ isOpen, onClose, collections }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -140,7 +140,10 @@ export default function PredictiveSearch({ isOpen, onClose }) {
                   <div className="py-3">
                     <h6 className="text-muted text-uppercase mb-3 font-heading fw-bold">Popular Searches</h6>
                     <div className="d-flex gap-2 flex-wrap">
-                      {["Dog Supplements", "Cat Treats", "Travel Beds", "Bundles"].map(term => (
+                      {(collections && collections.length > 0 
+                        ? collections.filter(c => c.handle !== 'all').slice(0, 4).map(c => c.title) 
+                        : ["Dog Supplements", "Cat Treats", "Travel Beds", "Bundles"]
+                      ).map(term => (
                         <button 
                           key={term} 
                           onClick={() => setQuery(term)}

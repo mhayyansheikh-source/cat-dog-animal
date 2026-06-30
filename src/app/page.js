@@ -2,7 +2,7 @@ import React from "react";
 import nextDynamic from "next/dynamic";
 import Hero from "@/components/Hero";
 
-const FeaturesBand = nextDynamic(() => import("@/components/FeaturesBand"));
+
 const TrustStats = nextDynamic(() => import("@/components/TrustStats"));
 import { 
   getShopifyProducts, 
@@ -52,8 +52,7 @@ export default async function Home() {
       {/* Hero Section */}
       <Hero collections={collections} heroMeta={heroMeta} promoProducts={promoProducts} />
 
-      {/* Features Band Segment */}
-      <FeaturesBand />
+
 
       {/* Best Sellers Grid Catalog */}
       <ProductTabs products={products} collections={collections} />
