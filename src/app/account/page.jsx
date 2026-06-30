@@ -10,5 +10,11 @@ export default function AccountIndexPage() {
     router.replace('/account/orders');
   }, [router]);
 
-  return <div className="text-center p-5"><div className="spinner-border text-dark" role="status"></div></div>;
+  return (
+    <div className="text-center p-5">
+      <div className="spinner-border text-dark" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  );
 }

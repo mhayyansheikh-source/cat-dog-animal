@@ -32,16 +32,12 @@ export default function AccountLayout({ children }) {
                 Profile
               </Link>
               <hr className="my-2" />
-              <button 
-                onClick={async () => {
-                  const { logoutAction } = await import('@/app/actions/account');
-                  await logoutAction();
-                  window.location.href = '/account/login';
-                }}
+              <a
+                href="/api/auth/logout"
                 className="nav-link px-0 text-danger text-start border-0 bg-transparent fs-5"
               >
                 Log out
-              </button>
+              </a>
             </nav>
           </div>
         </div>

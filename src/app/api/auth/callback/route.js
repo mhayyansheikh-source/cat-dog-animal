@@ -8,21 +8,29 @@ export async function GET(request) {
   const state = url.searchParams.get('state');
 
   const savedState = request.cookies.get('oauth_state')?.value;
+  const codeVerifier = request.cookies.get('oauth_code_verifier')?.value;
 
-  if (state !== savedState) {
-    return NextResponse.json({ error: 'State mismatch' }, { status: 400 });
+  // Validate state to prevent CSRF
+  if (!savedState || state !== savedState) {
+    return NextResponse.json({ error: 'State mismatch — possible CSRF attack' }, { status: 400 });
   }
 
   if (!code) {
-    return NextResponse.json({ error: 'No code provided' }, { status: 400 });
+    return NextResponse.json({ error: 'No authorization code provided' }, { status: 400 });
+  }
+
+  if (!codeVerifier) {
+    return NextResponse.json({ error: 'Missing PKCE code verifier' }, { status: 400 });
   }
 
   const tokenEndpoint = process.env.SHOPIFY_CUSTOMER_API_TOKEN_ENDPOINT;
   const clientId = process.env.SHOPIFY_CUSTOMER_API_CLIENT_ID;
-  const redirectUri = process.env.SHOPIFY_CUSTOMER_API_REDIRECT_URI || new URL('/api/auth/callback', request.url).toString();
+  const redirectUri =
+    process.env.SHOPIFY_CUSTOMER_API_REDIRECT_URI ||
+    new URL('/api/auth/callback', request.url).toString();
 
   try {
-    // Exchange the authorization code for an access token
+    // Exchange the authorization code + code_verifier for tokens (PKCE)
     const tokenResponse = await fetch(tokenEndpoint, {
       method: 'POST',
       headers: {
@@ -33,35 +41,37 @@ export async function GET(request) {
         client_id: clientId,
         redirect_uri: redirectUri,
         code,
+        code_verifier: codeVerifier, // PKCE: verifier must match the challenge sent during login
       }),
     });
 
     const tokenData = await tokenResponse.json();
 
     if (!tokenResponse.ok) {
-      console.error("Token exchange failed:", tokenData);
-      return NextResponse.json({ error: 'Token exchange failed', details: tokenData }, { status: 400 });
+      console.error('Token exchange failed:', tokenData);
+      return NextResponse.redirect(new URL('/account/login?error=token_failed', request.url));
     }
 
-    const { access_token } = tokenData;
+    const { access_token, expires_in } = tokenData;
 
-    // Create a response that redirects the user to the account page
-    const response = NextResponse.redirect(new URL('/account', request.url));
-    
-    // Store the access token securely in an HTTP-only cookie
-    response.cookies.set('shopify_customer_access_token', access_token, {
+    const response = NextResponse.redirect(new URL('/account/orders', request.url));
+
+    // Store the Customer Account API access token
+    response.cookies.set('shopify_customer_token', access_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
+      sameSite: 'lax',
       path: '/',
-      maxAge: tokenData.expires_in || 3600 // default 1 hour
+      maxAge: expires_in || 3600,
     });
-    
-    // Clear the state cookie
+
+    // Clear PKCE and state cookies
     response.cookies.delete('oauth_state');
+    response.cookies.delete('oauth_code_verifier');
 
     return response;
   } catch (error) {
-    console.error("Error exchanging token:", error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error('Error in OAuth callback:', error);
+    return NextResponse.redirect(new URL('/account/login?error=server_error', request.url));
   }
 }

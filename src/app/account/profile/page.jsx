@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getProfileAction } from '@/app/actions/account';
 
 export default function ProfilePage() {
   const [customer, setCustomer] = useState(null);
@@ -11,16 +10,19 @@ export default function ProfilePage() {
   useEffect(() => {
     async function loadProfile() {
       try {
-        const res = await getProfileAction();
-        if (res?.error) {
+        const res = await fetch('/api/account/me');
+        if (res.status === 401) {
           router.push('/account/login');
-        } else if (res?.customer) {
-          setCustomer(res.customer);
+          return;
+        }
+        const data = await res.json();
+        if (data.error) {
+          router.push('/account/login');
         } else {
-          router.push('/account/login');
+          setCustomer(data.customer);
         }
       } catch (error) {
-        console.error("Error loading profile:", error);
+        console.error('Error loading profile:', error);
         router.push('/account/login');
       }
     }
@@ -28,13 +30,19 @@ export default function ProfilePage() {
   }, [router]);
 
   if (!customer) {
-    return <div className="text-center p-5"><div className="spinner-border text-dark" role="status"></div></div>;
+    return (
+      <div className="text-center p-5">
+        <div className="spinner-border text-dark" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div>
       <h1 className="h3 mb-4">Profile Details</h1>
-      
+
       <div className="card border p-4 rounded-card shadow-sm mb-4">
         <h2 className="h5 mb-4 border-bottom pb-2">Account Info</h2>
         <div className="row g-3">
@@ -62,8 +70,13 @@ export default function ProfilePage() {
         {customer.defaultAddress ? (
           <div>
             <div>{customer.defaultAddress.address1}</div>
-            {customer.defaultAddress.address2 && <div>{customer.defaultAddress.address2}</div>}
-            <div>{customer.defaultAddress.city}, {customer.defaultAddress.province} {customer.defaultAddress.zip}</div>
+            {customer.defaultAddress.address2 && (
+              <div>{customer.defaultAddress.address2}</div>
+            )}
+            <div>
+              {customer.defaultAddress.city}, {customer.defaultAddress.province}{' '}
+              {customer.defaultAddress.zip}
+            </div>
             <div>{customer.defaultAddress.country}</div>
           </div>
         ) : (
