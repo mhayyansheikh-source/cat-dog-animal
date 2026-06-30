@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import PageTransition from "@/components/PageTransition";
 
 import ToastProvider from "@/components/ToastProvider";
-import { getShopifyMenu, getShopInfo, getShopPolicies, getShopifyCollectionsWithProducts } from "@/utils/shopify";
+import { getShopifyMenu, getShopInfo, getShopPolicies, getShopifyCollectionsWithProducts, getShopifyProducts } from "@/utils/shopify";
 
 const Footer = dynamic(() => import("@/components/Footer"), { ssr: true });
 const CartDrawer = dynamic(() => import("@/components/CartDrawer"));
@@ -73,7 +73,10 @@ export default async function RootLayout({ children }) {
   const mainMenu = await getShopifyMenu('main-menu');
   const footerMenu = await getShopifyMenu('footer');
   const policies = await getShopPolicies();
-  const collectionsData = await getShopifyCollectionsWithProducts(5, 0);
+  const [collectionsData, featuredProducts] = await Promise.all([
+    getShopifyCollectionsWithProducts(5, 0),
+    getShopifyProducts(8),
+  ]);
 
   const shop = await getShopInfo();
   const siteName = shop?.name || "Peteora";
@@ -107,7 +110,7 @@ export default async function RootLayout({ children }) {
         <ToastProvider />
       
         <CartProvider>
-          <Header menu={mainMenu} shop={shop} collections={collectionsData} />
+          <Header menu={mainMenu} shop={shop} collections={collectionsData} products={featuredProducts} />
           <main className="flex-grow-1">
             <PageTransition>
               {children}

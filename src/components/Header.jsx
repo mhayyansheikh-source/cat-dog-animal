@@ -6,12 +6,14 @@ import { useCart } from "@/context/CartContext";
 import { ShoppingCart, Search, Menu, X, PawPrint, ChevronRight } from "lucide-react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import PredictiveSearch from "@/components/PredictiveSearch";
+import MarqueeTopBar from "@/components/MarqueeTopBar";
 
-export default function Header({ menu, shop, collections }) {
+export default function Header({ menu, shop, collections, products }) {
   const { setIsCartOpen, cartCount } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
 
   // Lock body scroll when mobile menu is open
@@ -46,6 +48,7 @@ export default function Header({ menu, shop, collections }) {
     } else {
       setHidden(false);
     }
+    setScrolled(latest > 50);
   });
 
   return (
@@ -56,25 +59,22 @@ export default function Header({ menu, shop, collections }) {
       }}
       animate={hidden ? "hidden" : "visible"}
       transition={{ duration: 0.35, ease: "easeInOut" }}
-      className="premium-header border-bottom position-sticky top-0"
-      style={{ background: "rgba(255, 255, 255, 0.95)", backdropFilter: "blur(10px)" }}
+      className="premium-header position-sticky top-0"
+      style={{
+        background: scrolled
+          ? "rgba(255, 255, 255, 0.88)"
+          : "rgba(255, 255, 255, 0.98)",
+        backdropFilter: scrolled ? "blur(20px) saturate(180%)" : "blur(0px)",
+        WebkitBackdropFilter: scrolled ? "blur(20px) saturate(180%)" : "blur(0px)",
+        boxShadow: scrolled
+          ? "0 4px 30px rgba(0, 0, 0, 0.08), 0 1px 0 rgba(255,255,255,0.6) inset"
+          : "0 1px 0 rgba(0,0,0,0.06)",
+        transition: "background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease",
+        zIndex: 1000,
+      }}
     >
-      {/* Peteora Announcement Bar */}
-      <div 
-        className="d-flex justify-content-center align-items-center py-2 px-3 gap-1 overflow-hidden" 
-        style={{ 
-          backgroundColor: "#198e7a", 
-          color: "white",
-          fontSize: "13px",
-          fontWeight: "700",
-          whiteSpace: "nowrap"
-        }}
-      >
-        <span className="text-truncate">🐾 Free Shipping Over $50 <span className="d-none d-md-inline">· Subscribe & Save 20% ·</span></span>
-        <Link href={collections?.length > 0 ? `/collections/${collections[0].handle}` : "/collections/all"} className="text-white text-decoration-underline ms-1 flex-shrink-0">
-          Shop Now
-        </Link>
-      </div>
+      {/* Animated Marquee Announcement Bar */}
+      <MarqueeTopBar products={products} collections={collections} />
 
       <nav className="navbar navbar-expand-lg navbar-light py-3">
         <div className="container d-flex align-items-center justify-content-between">
