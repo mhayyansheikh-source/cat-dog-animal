@@ -10,6 +10,7 @@ import { getShopifyMenu, getShopInfo, getShopPolicies, getShopifyCollectionsWith
 
 const Footer = dynamic(() => import("@/components/Footer"), { ssr: true });
 const CartDrawer = dynamic(() => import("@/components/CartDrawer"));
+const ConsentBanner = dynamic(() => import("@/components/ConsentBanner"), { ssr: false });
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -110,6 +111,7 @@ export default async function RootLayout({ children }) {
           </main>
           <Footer menu={footerMenu} mainMenu={mainMenu} shop={shop} policies={policies} collections={collectionsData} />
           <CartDrawer />
+          <ConsentBanner />
         </CartProvider>
       </body>
     </html>
