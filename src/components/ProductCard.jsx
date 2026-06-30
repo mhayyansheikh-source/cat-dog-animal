@@ -155,16 +155,16 @@ export default function ProductCard({ product, index = 0, isPriority = false, is
       </div>
 
       {/* Card Details */}
-      <div className="card-body p-3 text-start d-flex flex-column justify-content-between flex-grow-1">
+      <div className="card-body p-2 p-md-3 text-start d-flex flex-column justify-content-between flex-grow-1">
         <div>
           {/* Ratings */}
-          <div className="d-flex align-items-center gap-1 text-warning mb-1 star-rating small">
-            ★ ★ ★ ★ ★ <span className="text-muted font-body" style={{ fontSize: "0.75rem" }}>(4.9)</span>
+          <div className="d-flex align-items-center gap-1 text-warning mb-1 star-rating" style={{ fontSize: "0.75rem" }}>
+            ★★★★★ <span className="text-muted font-body" style={{ fontSize: "0.7rem" }}>(4.9)</span>
           </div>
 
           {/* Title */}
           <Link href={`/product/${product.handle}`} className="text-decoration-none text-dark">
-            <h6 className="fw-bold font-heading mb-1 hover-scale" style={{ fontSize: "1rem" }}>
+            <h6 className="fw-bold font-heading mb-1 hover-scale" style={{ fontSize: "clamp(0.85rem, 3.5vw, 1rem)", lineHeight: "1.3", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
               {product.title}
             </h6>
           </Link>
@@ -173,9 +173,9 @@ export default function ProductCard({ product, index = 0, isPriority = false, is
           {product.product_type ? (
             <motion.span
               whileHover={{ scale: 1.05 }}
-              className="d-inline-flex align-items-center px-2 py-1 rounded-pill font-body mb-2 fw-bold"
+              className="d-inline-flex align-items-center px-2 py-1 rounded-pill font-body mb-1 fw-bold text-truncate"
               style={{
-                fontSize: "0.75rem",
+                fontSize: "0.65rem",
                 background: "linear-gradient(135deg, rgba(254, 146, 77, 0.15) 0%, rgba(25, 142, 122, 0.15) 100%)",
                 color: "var(--charcoal-dark)",
                 border: "1px solid rgba(254, 146, 77, 0.3)",
@@ -188,8 +188,8 @@ export default function ProductCard({ product, index = 0, isPriority = false, is
           ) : (
             <motion.span
               whileHover={{ scale: 1.05 }}
-              className="d-inline-flex align-items-center px-2 py-1 rounded-pill font-body mb-2 fw-bold text-muted"
-              style={{ fontSize: "0.75rem", backgroundColor: "#f8f9fa", border: "1px solid #dee2e6" }}
+              className="d-inline-flex align-items-center px-2 py-1 rounded-pill font-body mb-1 fw-bold text-muted text-truncate"
+              style={{ fontSize: "0.65rem", backgroundColor: "#f8f9fa", border: "1px solid #dee2e6", maxWidth: "100%" }}
             >
               🐾 Pet Essential
             </motion.span>
@@ -239,13 +239,13 @@ export default function ProductCard({ product, index = 0, isPriority = false, is
           </motion.div>
 
           {/* Pricing Row & Add button */}
-          <div className="d-flex align-items-center justify-content-between mt-auto pt-2 border-top">
-            <div className="d-flex align-items-baseline gap-2">
-              <span className="fs-5 fw-bold" style={{ color: "var(--orange)" }}>
+          <div className="d-flex align-items-center justify-content-between mt-auto pt-2 border-top gap-1">
+            <div className="d-flex flex-wrap align-items-baseline gap-1 gap-md-2">
+              <span className="fw-bold" style={{ color: "var(--orange)", fontSize: "clamp(0.9rem, 4vw, 1.25rem)" }}>
                 {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(selectedVariant.price)}
               </span>
               {selectedVariant.compare_at_price && (
-                <span className="text-decoration-line-through text-muted small">
+                <span className="text-decoration-line-through text-muted" style={{ fontSize: "0.7rem" }}>
                   {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(selectedVariant.compare_at_price)}
                 </span>
               )}
@@ -263,15 +263,15 @@ export default function ProductCard({ product, index = 0, isPriority = false, is
                   addToCart(product, selectedVariant);
                 }
               }}
-              className="btn d-flex align-items-center justify-content-center"
+              className="btn d-flex align-items-center justify-content-center flex-shrink-0"
               style={{
-                width: "40px",
-                height: "40px",
+                width: "clamp(32px, 8vw, 40px)",
+                height: "clamp(32px, 8vw, 40px)",
                 borderRadius: "50%",
                 backgroundColor: "var(--orange)",
                 color: "white",
                 border: "none",
-                fontSize: "20px",
+                fontSize: "1.2rem",
                 fontWeight: "700",
                 lineHeight: "1",
                 cursor: "pointer",
