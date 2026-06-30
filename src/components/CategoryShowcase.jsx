@@ -269,7 +269,7 @@ export default function CategoryShowcase({ dogCollection, catCollection, otherCo
           <div className="col-12 col-md-6 col-lg-4">
             <CategoryCard
               collection={catCollection}
-              handle="cats"
+              handle="cats-1"
               emoji="🐈"
               gradientFrom="#198E7A"
               gradientTo="#065F46"

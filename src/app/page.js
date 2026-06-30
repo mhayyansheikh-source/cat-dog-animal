@@ -37,7 +37,7 @@ export default async function Home() {
   // Fetch dog, cat, accessories, and bundles collections in parallel
   const [dogCollection, catCollection, accessoriesCollection, bundleCollection] = await Promise.allSettled([
     getShopifyCollectionByHandle("dogs"),
-    getShopifyCollectionByHandle("cats"),
+    getShopifyCollectionByHandle("cats-1"),
     getShopifyCollectionByHandle("accessories"),
     getShopifyCollectionByHandle("bundles"),
   ]);
