@@ -12,6 +12,7 @@ import {
 } from "@/utils/shopify";
 
 const ProductTabs = nextDynamic(() => import("@/components/ProductTabs"));
+const CategoryShowcase = nextDynamic(() => import("@/components/CategoryShowcase"));
 const BundlesSection = nextDynamic(() => import("@/components/BundlesSection"));
 const ReviewsSection = nextDynamic(() => import("@/components/ReviewsSection"));
 const NewsletterSection = nextDynamic(() => import("@/components/NewsletterSection"));
@@ -33,18 +34,23 @@ export default async function Home() {
   const heroMeta = await getShopifyMetaobject("homepage_config", "hero") || null;
   const statsMeta = await getShopifyMetaobject("homepage_config", "stats") || null;
 
-  // Fetch bundles explicitly
+  // Fetch dog, cat, accessories, and bundles collections in parallel
+  const [dogCollection, catCollection, accessoriesCollection, bundleCollection] = await Promise.allSettled([
+    getShopifyCollectionByHandle("dogs"),
+    getShopifyCollectionByHandle("cats"),
+    getShopifyCollectionByHandle("accessories"),
+    getShopifyCollectionByHandle("bundles"),
+  ]);
+
+  const dogData = dogCollection.status === 'fulfilled' ? dogCollection.value : null;
+  const catData = catCollection.status === 'fulfilled' ? catCollection.value : null;
+  const accessoriesData = accessoriesCollection.status === 'fulfilled' ? accessoriesCollection.value : null;
+
   let bundleProducts = [];
-  try {
-    const bundleCollection = await getShopifyCollectionByHandle("bundles");
-    if (bundleCollection && bundleCollection.products) {
-      bundleProducts = bundleCollection.products;
-    } else {
-      // Fallback
-      bundleProducts = products.filter(p => p.product_type?.toLowerCase().includes("bundle") || p.tags?.some(t => t.toLowerCase().includes("bundle")));
-    }
-  } catch(e) {
-    console.error("Error fetching bundles", e);
+  if (bundleCollection.status === 'fulfilled' && bundleCollection.value?.products) {
+    bundleProducts = bundleCollection.value.products;
+  } else {
+    bundleProducts = products.filter(p => p.product_type?.toLowerCase().includes("bundle") || p.tags?.some(t => t.toLowerCase().includes("bundle")));
   }
 
   return (
@@ -56,6 +62,9 @@ export default async function Home() {
 
       {/* Best Sellers Grid Catalog */}
       <ProductTabs products={products} collections={collections} />
+
+      {/* Shop by Category — Dogs, Cats & Other Pets */}
+      <CategoryShowcase dogCollection={dogData} catCollection={catData} otherCollection={accessoriesData} />
 
       {/* Trust Stats Numbers */}
       <div className="cv-auto">
