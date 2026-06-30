@@ -52,7 +52,7 @@ export async function GET(request) {
       return NextResponse.redirect(new URL('/?error=token_failed', request.url));
     }
 
-    const { access_token, expires_in } = tokenData;
+    const { access_token, id_token, expires_in } = tokenData;
 
     const response = NextResponse.redirect(new URL('/account/orders', request.url));
 
@@ -64,6 +64,16 @@ export async function GET(request) {
       path: '/',
       maxAge: expires_in || 3600,
     });
+
+    if (id_token) {
+      response.cookies.set('shopify_customer_id_token', id_token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+        path: '/',
+        maxAge: expires_in || 3600,
+      });
+    }
 
     // Clear PKCE and state cookies
     response.cookies.delete('oauth_state');
