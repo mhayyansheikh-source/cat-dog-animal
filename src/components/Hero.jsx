@@ -18,7 +18,7 @@ export default function Hero() {
         <div className="row align-items-center g-5 flex-grow-1">
           
           {/* Left Content */}
-          <div className="col-lg-6 text-center text-lg-start">
+          <div className="col-lg-6 text-center text-lg-start order-2 order-lg-1">
             
             {/* Promo Pill */}
             <motion.div 
@@ -110,7 +110,7 @@ export default function Hero() {
           </div>
 
           {/* Right Content - Hero Image */}
-          <div className="col-lg-6 position-relative mt-5 mt-lg-0">
+          <div className="col-lg-6 position-relative mt-5 mt-lg-0 order-1 order-lg-2">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9, x: 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
