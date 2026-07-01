@@ -119,7 +119,7 @@ export default function Hero() {
               style={{ aspectRatio: "4/3", zIndex: 5, maxWidth: "600px" }}
             >
               <Image 
-                src="/hero-section-peteora.png" 
+                src="/IMG.png" 
                 alt="Happy Dogs and Cats" 
                 fill 
                 priority
