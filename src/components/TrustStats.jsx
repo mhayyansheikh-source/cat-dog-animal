@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { useAutoScroll } from "@/hooks/useAutoScroll";
 
 const stats = [
   { num: "250K+", label: "Happy Pets Fed" },
@@ -12,6 +13,7 @@ const stats = [
 ];
 
 export default function TrustStats({ statsMeta = null }) {
+  const carouselRef = useAutoScroll({ interval: 3500 });
   let displayStats = stats;
   
   if (statsMeta?.stats_json) {
@@ -50,6 +52,7 @@ export default function TrustStats({ statsMeta = null }) {
 
         {/* Stats Grid / Mobile Carousel */}
         <div 
+          ref={carouselRef}
           className="d-flex flex-nowrap flex-md-wrap gap-3 overflow-auto pb-3"
           style={{
             scrollSnapType: "x mandatory",

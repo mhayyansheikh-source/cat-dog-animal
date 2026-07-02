@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { ArrowRight, ShoppingBag } from "lucide-react";
+import { useAutoScroll } from "@/hooks/useAutoScroll";
 
 /* ─── Single category card ─── */
 function CategoryCard({ collection, handle, gradientFrom, gradientTo, accentColor, delay, label }) {
@@ -162,6 +163,7 @@ function CategoryCard({ collection, handle, gradientFrom, gradientTo, accentColo
 /* ─── Main section export ─── */
 export default function CategoryShowcase({ dogCollection, catCollection, petSupplementsCollection }) {
   const sectionRef = useRef(null);
+  const carouselRef = useAutoScroll({ interval: 4000 });
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   return (
@@ -206,6 +208,7 @@ export default function CategoryShowcase({ dogCollection, catCollection, petSupp
 
         {/* Responsive Grid / Mobile Carousel */}
         <div 
+          ref={carouselRef}
           className="row flex-nowrap flex-md-wrap overflow-auto pb-4 g-4" 
           style={{ 
             scrollSnapType: "x mandatory", 

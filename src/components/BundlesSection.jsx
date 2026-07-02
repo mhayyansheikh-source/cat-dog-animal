@@ -1,8 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
+import { useAutoScroll } from "@/hooks/useAutoScroll";
+import { useInView } from "framer-motion";
 
 
 
@@ -154,8 +156,11 @@ function BundleCard({ bundle }) {
   );
 }
 
-export default function BundlesSection({ dynamicProducts }) {
+export default function BundlesSection({ dynamicProducts = [] }) {
   const hasDynamic = dynamicProducts && dynamicProducts.length > 0;
+  const sectionRef = useRef(null);
+  const carouselRef = useAutoScroll({ interval: 5000 });
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
   
   if (!hasDynamic) {
     return null; // Return null if no live bundles are found
@@ -210,7 +215,7 @@ export default function BundlesSection({ dynamicProducts }) {
   };
 
   return (
-    <section className="py-5 bg-white">
+    <section ref={sectionRef} className="py-5 bg-white">
       <div className="container-fluid px-3 px-md-4 px-lg-5">
         {/* Section Header */}
         <div className="text-center mb-5">
@@ -239,8 +244,8 @@ export default function BundlesSection({ dynamicProducts }) {
           </p>
         </div>
 
-        {/* Bundle Grid */}
-        <div className="bundle-carousel">
+        {/* Horizontal scrollable row for bundles */}
+        <div ref={carouselRef} className="bundle-carousel">
           {renderDynamicBundles()}
         </div>
         <style dangerouslySetInnerHTML={{__html: `
