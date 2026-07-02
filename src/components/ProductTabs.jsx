@@ -60,11 +60,11 @@ export default function ProductTabs({ products = [], collections = [] }) {
 
           {/* Tab Pills */}
           <div
+            className="d-flex flex-nowrap flex-md-wrap justify-content-start justify-content-md-center overflow-auto pb-2 pb-md-0"
             style={{
-              display: "flex",
-              justifyContent: "center",
               gap: "10px",
-              flexWrap: "wrap",
+              scrollbarWidth: "none",
+              WebkitOverflowScrolling: "touch"
             }}
           >
             {tabs.map((tab) => {
@@ -73,6 +73,7 @@ export default function ProductTabs({ products = [], collections = [] }) {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
+                  className="flex-shrink-0"
                   style={{
                     backgroundColor: isActive ? "var(--orange)" : "white",
                     color: isActive ? "white" : "#6B7280",

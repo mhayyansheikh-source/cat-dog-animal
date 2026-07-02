@@ -135,9 +135,9 @@ export default function Hero() {
       {/* Bottom Bar Features */}
       <div className="w-100 position-relative z-3" style={{ borderTop: "1px solid rgba(0,0,0,0.05)", backgroundColor: "white" }}>
         <div className="container-fluid px-3 px-md-4 px-lg-5 py-3">
-          <div className="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center gap-4">
+          <div className="d-flex flex-nowrap flex-lg-wrap justify-content-start justify-content-lg-between align-items-center gap-4 overflow-auto pb-2 pb-lg-0" style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}>
             
-            <div className="d-flex align-items-center gap-2">
+            <div className="d-flex align-items-center gap-2 flex-shrink-0">
               <CheckCircle className="text-teal" style={{ color: "var(--teal)" }} size={24} />
               <div style={{ lineHeight: "1.2" }}>
                 <div className="fw-bold" style={{ color: "var(--charcoal)", fontSize: "14px" }}>HIGH QUALITY</div>
@@ -145,7 +145,7 @@ export default function Hero() {
               </div>
             </div>
 
-            <div className="d-flex align-items-center gap-2">
+            <div className="d-flex align-items-center gap-2 flex-shrink-0">
               <CheckCircle className="text-teal" style={{ color: "var(--teal)" }} size={24} />
               <div style={{ lineHeight: "1.2" }}>
                 <div className="fw-bold" style={{ color: "var(--charcoal)", fontSize: "14px" }}>SAFE & PET</div>
@@ -153,7 +153,7 @@ export default function Hero() {
               </div>
             </div>
 
-            <div className="d-flex align-items-center gap-2">
+            <div className="d-flex align-items-center gap-2 flex-shrink-0" style={{ paddingRight: "16px" }}>
               <div className="rounded-circle text-white d-flex align-items-center justify-content-center" style={{ backgroundColor: "var(--teal)", width: "24px", height: "24px" }}>
                  <ShieldCheck size={14} strokeWidth={3} />
               </div>
