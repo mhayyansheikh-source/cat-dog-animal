@@ -5,8 +5,11 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { Tag, Truck, Calendar, ChevronRight, ShieldCheck, CheckCircle } from "lucide-react";
+import { useAutoScroll } from "@/hooks/useAutoScroll";
 
 export default function Hero() {
+  const carouselRef = useAutoScroll({ interval: 3500 });
+
   return (
     <section className="position-relative overflow-hidden hero-revamped" style={{ backgroundColor: "var(--cream)", minHeight: "80vh", display: "flex", flexDirection: "column" }}>
       
@@ -135,7 +138,7 @@ export default function Hero() {
       {/* Bottom Bar Features */}
       <div className="w-100 position-relative z-3" style={{ borderTop: "1px solid rgba(0,0,0,0.05)", backgroundColor: "white" }}>
         <div className="container-fluid px-3 px-md-4 px-lg-5 py-3">
-          <div className="d-flex flex-nowrap flex-lg-wrap justify-content-start justify-content-lg-between align-items-center gap-4 overflow-auto pb-2 pb-lg-0" style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}>
+          <div ref={carouselRef} className="d-flex flex-nowrap flex-lg-wrap justify-content-start justify-content-lg-between align-items-center gap-4 overflow-auto pb-2 pb-lg-0" style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}>
             
             <div className="d-flex align-items-center gap-2 flex-shrink-0">
               <CheckCircle className="text-teal" style={{ color: "var(--teal)" }} size={24} />

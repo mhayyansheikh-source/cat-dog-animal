@@ -3,11 +3,13 @@
 import React, { useState } from "react";
 import ProductCard from "./ProductCard";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAutoScroll } from "@/hooks/useAutoScroll";
 
 
 
 export default function ProductTabs({ products = [], collections = [] }) {
   const [activeTab, setActiveTab] = useState("all");
+  const carouselRef = useAutoScroll({ interval: 3500 });
 
   // Build dynamic tabs
   const tabs = [{ id: "all", label: "All" }];
@@ -60,6 +62,7 @@ export default function ProductTabs({ products = [], collections = [] }) {
 
           {/* Tab Pills */}
           <div
+            ref={carouselRef}
             className="d-flex flex-nowrap flex-md-wrap justify-content-start justify-content-md-center overflow-auto pb-2 pb-md-0"
             style={{
               gap: "10px",
