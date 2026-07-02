@@ -7,8 +7,141 @@ import ShippingTimer from "@/components/ShippingTimer";
 import LiveScarcity from "@/components/LiveScarcity";
 import TrustBadges from "@/components/TrustBadges";
 import DirectCheckoutBar from "@/components/DirectCheckoutBar";
-import { ShoppingCart, Star, Sparkles, Check, ChevronDown, ChevronUp, ShieldCheck, Crown } from "lucide-react";
+import { ShoppingCart, Star, Sparkles, Check, ChevronDown, ChevronUp, ShieldCheck, Crown, Volume2, VolumeX, Play, Pause } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+
+const ActionVideoPlayer = ({ videoSrc }) => {
+  const { isSlowConnection } = useNetworkStatus();
+  const [isMuted, setIsMuted] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const videoRef = React.useRef(null);
+  const containerRef = React.useRef(null);
+
+  // Intersection Observer to handle lazy loading
+  useEffect(() => {
+    if (isSlowConnection || hasError) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting) {
+          if (videoRef.current) {
+            videoRef.current.play().then(() => {
+              setIsPlaying(true);
+            }).catch(() => {
+              setIsPlaying(false);
+            });
+          }
+        } else {
+          if (videoRef.current) {
+            videoRef.current.pause();
+            setIsPlaying(false);
+          }
+        }
+      },
+      { threshold: 0.25 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      if (containerRef.current) observer.unobserve(containerRef.current);
+    };
+  }, [isSlowConnection, hasError]);
+
+  if (hasError) return null; // Elegantly hide broken videos
+
+  return (
+    <motion.div 
+      ref={containerRef}
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      className="rounded-4 overflow-hidden shadow-sm position-relative shimmer-placeholder group"
+      style={{ 
+        aspectRatio: "9/16", 
+        width: "100%",
+        backgroundColor: "#f6f7f8",
+        cursor: "pointer"
+      }}
+      onClick={() => {
+        if (videoRef.current) {
+          if (isPlaying) {
+            videoRef.current.pause();
+            setIsPlaying(false);
+          } else {
+            videoRef.current.play();
+            setIsPlaying(true);
+          }
+        }
+      }}
+    >
+      <video
+        ref={videoRef}
+        src={videoSrc}
+        muted={isMuted}
+        loop
+        playsInline
+        preload="none"
+        onError={() => setHasError(true)}
+        onLoadedData={(e) => {
+          e.target.parentElement.classList.remove('shimmer-placeholder');
+          e.target.style.opacity = 1;
+        }}
+        className="position-absolute w-100 h-100 border-0"
+        style={{ objectFit: "cover", top: 0, left: 0, opacity: 0, transition: "opacity 0.3s ease" }}
+      />
+      
+      {/* Interaction Controls Overlay */}
+      <div className="position-absolute bottom-0 start-0 w-100 p-2 d-flex justify-content-between align-items-center" style={{ background: "linear-gradient(transparent, rgba(0,0,0,0.4))", opacity: isPlaying ? 0 : 1, transition: "opacity 0.3s ease" }}>
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsMuted(!isMuted);
+          }}
+          className="btn btn-sm btn-dark rounded-circle p-1 d-flex justify-content-center align-items-center"
+          style={{ width: "32px", height: "32px", background: "rgba(0,0,0,0.5)", border: "none" }}
+          aria-label={isMuted ? "Unmute video" : "Mute video"}
+        >
+          {isMuted ? <VolumeX size={16} color="white" /> : <Volume2 size={16} color="white" />}
+        </button>
+        {!isPlaying && (
+          <div className="text-white">
+            <Play size={24} fill="white" />
+          </div>
+        )}
+      </div>
+      
+      {/* Show controls on hover even if playing */}
+      <div 
+        className="position-absolute top-0 start-0 w-100 h-100 overlay-controls"
+        style={{ opacity: 0, transition: "opacity 0.2s" }}
+        onMouseEnter={(e) => e.currentTarget.style.opacity = 1}
+        onMouseLeave={(e) => e.currentTarget.style.opacity = 0}
+      >
+        <div className="position-absolute bottom-0 start-0 w-100 p-2 d-flex justify-content-between align-items-center" style={{ background: "linear-gradient(transparent, rgba(0,0,0,0.4))" }}>
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMuted(!isMuted);
+            }}
+            className="btn btn-sm btn-dark rounded-circle p-1 d-flex justify-content-center align-items-center"
+            style={{ width: "32px", height: "32px", background: "rgba(0,0,0,0.5)", border: "none" }}
+          >
+            {isMuted ? <VolumeX size={16} color="white" /> : <Volume2 size={16} color="white" />}
+          </button>
+          <div className="text-white">
+            {isPlaying ? <Pause size={24} fill="white" /> : <Play size={24} fill="white" />}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 const shopifyLoader = ({ src, width, quality }) => {
   try {
@@ -26,6 +159,7 @@ const blurPlaceholder = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABC
 
 export default function ProductDetailsClient({ product }) {
   const { addToCart } = useCart();
+  const { isSlowConnection } = useNetworkStatus();
   
   // Additional images added dynamically when variants are clicked
   const [extraImages, setExtraImages] = useState([]);
@@ -125,25 +259,25 @@ export default function ProductDetailsClient({ product }) {
   // 1. Check for specific product handle
   if (product.handle === "breathable-pet-cat-carrier-backpack") {
     actionVideos = [
-      "https://cdn.shopify.com/videos/c/o/v/b889f5e33b4e48e0996955ae2a407879.mp4",
-      "https://cdn.shopify.com/videos/c/o/v/b0b78d82c73a47dc9e91f15dbbde4663.mp4",
-      "https://cdn.shopify.com/videos/c/o/v/8e51ec498b3343aa90462a47ffb07246.mp4",
-      "https://cdn.shopify.com/videos/c/o/v/d109932d05614077adcc18866975b48e.mp4",
-      "https://cdn.shopify.com/videos/c/o/v/41a058b0cbf74ba3a29e2afc17f96362.mp4"
+      { url: "https://cdn.shopify.com/videos/c/o/v/b889f5e33b4e48e0996955ae2a407879.mp4" },
+      { url: "https://cdn.shopify.com/videos/c/o/v/b0b78d82c73a47dc9e91f15dbbde4663.mp4" },
+      { url: "https://cdn.shopify.com/videos/c/o/v/8e51ec498b3343aa90462a47ffb07246.mp4" },
+      { url: "https://cdn.shopify.com/videos/c/o/v/d109932d05614077adcc18866975b48e.mp4" },
+      { url: "https://cdn.shopify.com/videos/c/o/v/41a058b0cbf74ba3a29e2afc17f96362.mp4" }
     ];
   } else if (product.handle === "quick-release-dog-harness-vest") {
     actionVideos = [
-      "https://cdn.shopify.com/videos/c/o/v/c838d67100f5445a989a57cec154a6cb.mp4",
-      "https://cdn.shopify.com/videos/c/o/v/cac9d1c7e82b457ab030dd4269812955.mp4",
-      "https://cdn.shopify.com/videos/c/o/v/078683ecd17a4aa58e4c5b2da181ccc8.mp4",
-      "https://cdn.shopify.com/videos/c/o/v/f809b7f1d96146e894b29d22d9a587d6.mp4"
+      { url: "https://cdn.shopify.com/videos/c/o/v/c838d67100f5445a989a57cec154a6cb.mp4" },
+      { url: "https://cdn.shopify.com/videos/c/o/v/cac9d1c7e82b457ab030dd4269812955.mp4" },
+      { url: "https://cdn.shopify.com/videos/c/o/v/078683ecd17a4aa58e4c5b2da181ccc8.mp4" },
+      { url: "https://cdn.shopify.com/videos/c/o/v/f809b7f1d96146e894b29d22d9a587d6.mp4" }
     ];
   } else if (product.handle === "freeze-dried-minnows-dog-cat-treats") {
     actionVideos = [
-      "https://cdn.shopify.com/videos/c/o/v/1f151323cfad478bb887d8cf9b58a4f6.mp4",
-      "https://cdn.shopify.com/videos/c/o/v/0e05b37477c9446e9ef1bf59f42bfbc1.mp4",
-      "https://cdn.shopify.com/videos/c/o/v/d40606f7c9a14b1fabc844b92e33e9c2.mp4",
-      "https://cdn.shopify.com/videos/c/o/v/4c982e5a4e4445b4a41562b1895555df.mp4"
+      { url: "https://cdn.shopify.com/videos/c/o/v/1f151323cfad478bb887d8cf9b58a4f6.mp4" },
+      { url: "https://cdn.shopify.com/videos/c/o/v/0e05b37477c9446e9ef1bf59f42bfbc1.mp4" },
+      { url: "https://cdn.shopify.com/videos/c/o/v/d40606f7c9a14b1fabc844b92e33e9c2.mp4" },
+      { url: "https://cdn.shopify.com/videos/c/o/v/4c982e5a4e4445b4a41562b1895555df.mp4" }
     ];
   }
 
@@ -152,7 +286,10 @@ export default function ProductDetailsClient({ product }) {
     const shortsJson = getMetafield("youtube_shorts_json");
     if (shortsJson) {
       const parsed = JSON.parse(shortsJson);
-      if (parsed.length > 0) actionVideos = parsed;
+      if (parsed.length > 0) {
+        // Handle backwards compatibility if strings were passed
+        actionVideos = parsed.map(v => typeof v === "string" ? { url: v } : v);
+      }
     }
   } catch(e) { console.error("Failed to parse Shorts JSON", e); }
   
@@ -231,7 +368,7 @@ export default function ProductDetailsClient({ product }) {
                         height={1000}
                         priority={activeIndex === 0}
                         fetchPriority={activeIndex === 0 ? "high" : "auto"}
-                        quality={90}
+                        quality={isSlowConnection ? 40 : 90}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         style={{ width: "100%", height: "auto", display: "block" }}
                       />
@@ -679,35 +816,8 @@ export default function ProductDetailsClient({ product }) {
                   gap: "12px"
                 }}
               >
-                {actionVideos.map((videoSrc, idx) => (
-                  <motion.div 
-                    key={idx}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: idx * 0.15, duration: 0.4 }}
-                    className="rounded-4 overflow-hidden shadow-sm position-relative shimmer-placeholder"
-                    style={{ 
-                      aspectRatio: "9/16", 
-                      width: "100%",
-                      pointerEvents: "none",
-                      backgroundColor: "#f6f7f8"
-                    }}
-                  >
-                    <video
-                      src={videoSrc}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      onLoadedData={(e) => {
-                        e.target.parentElement.classList.remove('shimmer-placeholder');
-                        e.target.style.opacity = 1;
-                      }}
-                      className="position-absolute w-100 h-100 border-0"
-                      style={{ objectFit: "cover", top: 0, left: 0, opacity: 0, transition: "opacity 0.3s ease" }}
-                    />
-                  </motion.div>
+                {actionVideos.map((videoObj, idx) => (
+                  <ActionVideoPlayer key={idx} videoSrc={videoObj.url} />
                 ))}
               </div>
             </section>

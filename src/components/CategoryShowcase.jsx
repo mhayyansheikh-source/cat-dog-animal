@@ -6,11 +6,13 @@ import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { ArrowRight, ShoppingBag } from "lucide-react";
 import { useAutoScroll } from "@/hooks/useAutoScroll";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 
 /* ─── Single category card ─── */
 function CategoryCard({ collection, handle, gradientFrom, gradientTo, accentColor, delay, label }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const { isSlowConnection } = useNetworkStatus();
 
   const products = collection?.products || [];
   const heroImage = collection?.image?.url || products[0]?.images?.[0];
@@ -30,7 +32,7 @@ function CategoryCard({ collection, handle, gradientFrom, gradientTo, accentColo
       <motion.div
         className="position-absolute inset-0 w-100 h-100"
         style={{ zIndex: 0 }}
-        whileHover={{ scale: 1.04 }}
+        whileHover={isSlowConnection ? {} : { scale: 1.04 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         {heroImage ? (
@@ -38,6 +40,7 @@ function CategoryCard({ collection, handle, gradientFrom, gradientTo, accentColo
             src={heroImage}
             alt={title}
             fill
+            quality={isSlowConnection ? 40 : 75}
             sizes="(max-width: 768px) 100vw, 50vw"
             style={{ objectFit: "cover" }}
             priority

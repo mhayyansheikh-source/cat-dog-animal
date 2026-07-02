@@ -6,9 +6,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { Tag, Truck, Calendar, ChevronRight, ShieldCheck, CheckCircle } from "lucide-react";
 import { useAutoScroll } from "@/hooks/useAutoScroll";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 
 export default function Hero() {
   const carouselRef = useAutoScroll({ interval: 3500 });
+  const { isSlowConnection } = useNetworkStatus();
 
   return (
     <section className="position-relative overflow-hidden hero-revamped" style={{ backgroundColor: "var(--cream)", display: "flex", flexDirection: "column" }}>
@@ -36,9 +38,9 @@ export default function Hero() {
 
             {/* Main Headline */}
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
+              initial={isSlowConnection ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
+              transition={{ delay: isSlowConnection ? 0 : 0.1 }}
               className="mb-4"
             >
               <h1 className="font-heading fw-bold mb-1" style={{ fontSize: "clamp(36px, 8vw, 72px)", color: "var(--teal)", lineHeight: "1" }}>
@@ -116,9 +118,9 @@ export default function Hero() {
           {/* Right Content - Hero Image */}
           <div className="col-lg-6 position-relative mt-n4 mt-lg-n5 order-1 order-lg-2 px-0 me-lg-n5">
             <motion.div 
-              initial={{ opacity: 0, scale: 0.9, x: 20 }}
+              initial={isSlowConnection ? { opacity: 1, scale: 1, x: 0 } : { opacity: 0, scale: 0.9, x: 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
+              transition={{ delay: isSlowConnection ? 0 : 0.2, duration: isSlowConnection ? 0 : 0.6 }}
               className="position-relative ms-auto"
               style={{ zIndex: 5, maxWidth: "1000px", width: "100%" }}
             >
@@ -128,6 +130,7 @@ export default function Hero() {
                   alt="Happy Dogs and Cats" 
                   fill 
                   priority
+                  quality={isSlowConnection ? 40 : 75}
                   sizes="(max-width: 991px) 100vw, 50vw"
                   style={{ objectFit: "contain", objectPosition: "right center" }}
                 />

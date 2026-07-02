@@ -6,6 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { ShoppingCart, Heart, ShieldCheck, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 
 export default function ProductCard({ product, index = 0, isPriority = false, isMosaic = false }) {
   const { addToCart } = useCart();
@@ -13,6 +14,7 @@ export default function ProductCard({ product, index = 0, isPriority = false, is
   const [userSelectedVariant, setUserSelectedVariant] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [showMobileVariants, setShowMobileVariants] = useState(false);
+  const { isSlowConnection } = useNetworkStatus();
 
   const handleVariantChange = (variantId) => {
     const variant = product.variants.find(v => v.id.toString() === variantId.toString());
@@ -26,7 +28,7 @@ export default function ProductCard({ product, index = 0, isPriority = false, is
   const videoMedia = (product.media || []).find(m => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO');
   let mainVideo = null;
   let mainExternalVideo = null;
-  if (videoMedia && !userSelectedVariant) {
+  if (videoMedia && !userSelectedVariant && !isSlowConnection) {
     if (videoMedia.mediaContentType === 'VIDEO') {
       mainVideo = (videoMedia.sources?.find(s => s.format === 'mp4') || videoMedia.sources?.[0])?.url;
     } else if (videoMedia.mediaContentType === 'EXTERNAL_VIDEO') {
