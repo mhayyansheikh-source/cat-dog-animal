@@ -178,9 +178,9 @@ export default function CategoryShowcase({ dogCollection, catCollection, petSupp
           <span
             className="badge rounded-pill px-3 py-2 mb-3 fw-bold"
             style={{
-              background: "linear-gradient(135deg, rgba(254,146,77,0.15), rgba(25,142,122,0.15))",
+              background: "linear-gradient(135deg, rgba(242,122,33,0.15), rgba(33,143,125,0.15))",
               color: "var(--charcoal-dark, #2a2a2a)",
-              border: "1px solid rgba(254,146,77,0.3)",
+              border: "1px solid rgba(242,122,33,0.3)",
               fontSize: "0.78rem",
               letterSpacing: "0.06em",
               textTransform: "uppercase",
@@ -222,9 +222,9 @@ export default function CategoryShowcase({ dogCollection, catCollection, petSupp
             <CategoryCard
               collection={dogCollection}
               handle="dogs"
-              gradientFrom="#D97706"
-              gradientTo="#92400E"
-              accentColor="#D97706"
+              gradientFrom="#F27A21"
+              gradientTo="#C25A12"
+              accentColor="#F27A21"
               delay={0.1}
             />
           </div>
@@ -232,9 +232,9 @@ export default function CategoryShowcase({ dogCollection, catCollection, petSupp
             <CategoryCard
               collection={catCollection}
               handle="cats-1"
-              gradientFrom="#198E7A"
-              gradientTo="#065F46"
-              accentColor="#198E7A"
+              gradientFrom="#218F7D"
+              gradientTo="#135E52"
+              accentColor="#218F7D"
               delay={0.25}
             />
           </div>
@@ -242,9 +242,9 @@ export default function CategoryShowcase({ dogCollection, catCollection, petSupp
             <CategoryCard
               collection={petSupplementsCollection}
               handle="pet-supplements"
-              gradientFrom="#7C3AED"
-              gradientTo="#4C1D95"
-              accentColor="#7C3AED"
+              gradientFrom="#2A2A2A"
+              gradientTo="#111111"
+              accentColor="#2A2A2A"
               delay={0.4}
               label="Pet Supplements"
             />
