@@ -111,7 +111,7 @@ export default function Hero() {
           </div>
 
           {/* Right Content - Hero Image */}
-          <div className="col-lg-6 position-relative mt-0 mt-lg-0 order-1 order-lg-2 px-0 px-lg-4 mx-n3 mx-lg-0 w-auto w-lg-100">
+          <div className="col-lg-6 position-relative mt-0 mt-lg-0 order-1 order-lg-2 px-0 px-lg-4 mx-n3 mx-lg-0">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9, x: 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
