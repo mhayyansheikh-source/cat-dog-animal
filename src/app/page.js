@@ -34,17 +34,17 @@ export default async function Home() {
   const heroMeta = await getShopifyMetaobject("homepage_config", "hero") || null;
   const statsMeta = await getShopifyMetaobject("homepage_config", "stats") || null;
 
-  // Fetch dog, cat, accessories, and bundles collections in parallel
-  const [dogCollection, catCollection, accessoriesCollection, bundleCollection] = await Promise.allSettled([
+  // Fetch dog, cat, pet supplements, and bundles collections in parallel
+  const [dogCollection, catCollection, petSupplementsCollectionResponse, bundleCollection] = await Promise.allSettled([
     getShopifyCollectionByHandle("dogs"),
     getShopifyCollectionByHandle("cats-1"),
-    getShopifyCollectionByHandle("accessories"),
+    getShopifyCollectionByHandle("pet-supplements"),
     getShopifyCollectionByHandle("bundles"),
   ]);
 
   const dogData = dogCollection.status === 'fulfilled' ? dogCollection.value : null;
   const catData = catCollection.status === 'fulfilled' ? catCollection.value : null;
-  const accessoriesData = accessoriesCollection.status === 'fulfilled' ? accessoriesCollection.value : null;
+  const petSupplementsData = petSupplementsCollectionResponse.status === 'fulfilled' ? petSupplementsCollectionResponse.value : null;
 
   let bundleProducts = [];
   if (bundleCollection.status === 'fulfilled' && bundleCollection.value?.products) {
@@ -63,8 +63,8 @@ export default async function Home() {
       {/* Best Sellers Grid Catalog */}
       <ProductTabs products={products} collections={collections} />
 
-      {/* Shop by Category — Dogs, Cats & Other Pets */}
-      <CategoryShowcase dogCollection={dogData} catCollection={catData} otherCollection={accessoriesData} />
+      {/* Shop by Category — Dogs, Cats & Pet Supplements */}
+      <CategoryShowcase dogCollection={dogData} catCollection={catData} petSupplementsCollection={petSupplementsData} />
 
       {/* Trust Stats Numbers */}
       <div className="cv-auto">

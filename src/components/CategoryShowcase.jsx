@@ -6,44 +6,8 @@ import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { ArrowRight, ShoppingBag } from "lucide-react";
 
-/* ─── Tiny animated product thumbnail strip ─── */
-function ProductStrip({ products }) {
-  const items = products.slice(0, 6);
-  return (
-    <div
-      className="d-flex gap-2 overflow-hidden"
-      style={{ maskImage: "linear-gradient(to right, transparent, black 10%, black 80%, transparent)" }}
-    >
-      <motion.div
-        className="d-flex gap-2 flex-shrink-0"
-        animate={{ x: ["0%", "-50%"] }}
-        transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-        style={{ width: "max-content" }}
-      >
-        {[...items, ...items].map((product, i) => (
-          <div
-            key={`${product.id}-${i}`}
-            className="rounded-3 overflow-hidden bg-white flex-shrink-0"
-            style={{ width: 64, height: 64, position: "relative", boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}
-          >
-            {product.images?.[0] && (
-              <Image
-                src={product.images[0]}
-                alt={product.title}
-                fill
-                sizes="64px"
-                style={{ objectFit: "contain", padding: "6px" }}
-              />
-            )}
-          </div>
-        ))}
-      </motion.div>
-    </div>
-  );
-}
-
 /* ─── Single category card ─── */
-function CategoryCard({ collection, handle, emoji, gradientFrom, gradientTo, accentColor, delay, label }) {
+function CategoryCard({ collection, handle, gradientFrom, gradientTo, accentColor, delay, label }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
@@ -111,7 +75,7 @@ function CategoryCard({ collection, handle, emoji, gradientFrom, gradientTo, acc
               border: "1px solid rgba(255,255,255,0.35)",
             }}
           >
-            {emoji} {productCount} Products
+            {productCount} Products
           </motion.span>
 
           <motion.div
@@ -138,7 +102,6 @@ function CategoryCard({ collection, handle, emoji, gradientFrom, gradientTo, acc
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: delay + 0.2, duration: 0.6 }}
           >
-            <div style={{ fontSize: "3rem", lineHeight: 1, marginBottom: "0.5rem" }}>{emoji}</div>
             <h2
               className="fw-black text-white mb-2"
               style={{
@@ -159,18 +122,6 @@ function CategoryCard({ collection, handle, emoji, gradientFrom, gradientTo, acc
                 : `Premium products handpicked for your ${title.toLowerCase()}.`}
             </p>
           </motion.div>
-
-          {/* Product thumbnail strip */}
-          {products.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={isInView ? { opacity: 1 } : {}}
-              transition={{ delay: delay + 0.5, duration: 0.6 }}
-              className="mb-4"
-            >
-              <ProductStrip products={products} />
-            </motion.div>
-          )}
 
           {/* CTA Button */}
           <motion.div
@@ -209,7 +160,7 @@ function CategoryCard({ collection, handle, emoji, gradientFrom, gradientTo, acc
 }
 
 /* ─── Main section export ─── */
-export default function CategoryShowcase({ dogCollection, catCollection, otherCollection }) {
+export default function CategoryShowcase({ dogCollection, catCollection, petSupplementsCollection }) {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
@@ -235,7 +186,7 @@ export default function CategoryShowcase({ dogCollection, catCollection, otherCo
               textTransform: "uppercase",
             }}
           >
-            🐾 Shop by Pet
+            Shop by Pet
           </span>
           <h2
             className="fw-black mb-3"
@@ -253,40 +204,49 @@ export default function CategoryShowcase({ dogCollection, catCollection, otherCo
           </p>
         </motion.div>
 
-        {/* Two-column cards grid */}
-        <div className="row g-4">
-          <div className="col-12 col-md-6 col-lg-4">
+        {/* Responsive Grid / Mobile Carousel */}
+        <div 
+          className="d-flex flex-nowrap flex-md-wrap gap-4 overflow-auto pb-4" 
+          style={{ 
+            scrollSnapType: "x mandatory", 
+            scrollbarWidth: "none", /* Firefox */
+            WebkitOverflowScrolling: "touch"
+          }}
+        >
+          {/* Hide scrollbar for Chrome/Safari/Edge */}
+          <style jsx>{`
+            .overflow-auto::-webkit-scrollbar { display: none; }
+          `}</style>
+
+          <div className="col-10 col-sm-8 col-md-5 col-lg-4 flex-shrink-0" style={{ scrollSnapAlign: "center" }}>
             <CategoryCard
               collection={dogCollection}
               handle="dogs"
-              emoji="🐕"
               gradientFrom="#D97706"
               gradientTo="#92400E"
               accentColor="#D97706"
               delay={0.1}
             />
           </div>
-          <div className="col-12 col-md-6 col-lg-4">
+          <div className="col-10 col-sm-8 col-md-5 col-lg-4 flex-shrink-0" style={{ scrollSnapAlign: "center" }}>
             <CategoryCard
               collection={catCollection}
               handle="cats-1"
-              emoji="🐈"
               gradientFrom="#198E7A"
               gradientTo="#065F46"
               accentColor="#198E7A"
               delay={0.25}
             />
           </div>
-          <div className="col-12 col-md-6 col-lg-4">
+          <div className="col-10 col-sm-8 col-md-5 col-lg-4 flex-shrink-0" style={{ scrollSnapAlign: "center" }}>
             <CategoryCard
-              collection={otherCollection}
-              handle="accessories"
-              emoji="🐠"
+              collection={petSupplementsCollection}
+              handle="pet-supplements"
               gradientFrom="#7C3AED"
               gradientTo="#4C1D95"
               accentColor="#7C3AED"
               delay={0.4}
-              label="Other Pets"
+              label="Pet Supplements"
             />
           </div>
         </div>
