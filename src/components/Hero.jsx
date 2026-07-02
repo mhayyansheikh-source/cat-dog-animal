@@ -11,13 +11,13 @@ export default function Hero() {
   const carouselRef = useAutoScroll({ interval: 3500 });
 
   return (
-    <section className="position-relative overflow-hidden hero-revamped" style={{ backgroundColor: "var(--cream)", minHeight: "80vh", display: "flex", flexDirection: "column" }}>
+    <section className="position-relative overflow-hidden hero-revamped" style={{ backgroundColor: "var(--cream)", display: "flex", flexDirection: "column" }}>
       
       {/* Background Decorative Shapes */}
       <div className="hero-shape-orange position-absolute top-0 end-0"></div>
       <div className="hero-shape-teal position-absolute bottom-0 start-0"></div>
 
-      <div className="container-fluid px-3 px-md-4 px-lg-5 position-relative flex-grow-1 d-flex flex-column justify-content-center" style={{ paddingTop: "clamp(24px, 5vw, 80px)", paddingBottom: "40px", zIndex: 2 }}>
+      <div className="container-fluid px-3 px-md-4 px-lg-5 position-relative flex-grow-1 d-flex flex-column" style={{ paddingTop: "clamp(16px, 3vw, 40px)", paddingBottom: "40px", zIndex: 2 }}>
         <div className="row align-items-center g-5 flex-grow-1">
           
           {/* Left Content */}
