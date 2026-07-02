@@ -14,7 +14,7 @@ export default function Hero() {
       <div className="hero-shape-orange position-absolute top-0 end-0"></div>
       <div className="hero-shape-teal position-absolute bottom-0 start-0"></div>
 
-      <div className="container-fluid px-3 px-md-4 px-lg-5 position-relative flex-grow-1 d-flex flex-column justify-content-center" style={{ paddingTop: "80px", paddingBottom: "40px", zIndex: 2 }}>
+      <div className="container-fluid px-3 px-md-4 px-lg-5 position-relative flex-grow-1 d-flex flex-column justify-content-center" style={{ paddingTop: "clamp(24px, 5vw, 80px)", paddingBottom: "40px", zIndex: 2 }}>
         <div className="row align-items-center g-5 flex-grow-1">
           
           {/* Left Content */}
@@ -57,9 +57,10 @@ export default function Hero() {
                 <div className="rounded-circle d-flex align-items-center justify-content-center text-white" style={{ backgroundColor: "var(--teal)", width: "48px", height: "48px" }}>
                   <Truck size={24} />
                 </div>
-                <div className="fw-bold" style={{ fontSize: "clamp(16px, 4vw, 20px)", color: "var(--charcoal)" }}>
+                <div className="fw-bold text-center text-lg-start" style={{ fontSize: "clamp(16px, 4vw, 20px)", color: "var(--charcoal)" }}>
                   PLUS, GET <span style={{ color: "var(--orange)" }}>FREE SHIPPING</span>
-                  <span className="ms-2 px-2 py-1 rounded text-white" style={{ backgroundColor: "var(--teal)", fontSize: "14px", verticalAlign: "middle" }}>OVER $50</span>
+                  <br className="d-md-none" />
+                  <span className="ms-md-2 mt-2 mt-md-0 px-2 py-1 rounded text-white d-inline-block" style={{ backgroundColor: "var(--teal)", fontSize: "14px", verticalAlign: "middle" }}>OVER $50</span>
                 </div>
               </div>
               
@@ -110,13 +111,13 @@ export default function Hero() {
           </div>
 
           {/* Right Content - Hero Image */}
-          <div className="col-lg-6 position-relative mt-5 mt-lg-0 order-1 order-lg-2">
+          <div className="col-lg-6 position-relative mt-0 mt-lg-0 order-1 order-lg-2 px-0 px-lg-4 mx-n3 mx-lg-0 w-auto w-lg-100">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9, x: 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
               className="position-relative w-100 mx-auto"
-              style={{ aspectRatio: "4/3", zIndex: 5, maxWidth: "600px" }}
+              style={{ aspectRatio: "1/1", zIndex: 5, maxWidth: "800px", width: "100%" }}
             >
               <Image 
                 src="/IMG.png" 
