@@ -114,13 +114,13 @@ export default function Hero() {
           </div>
 
           {/* Right Content - Hero Image */}
-          <div className="col-lg-6 position-relative mt-0 mt-lg-0 order-1 order-lg-2 px-0 px-lg-4 mx-n3 mx-lg-0">
+          <div className="col-lg-6 position-relative mt-n4 mt-lg-n5 order-1 order-lg-2 px-0 me-lg-n5">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9, x: 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
-              className="position-relative w-100 mx-auto"
-              style={{ aspectRatio: "1/1", zIndex: 5, maxWidth: "800px", width: "100%" }}
+              className="position-relative ms-auto"
+              style={{ aspectRatio: "1/1", zIndex: 5, maxWidth: "1000px", width: "100%", transform: "scale(1.15)", transformOrigin: "right top" }}
             >
               <Image 
                 src="/IMG.png" 
@@ -128,7 +128,7 @@ export default function Hero() {
                 fill 
                 priority
                 sizes="(max-width: 991px) 100vw, 50vw"
-                style={{ objectFit: "contain", objectPosition: "bottom" }}
+                style={{ objectFit: "contain", objectPosition: "right center" }}
               />
             </motion.div>
           </div>
