@@ -17,7 +17,7 @@ export default function Hero() {
       <div className="hero-shape-orange position-absolute top-0 end-0"></div>
       <div className="hero-shape-teal position-absolute bottom-0 start-0"></div>
 
-      <div className="container-fluid px-3 px-md-4 px-lg-5 position-relative flex-grow-1 d-flex flex-column" style={{ paddingTop: "clamp(16px, 3vw, 40px)", paddingBottom: "40px", zIndex: 2 }}>
+      <div className="container-fluid px-3 px-md-4 px-lg-5 pt-3 pt-lg-4 pb-5 position-relative flex-grow-1 d-flex flex-column" style={{ zIndex: 2 }}>
         <div className="row align-items-center g-5 flex-grow-1">
           
           {/* Left Content */}
