@@ -205,7 +205,7 @@ export default function ProductDetailsClient({ product }) {
   // Variant states
   const [activeVariant, setActiveVariant] = useState(product.variants[0]);
   const [quantity, setQuantity] = useState(1);
-  const [selectedBundleQty, setSelectedBundleQty] = useState(1);
+  const [selectedBundleQty, setSelectedBundleQty] = useState(2);
 
   // FAQ states
   const [openFaq, setOpenFaq] = useState(null);
@@ -659,12 +659,37 @@ export default function ProductDetailsClient({ product }) {
                   type="button"
                   whileHover={{ scale: activeVariant.available ? 1.01 : 1 }}
                   whileTap={{ scale: activeVariant.available ? 0.99 : 1 }}
-                  onClick={(e) => { e.preventDefault(); setSelectedBundleQty(1); }}
+                  onClick={(e) => { 
+                    e.preventDefault(); 
+                    setSelectedBundleQty(1);
+                    if (typeof window !== "undefined" && window.navigator && window.navigator.vibrate) window.navigator.vibrate(50);
+                  }}
                   disabled={!activeVariant.available}
                   className="btn btn-outline-secondary d-flex align-items-center justify-content-between p-3 position-relative w-100 text-start"
-                  style={{ minHeight: "72px", border: selectedBundleQty === 1 ? "2px solid var(--charcoal)" : "1px solid #dee2e6", borderRadius: "12px", backgroundColor: selectedBundleQty === 1 ? "rgba(0,0,0,0.02)" : "transparent" }}
+                  style={{ minHeight: "72px", border: selectedBundleQty === 1 ? "2px solid var(--charcoal)" : "1px solid #dee2e6", borderRadius: "12px", backgroundColor: selectedBundleQty === 1 ? "rgba(0,0,0,0.02)" : "transparent", transition: "all 0.2s ease" }}
                 >
-                  <div className="d-flex flex-column">
+                  <motion.span 
+                    animate={{ 
+                      y: [-2, 2, -2], 
+                      filter: ["hue-rotate(0deg)", "hue-rotate(20deg)", "hue-rotate(0deg)"] 
+                    }}
+                    transition={{ 
+                      duration: 3, 
+                      repeat: Infinity, 
+                      ease: "easeInOut" 
+                    }}
+                    className="discount-badge"
+                    style={{ 
+                      background: "linear-gradient(45deg, #FF3366, #FF9933)", 
+                      color: "white", 
+                      boxShadow: "0 4px 15px rgba(255, 51, 102, 0.3)",
+                      fontWeight: "bold",
+                      letterSpacing: "0.5px"
+                    }}
+                  >
+                    🔥 FRIDAY SPECIAL SALE
+                  </motion.span>
+                  <div className="d-flex flex-column mt-2">
                     <strong className="d-block text-dark">
                       {selectedBundleQty === 1 && <span className="text-success me-2">●</span>}
                       {selectedBundleQty !== 1 && <span className="text-muted me-2">○</span>}
@@ -672,7 +697,7 @@ export default function ProductDetailsClient({ product }) {
                     </strong>
                     <span className="small text-muted font-body">Perfect for trying it out</span>
                   </div>
-                  <div className="d-flex flex-column align-items-end">
+                  <div className="d-flex flex-column align-items-end mt-2">
                     <strong className="fs-5 text-dark">
                       {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(basePrice)}
                     </strong>
@@ -689,10 +714,14 @@ export default function ProductDetailsClient({ product }) {
                   type="button"
                   whileHover={{ scale: activeVariant.available ? 1.01 : 1 }}
                   whileTap={{ scale: activeVariant.available ? 0.99 : 1 }}
-                  onClick={(e) => { e.preventDefault(); setSelectedBundleQty(2); }}
+                  onClick={(e) => { 
+                    e.preventDefault(); 
+                    setSelectedBundleQty(2);
+                    if (typeof window !== "undefined" && window.navigator && window.navigator.vibrate) window.navigator.vibrate(50);
+                  }}
                   disabled={!activeVariant.available}
                   className="btn btn-outline-success d-flex align-items-center justify-content-between p-3 position-relative w-100 text-start"
-                  style={{ minHeight: "72px", border: selectedBundleQty === 2 ? "2px solid #198e7a" : "1px solid #dee2e6", borderRadius: "12px", backgroundColor: selectedBundleQty === 2 ? "rgba(25, 142, 122, 0.08)" : "transparent" }}
+                  style={{ minHeight: "72px", border: selectedBundleQty === 2 ? "2px solid #198e7a" : "1px solid #dee2e6", borderRadius: "12px", backgroundColor: selectedBundleQty === 2 ? "rgba(25, 142, 122, 0.08)" : "transparent", boxShadow: selectedBundleQty === 2 ? "0 0 0 4px rgba(25, 142, 122, 0.2)" : "none", transition: "all 0.2s ease" }}
                 >
                   <motion.span 
                     animate={{ opacity: [0.8, 1, 0.8] }}
@@ -708,7 +737,7 @@ export default function ProductDetailsClient({ product }) {
                       Buy 2 Items
                     </strong>
                   </div>
-                  <div className="d-flex flex-column align-items-end">
+                  <div className="d-flex flex-column align-items-end mt-2 position-relative">
                     <strong className="fs-5" style={{ color: "#198e7a" }}>
                       {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(getBulkCardPrice(2) * 2)}
                     </strong>
@@ -718,6 +747,17 @@ export default function ProductDetailsClient({ product }) {
                       </span>
                     )}
                     <span className="d-block small" style={{ color: "#198e7a" }}>Total</span>
+                    
+                    {selectedBundleQty === 2 && activeVariant.compare_at_price && (
+                      <motion.span 
+                        initial={{ opacity: 0, x: -10 }} 
+                        animate={{ opacity: 1, x: 0 }} 
+                        className="badge bg-success position-absolute" 
+                        style={{ right: "100%", top: "4px", marginRight: "12px", whiteSpace: "nowrap" }}
+                      >
+                        Save {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format((parseFloat(activeVariant.compare_at_price) * 2) - (getBulkCardPrice(2) * 2))}!
+                      </motion.span>
+                    )}
                   </div>
                 </motion.button>
 
@@ -725,12 +765,16 @@ export default function ProductDetailsClient({ product }) {
                   type="button"
                   whileHover={{ scale: activeVariant.available ? 1.02 : 1 }}
                   whileTap={{ scale: activeVariant.available ? 0.98 : 1 }}
-                  onClick={(e) => { e.preventDefault(); setSelectedBundleQty(3); }}
+                  onClick={(e) => { 
+                    e.preventDefault(); 
+                    setSelectedBundleQty(3);
+                    if (typeof window !== "undefined" && window.navigator && window.navigator.vibrate) window.navigator.vibrate(50);
+                  }}
                   disabled={!activeVariant.available}
                   className="btn btn-outline-warning d-flex align-items-center justify-content-between p-3 position-relative w-100 text-start shadow-sm"
-                  style={{ minHeight: "72px", border: selectedBundleQty === 3 ? "2px solid var(--orange)" : "1px solid #dee2e6", borderRadius: "12px", backgroundColor: selectedBundleQty === 3 ? "rgba(254, 146, 77, 0.08)" : "transparent" }}
+                  style={{ minHeight: "72px", border: selectedBundleQty === 3 ? "2px solid var(--orange)" : "1px solid #dee2e6", borderRadius: "12px", backgroundColor: selectedBundleQty === 3 ? "rgba(254, 146, 77, 0.08)" : "transparent", boxShadow: selectedBundleQty === 3 ? "0 0 0 4px rgba(254, 146, 77, 0.2)" : "none", transition: "all 0.2s ease" }}
                 >
-                  <span className="discount-badge text-white border-0 d-flex align-items-center gap-1">
+                  <span className="discount-badge text-white border-0 d-flex align-items-center gap-1" style={{ background: "var(--orange)" }}>
                     <Crown size={14} fill="currentColor" strokeWidth={2.5} /> BEST VALUE (15% OFF)
                   </span>
                   <div className="d-flex flex-column mt-2">
@@ -740,7 +784,7 @@ export default function ProductDetailsClient({ product }) {
                       Buy 3 Items
                     </strong>
                   </div>
-                  <div className="d-flex flex-column align-items-end">
+                  <div className="d-flex flex-column align-items-end mt-2 position-relative">
                     <strong className="fs-5" style={{ color: "var(--orange)" }}>
                       {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(getBulkCardPrice(3) * 3)}
                     </strong>
@@ -750,6 +794,17 @@ export default function ProductDetailsClient({ product }) {
                       </span>
                     )}
                     <span className="d-block small" style={{ color: "var(--orange)" }}>Total</span>
+
+                    {selectedBundleQty === 3 && activeVariant.compare_at_price && (
+                      <motion.span 
+                        initial={{ opacity: 0, x: -10 }} 
+                        animate={{ opacity: 1, x: 0 }} 
+                        className="badge bg-warning text-dark position-absolute" 
+                        style={{ right: "100%", top: "4px", marginRight: "12px", whiteSpace: "nowrap" }}
+                      >
+                        Save {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format((parseFloat(activeVariant.compare_at_price) * 3) - (getBulkCardPrice(3) * 3))}!
+                      </motion.span>
+                    )}
                   </div>
                 </motion.button>
               </div>
