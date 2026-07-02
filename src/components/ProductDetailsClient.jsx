@@ -119,22 +119,31 @@ export default function ProductDetailsClient({ product }) {
 
   const ingredientsText = getMetafield("ingredients");
 
-  // Dynamic YouTube Shorts Logic
-  let youtubeShorts = [];
+  // Dynamic MP4 Action Videos Logic
+  let actionVideos = [];
   
   // 1. Check for specific product handle
   if (product.handle === "breathable-pet-cat-carrier-backpack") {
-    youtubeShorts = [
-      "E07RjcNgIOA",
-      "Piaj11uRvsc",
-      "tACKkJ0geq8",
-      "tPjnaoQF95s"
+    actionVideos = [
+      "https://cdn.shopify.com/videos/c/o/v/b889f5e33b4e48e0996955ae2a407879.mp4",
+      "https://cdn.shopify.com/videos/c/o/v/b0b78d82c73a47dc9e91f15dbbde4663.mp4",
+      "https://cdn.shopify.com/videos/c/o/v/8e51ec498b3343aa90462a47ffb07246.mp4",
+      "https://cdn.shopify.com/videos/c/o/v/d109932d05614077adcc18866975b48e.mp4",
+      "https://cdn.shopify.com/videos/c/o/v/41a058b0cbf74ba3a29e2afc17f96362.mp4"
     ];
   } else if (product.handle === "quick-release-dog-harness-vest") {
-    youtubeShorts = [
-      "zU69mDYiJ2o",
-      "a3XF6zIM-M8",
-      "EtHofhA1zLw"
+    actionVideos = [
+      "https://cdn.shopify.com/videos/c/o/v/c838d67100f5445a989a57cec154a6cb.mp4",
+      "https://cdn.shopify.com/videos/c/o/v/cac9d1c7e82b457ab030dd4269812955.mp4",
+      "https://cdn.shopify.com/videos/c/o/v/078683ecd17a4aa58e4c5b2da181ccc8.mp4",
+      "https://cdn.shopify.com/videos/c/o/v/f809b7f1d96146e894b29d22d9a587d6.mp4"
+    ];
+  } else if (product.handle === "freeze-dried-minnows-dog-cat-treats") {
+    actionVideos = [
+      "https://cdn.shopify.com/videos/c/o/v/1f151323cfad478bb887d8cf9b58a4f6.mp4",
+      "https://cdn.shopify.com/videos/c/o/v/0e05b37477c9446e9ef1bf59f42bfbc1.mp4",
+      "https://cdn.shopify.com/videos/c/o/v/d40606f7c9a14b1fabc844b92e33e9c2.mp4",
+      "https://cdn.shopify.com/videos/c/o/v/4c982e5a4e4445b4a41562b1895555df.mp4"
     ];
   }
 
@@ -143,7 +152,7 @@ export default function ProductDetailsClient({ product }) {
     const shortsJson = getMetafield("youtube_shorts_json");
     if (shortsJson) {
       const parsed = JSON.parse(shortsJson);
-      if (parsed.length > 0) youtubeShorts = parsed;
+      if (parsed.length > 0) actionVideos = parsed;
     }
   } catch(e) { console.error("Failed to parse Shorts JSON", e); }
   
@@ -652,8 +661,8 @@ export default function ProductDetailsClient({ product }) {
             <TrustBadges />
           </motion.div>
 
-          {/* Generative Engine Optimized YouTube Shorts Section */}
-          {youtubeShorts.length > 0 && (
+          {/* Action Videos Section */}
+          {actionVideos.length > 0 && (
             <section 
               className="mb-5 mt-2" 
               aria-label="Product Demonstration Videos"
@@ -670,33 +679,33 @@ export default function ProductDetailsClient({ product }) {
                   gap: "12px"
                 }}
               >
-                {youtubeShorts.map((videoId, idx) => (
+                {actionVideos.map((videoSrc, idx) => (
                   <motion.div 
                     key={idx}
                     initial={{ opacity: 0, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.15, duration: 0.4 }}
-                    className="rounded-4 overflow-hidden shadow-sm position-relative bg-light"
+                    className="rounded-4 overflow-hidden shadow-sm position-relative shimmer-placeholder"
                     style={{ 
                       aspectRatio: "9/16", 
                       width: "100%",
-                      pointerEvents: "none" 
+                      pointerEvents: "none",
+                      backgroundColor: "#f6f7f8"
                     }}
                   >
-                    <iframe
-                      src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&rel=0&modestbranding=1&playsinline=1`}
-                      title={`Demonstration of ${product.title || "Pet Carrier"} - Video ${idx + 1}`}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                      loading="lazy"
-                      className="position-absolute border-0"
-                      style={{
-                        width: "120%",
-                        height: "120%",
-                        top: "-10%",
-                        left: "-10%"
+                    <video
+                      src={videoSrc}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      onLoadedData={(e) => {
+                        e.target.parentElement.classList.remove('shimmer-placeholder');
+                        e.target.style.opacity = 1;
                       }}
+                      className="position-absolute w-100 h-100 border-0"
+                      style={{ objectFit: "cover", top: 0, left: 0, opacity: 0, transition: "opacity 0.3s ease" }}
                     />
                   </motion.div>
                 ))}
