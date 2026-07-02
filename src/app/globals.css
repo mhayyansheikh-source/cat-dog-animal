@@ -546,6 +546,18 @@ p, span, li, button, input, select, textarea, .font-body {
   pointer-events: none;
 }
 
+.hero-image-wrapper {
+  aspect-ratio: 4/3;
+}
+
+@media (min-width: 992px) {
+  .hero-image-wrapper {
+    aspect-ratio: 1/1;
+    transform: scale(1.15);
+    transform-origin: right center;
+  }
+}
+
 .hero-shape-teal {
   width: 60vw;
   height: 60vw;

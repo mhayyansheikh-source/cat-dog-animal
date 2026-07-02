@@ -120,16 +120,18 @@ export default function Hero() {
               animate={{ opacity: 1, scale: 1, x: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
               className="position-relative ms-auto"
-              style={{ aspectRatio: "1/1", zIndex: 5, maxWidth: "1000px", width: "100%", transform: "scale(1.15)", transformOrigin: "right top" }}
+              style={{ zIndex: 5, maxWidth: "1000px", width: "100%" }}
             >
-              <Image 
-                src="/IMG.png" 
-                alt="Happy Dogs and Cats" 
-                fill 
-                priority
-                sizes="(max-width: 991px) 100vw, 50vw"
-                style={{ objectFit: "contain", objectPosition: "right center" }}
-              />
+              <div className="hero-image-wrapper w-100 position-relative">
+                <Image 
+                  src="/IMG.png" 
+                  alt="Happy Dogs and Cats" 
+                  fill 
+                  priority
+                  sizes="(max-width: 991px) 100vw, 50vw"
+                  style={{ objectFit: "contain", objectPosition: "right center" }}
+                />
+              </div>
             </motion.div>
           </div>
         </div>
