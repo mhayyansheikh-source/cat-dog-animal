@@ -206,7 +206,7 @@ export default function CategoryShowcase({ dogCollection, catCollection, petSupp
 
         {/* Responsive Grid / Mobile Carousel */}
         <div 
-          className="d-flex flex-nowrap flex-md-wrap gap-4 overflow-auto pb-4" 
+          className="row flex-nowrap flex-md-wrap overflow-auto pb-4 g-4" 
           style={{ 
             scrollSnapType: "x mandatory", 
             scrollbarWidth: "none", /* Firefox */
@@ -218,7 +218,7 @@ export default function CategoryShowcase({ dogCollection, catCollection, petSupp
             .overflow-auto::-webkit-scrollbar { display: none; }
           `}</style>
 
-          <div className="col-10 col-sm-8 col-md-5 col-lg-4 flex-shrink-0" style={{ scrollSnapAlign: "center" }}>
+          <div className="col-10 col-sm-8 col-md-6 col-lg-4 flex-shrink-0" style={{ scrollSnapAlign: "center" }}>
             <CategoryCard
               collection={dogCollection}
               handle="dogs"
@@ -228,7 +228,7 @@ export default function CategoryShowcase({ dogCollection, catCollection, petSupp
               delay={0.1}
             />
           </div>
-          <div className="col-10 col-sm-8 col-md-5 col-lg-4 flex-shrink-0" style={{ scrollSnapAlign: "center" }}>
+          <div className="col-10 col-sm-8 col-md-6 col-lg-4 flex-shrink-0" style={{ scrollSnapAlign: "center" }}>
             <CategoryCard
               collection={catCollection}
               handle="cats-1"
@@ -238,7 +238,7 @@ export default function CategoryShowcase({ dogCollection, catCollection, petSupp
               delay={0.25}
             />
           </div>
-          <div className="col-10 col-sm-8 col-md-5 col-lg-4 flex-shrink-0" style={{ scrollSnapAlign: "center" }}>
+          <div className="col-10 col-sm-8 col-md-6 col-lg-4 flex-shrink-0" style={{ scrollSnapAlign: "center" }}>
             <CategoryCard
               collection={petSupplementsCollection}
               handle="pet-supplements"

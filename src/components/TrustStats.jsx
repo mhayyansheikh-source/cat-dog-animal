@@ -48,14 +48,18 @@ export default function TrustStats({ statsMeta = null }) {
           </p>
         </div>
 
-        {/* Stats Grid */}
-        <div
+        {/* Stats Grid / Mobile Carousel */}
+        <div 
+          className="d-flex flex-nowrap flex-md-wrap gap-3 overflow-auto pb-3"
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-            gap: "20px",
+            scrollSnapType: "x mandatory",
+            scrollbarWidth: "none",
+            WebkitOverflowScrolling: "touch",
           }}
         >
+          <style jsx>{`
+            .overflow-auto::-webkit-scrollbar { display: none; }
+          `}</style>
           {displayStats.map((s, i) => (
             <motion.div
               key={i}
@@ -63,7 +67,9 @@ export default function TrustStats({ statsMeta = null }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.45, delay: i * 0.08 }}
+              className="col-9 col-sm-6 col-md-4 col-lg flex-shrink-0"
               style={{
+                scrollSnapAlign: "center",
                 background: "white",
                 border: "1px solid #E5E7EB",
                 borderRadius: "16px",
