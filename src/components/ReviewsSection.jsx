@@ -87,7 +87,7 @@ export default function ReviewsSection() {
     >
       <div className="font-body text-start">
         {/* Section Header */}
-        <div className="container text-center mb-5">
+        <div className="container-fluid px-3 px-md-4 px-lg-5 text-center mb-5">
           <span
             className="fw-bold text-uppercase small d-block mb-2"
             style={{ color: "var(--orange)", letterSpacing: "0.12em" }}

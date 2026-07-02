@@ -211,7 +211,7 @@ export default function BundlesSection({ dynamicProducts }) {
 
   return (
     <section className="py-5 bg-white">
-      <div className="container">
+      <div className="container-fluid px-3 px-md-4 px-lg-5">
         {/* Section Header */}
         <div className="text-center mb-5">
           <span

@@ -45,7 +45,7 @@ export default function NewsletterSection() {
         borderBottom: "1px solid rgba(255,255,255,0.1)"
       }}
     >
-      <div className="container py-3">
+      <div className="container-fluid px-3 px-md-4 px-lg-5 py-3">
         <div className="max-width-md mx-auto" style={{ maxWidth: "640px" }}>
           <h2 className="display-6 fw-bold font-heading mb-3 text-white">
             Get 15% Off Your First Order 🐾

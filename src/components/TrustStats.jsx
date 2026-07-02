@@ -31,7 +31,7 @@ export default function TrustStats({ statsMeta = null }) {
         borderBottom: "1px solid #E5E7EB",
       }}
     >
-      <div className="container">
+      <div className="container-fluid px-3 px-md-4 px-lg-5">
         {/* Header */}
         <div className="text-center" style={{ marginBottom: "40px" }}>
           <p

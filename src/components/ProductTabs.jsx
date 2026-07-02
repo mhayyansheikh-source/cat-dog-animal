@@ -26,7 +26,7 @@ export default function ProductTabs({ products = [], collections = [] }) {
 
   return (
     <section id="catalog-section" className="py-5" style={{ backgroundColor: "var(--cream, #FDFAF5)" }}>
-      <div className="container" id="shop-dogs">
+      <div className="container-fluid px-3 px-md-4 px-lg-5" id="shop-dogs">
         <div id="shop-cats" className="text-center mb-5">
 
           {/* Eyebrow */}

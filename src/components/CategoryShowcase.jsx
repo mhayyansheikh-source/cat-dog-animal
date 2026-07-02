@@ -166,7 +166,7 @@ export default function CategoryShowcase({ dogCollection, catCollection, petSupp
 
   return (
     <section className="py-5" style={{ background: "linear-gradient(180deg, #fafafa 0%, #f3f4f6 100%)" }}>
-      <div className="container px-3 px-md-4" style={{ maxWidth: 1400 }}>
+      <div className="container-fluid px-3 px-md-4 px-lg-5">
         {/* Section Header */}
         <motion.div
           ref={sectionRef}

@@ -14,7 +14,7 @@ export default function Hero() {
       <div className="hero-shape-orange position-absolute top-0 end-0"></div>
       <div className="hero-shape-teal position-absolute bottom-0 start-0"></div>
 
-      <div className="container position-relative flex-grow-1 d-flex flex-column justify-content-center" style={{ paddingTop: "80px", paddingBottom: "40px", zIndex: 2 }}>
+      <div className="container-fluid px-3 px-md-4 px-lg-5 position-relative flex-grow-1 d-flex flex-column justify-content-center" style={{ paddingTop: "80px", paddingBottom: "40px", zIndex: 2 }}>
         <div className="row align-items-center g-5 flex-grow-1">
           
           {/* Left Content */}
@@ -133,7 +133,7 @@ export default function Hero() {
 
       {/* Bottom Bar Features */}
       <div className="w-100 position-relative z-3" style={{ borderTop: "1px solid rgba(0,0,0,0.05)", backgroundColor: "white" }}>
-        <div className="container py-3">
+        <div className="container-fluid px-3 px-md-4 px-lg-5 py-3">
           <div className="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center gap-4">
             
             <div className="d-flex align-items-center gap-2">
