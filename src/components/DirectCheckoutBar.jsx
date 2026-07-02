@@ -1,37 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
-import { CreditCard } from "lucide-react";
-import { checkoutAction } from "@/app/actions";
+import { ShoppingCart } from "lucide-react";
 import { motion } from "framer-motion";
-import toast from "react-hot-toast";
+import { useCart } from "@/context/CartContext";
 
 export default function DirectCheckoutBar({ product, activeVariant }) {
-  const [isPending, setIsPending] = useState(false);
+  const { addToCart } = useCart();
 
   if (!product || !activeVariant) return null;
 
-  const handleDirectBuy = async () => {
-    setIsPending(true);
-    try {
-      const lineItems = [{
-        variantId: activeVariant.id,
-        quantity: 1
-      }];
-      
-      const response = await checkoutAction(lineItems);
-      if (response?.success && response.checkoutUrl) {
-        window.location.href = response.checkoutUrl;
-      } else {
-        toast.error(response?.error || "Failed to build a direct checkout session.");
-      }
-    } catch (e) {
-      console.error("Direct buy redirect error:", e);
-      toast.error("An error occurred during checkout.");
-    } finally {
-      setIsPending(false);
-    }
+  const handleAddToCart = () => {
+    addToCart(product, activeVariant, 1);
   };
 
   return (
@@ -47,29 +28,18 @@ export default function DirectCheckoutBar({ product, activeVariant }) {
           </span>
         </div>
 
-        {/* Buy Now Button - Condensed for Mobile Target */}
+        {/* Add to Cart Button - Condensed for Mobile Target */}
         <motion.button
-          whileTap={!isPending ? { scale: 0.96 } : {}}
-          onClick={handleDirectBuy}
-          disabled={isPending || !activeVariant.available}
+          whileTap={{ scale: 0.96 }}
+          onClick={handleAddToCart}
+          disabled={!activeVariant.available}
           className={`rounded-pill-cta flex-grow-1 d-flex align-items-center justify-content-center gap-2 font-heading shadow-sm m-0 ${
             !activeVariant.available ? "btn-secondary" : "btn-zesty-primary"
           }`}
           style={{ height: "48px", fontSize: "16px", textTransform: "uppercase" }}
         >
-          {isPending ? (
-            <>
-              <div className="spinner-border spinner-border-sm" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-              Loading...
-            </>
-          ) : (
-            <>
-              <CreditCard size={18} />
-              {activeVariant.available ? "Buy Now" : "Out of Stock"}
-            </>
-          )}
+          <ShoppingCart size={18} />
+          {activeVariant.available ? "Add to Cart" : "Out of Stock"}
         </motion.button>
       </div>
     </div>
