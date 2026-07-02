@@ -25,7 +25,7 @@ export default async function AllProductsPage() {
           textAlign: "center",
         }}
       >
-        <div className="container">
+        <div className="container-fluid px-3 px-md-4 px-lg-5">
           <nav aria-label="breadcrumb" style={{ marginBottom: "20px" }}>
             <ol style={{ display: "flex", justifyContent: "center", listStyle: "none", padding: 0, margin: 0, gap: "6px", fontSize: "13px", color: "#6B7280" }}>
               <li><Link href="/" style={{ color: "#6B7280", textDecoration: "none" }}>Home</Link></li>
@@ -43,7 +43,7 @@ export default async function AllProductsPage() {
       </section>
 
       {/* ── MAIN BODY ── */}
-      <div className="container" style={{ padding: "48px 24px 80px" }}>
+      <div className="container-fluid px-3 px-md-4 px-lg-5" style={{ padding: "48px 0 80px" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px", paddingBottom: "16px", borderBottom: "1px solid #E5E7EB" }}>
           <p style={{ fontSize: "14px", color: "#6B7280", margin: 0 }}>Showing <strong style={{ color: "#2A2A2A" }}>{products.length}</strong> products</p>
         </div>

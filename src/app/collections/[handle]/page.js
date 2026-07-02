@@ -92,17 +92,17 @@ export default async function CollectionPage({ params, searchParams }) {
       </section>
 
       {/* ── MAIN BODY ── */}
-      <div className="container" style={{ padding: "48px 24px 80px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: "40px", alignItems: "start" }}>
+      <div className="container-fluid px-3 px-md-4 px-lg-5" style={{ padding: "48px 0 80px" }}>
+        <div className="row g-4 g-lg-5 align-items-start">
           
           {/* ══ DYNAMIC SIDEBAR ══ */}
-          <div className="d-none d-lg-block">
+          <div className="col-lg-3 d-none d-lg-block">
             <h5 className="mb-4 fw-bold">Filters</h5>
             <CollectionFilters filters={collectionFilters} />
           </div>
 
           {/* ══ PRODUCT GRID ══ */}
-          <div>
+          <div className="col-12 col-lg-9">
             {products.length > 0 ? (
               <>
                 {/* Mobile Filter Drawer (handles sticky top and showing product count on mobile) */}
