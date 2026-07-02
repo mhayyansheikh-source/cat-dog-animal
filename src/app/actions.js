@@ -7,7 +7,13 @@ import {
 import { cookies } from "next/headers";
 
 export async function checkoutAction(lineItems) {
-  return await createShopifyCheckout(lineItems);
+  try {
+    const checkoutUrl = await createShopifyCheckout(lineItems);
+    return { success: true, checkoutUrl };
+  } catch (error) {
+    console.error("checkoutAction failed:", error);
+    return { success: false, error: error.message || "Unknown error" };
+  }
 }
 
 export async function createCartAction() {

@@ -20,11 +20,11 @@ export default function DirectCheckoutBar({ product, activeVariant }) {
         quantity: 1
       }];
       
-      const checkoutUrl = await checkoutAction(lineItems);
-      if (checkoutUrl) {
-        window.location.href = checkoutUrl;
+      const response = await checkoutAction(lineItems);
+      if (response?.success && response.checkoutUrl) {
+        window.location.href = response.checkoutUrl;
       } else {
-        toast.error("Failed to build a direct checkout session.");
+        toast.error(response?.error || "Failed to build a direct checkout session.");
       }
     } catch (e) {
       console.error("Direct buy redirect error:", e);
