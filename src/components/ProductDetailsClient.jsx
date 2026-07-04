@@ -10,6 +10,7 @@ import DirectCheckoutBar from "@/components/DirectCheckoutBar";
 import { ShoppingCart, Star, Sparkles, Check, ChevronDown, ChevronUp, ShieldCheck, Crown, Volume2, VolumeX, Play, Pause } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { getProductReviews } from "@/data/reviewsConfig";
 
 const ActionVideoPlayer = ({ videoSrc }) => {
   const { isSlowConnection } = useNetworkStatus();
@@ -237,11 +238,7 @@ export default function ProductDetailsClient({ product }) {
     if (faqJson) parsedFaqs = JSON.parse(faqJson);
   } catch(e) { console.error("Failed to parse FAQ JSON", e); }
 
-  let testimonials = [
-    { name: "Sarah M.", rating: 5, text: `Absolutely incredible quality. My pet loves the ${product.title || "product"} and the shipping was so fast!` },
-    { name: "David T.", rating: 5, text: `I was skeptical at first, but this exceeded all my expectations. Highly recommend this for any pet owner.` },
-    { name: "Emily R.", rating: 5, text: `Customer service is top notch and it works exactly as described. Worth every penny.` }
-  ];
+  let testimonials = getProductReviews(product.handle, product.title);
 
   try {
     const testimonialJson = getMetafield("testimonials_json");
