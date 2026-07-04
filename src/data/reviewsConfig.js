@@ -26,8 +26,13 @@ export const fallbackReviewTemplates = [
   "Five stars! The [PRODUCT_NAME] exceeded my expectations."
 ];
 
-// 3. A pool of believable reviewer names
-export const fallbackNames = ["Jessica W.", "Amanda B.", "Chris P.", "Mark D.", "Lisa K.", "Tom H.", "Ryan C.", "Samantha T.", "Kevin J.", "Michelle L."];
+// 3. Separate First Names and Last Initials to create massive combinations
+export const firstNames = [
+  "Sarah", "David", "Emily", "Michael", "Jessica", "Chris", "Amanda", 
+  "Matthew", "Ashley", "Josh", "Megan", "Andrew", "Rachel", "Daniel", 
+  "Lauren", "Justin", "Nicole", "Kevin", "Brittany", "Brian"
+];
+export const lastInitials = ["A.", "B.", "C.", "D.", "F.", "G.", "H.", "K.", "L.", "M.", "P.", "R.", "S.", "T.", "W."];
 
 // A simple function that turns a string (like a product handle) into a consistent number
 export function getStringSeed(str) {
@@ -40,30 +45,39 @@ export function getStringSeed(str) {
 }
 
 export function getProductReviews(productHandle, productTitle) {
-  // Step 1: Check if you have hand-written reviews for this product
-  if (specificReviews[productHandle] && specificReviews[productHandle].length > 0) {
-    return specificReviews[productHandle];
-  }
-
-  // Step 2: If no specific reviews exist, generate consistent random ones
-  const generatedReviews = [];
-  
-  // Use the product handle to create a fixed "seed" number
   let seed = getStringSeed(productHandle);
-  
-  // Fallback title if undefined
   const safeTitle = productTitle || "product";
 
-  // Generate exactly 3 reviews
+  // HELPER FUNCTION: Generates a consistent random name based on a seed
+  const generateName = (nameSeed) => {
+    const first = firstNames[nameSeed % firstNames.length];
+    const last = lastInitials[(nameSeed * 2) % lastInitials.length];
+    return `${first} ${last}`;
+  };
+
+  // Step 1: Check for hand-written reviews
+  if (specificReviews[productHandle] && specificReviews[productHandle].length > 0) {
+    return specificReviews[productHandle].map((review, index) => {
+      return {
+        ...review,
+        // If the review doesn't have a name, generate one using the product seed + review index
+        name: review.name ? review.name : generateName(seed + index)
+      };
+    });
+  }
+
+  // Step 2: Generate random fallback reviews for new products
+  const generatedReviews = [];
+
   for (let i = 0; i < 3; i++) {
-    const nameIndex = (seed + i) % fallbackNames.length;
     const templateIndex = (seed * i + i) % fallbackReviewTemplates.length;
     
     let reviewText = fallbackReviewTemplates[templateIndex];
     reviewText = reviewText.replace(/\[PRODUCT_NAME\]/g, safeTitle.toLowerCase());
 
     generatedReviews.push({
-      name: fallbackNames[nameIndex],
+      // Dynamically generate a name using the combinatorics function
+      name: generateName(seed + i),
       text: reviewText,
       rating: ((seed + i) % 5 === 0) ? 4 : 5 
     });
