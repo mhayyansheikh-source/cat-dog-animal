@@ -195,8 +195,8 @@ export default async function PolicyPage(props) {
         <br>
         <h4>Domestic Shipping Policy</h4>
         <p><strong>Shipment Processing Time</strong></p>
-        <p>All orders are processed within 1–5 business days. Orders are not shipped or delivered on weekends or holidays.</p>
-        <p>If we are experiencing a high volume of orders, shipments may be delayed by a few days. Please allow additional days in transit for delivery. If there will be a significant delay in the shipment of your order, we will contact you via email or telephone.</p>
+        <p>Please allow 1 to 3 business days for your order to be processed and dispatched from our warehouse. Orders are not shipped or delivered on weekends or holidays.</p>
+        <p>If we are experiencing a high volume of orders, shipments may be delayed by a few days. Please allow additional days in transit for delivery.</p>
         <br>
         <p><strong>Shipping Rates & Delivery Estimates</strong></p>
         <p>Shipping charges for your order will be calculated and displayed at checkout. Below are our standard delivery estimates:</p>
@@ -212,23 +212,12 @@ export default async function PolicyPage(props) {
             <tbody>
               <tr>
                 <td>Standard Shipping</td>
-                <td>3–5 business days</td>
-                <td>Free over $50, or $5.99</td>
-              </tr>
-              <tr>
-                <td>Expedited Shipping</td>
-                <td>2 business days</td>
-                <td>$12.99</td>
-              </tr>
-              <tr>
-                <td>Overnight Shipping</td>
-                <td>1 business day</td>
-                <td>$24.99</td>
+                <td>5–15 business days</td>
+                <td>Free for orders over $50<br>(Otherwise $5.99)</td>
               </tr>
             </tbody>
           </table>
         </div>
-        <p><em>Note: Overnight delivery is only available for orders with delivery addresses within the continental United States. Delivery delays can occasionally occur due to carrier issues or extreme weather.</em></p>
         <br>
         <p><strong>Shipment to P.O. Boxes or APO/FPO Addresses</strong></p>
         <p>Peteora.com ships to addresses within the U.S., U.S. Territories, and APO/FPO/DPO addresses.</p>
