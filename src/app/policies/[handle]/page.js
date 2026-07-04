@@ -212,8 +212,8 @@ export default async function PolicyPage(props) {
             <tbody>
               <tr>
                 <td>Standard Shipping</td>
-                <td>5–15 business days</td>
-                <td>Free for orders over $50<br>(Otherwise $5.99)</td>
+                <td>5–12 business days</td>
+                <td>Free for orders over $50</td>
               </tr>
             </tbody>
           </table>
