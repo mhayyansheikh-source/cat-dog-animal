@@ -108,7 +108,7 @@ export default function PredictiveSearch({ isOpen, onClose, collections }) {
                     <div className="row g-3">
                       {results.map((product) => (
                         <div key={product.id} className="col-12 col-md-6 col-lg-4">
-                          <Link href={`/product/${product.handle}`} onClick={onClose} className="text-decoration-none">
+                          <Link href={`/products/${product.handle}`} onClick={onClose} className="text-decoration-none">
                             <motion.div 
                               whileHover={{ scale: 1.02, backgroundColor: "var(--soft-sand)" }}
                               className="d-flex gap-3 align-items-center p-2 rounded transition-all"

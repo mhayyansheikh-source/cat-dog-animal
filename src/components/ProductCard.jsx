@@ -62,7 +62,7 @@ export default function ProductCard({ product, index = 0, isPriority = false, is
 
         {/* Product Image Wrapper */}
         <Link 
-          href={`/product/${product.handle || product.id}`} 
+          href={`/products/${product.handle || product.id}`} 
           className="d-block overflow-hidden position-relative shimmer-placeholder" 
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
@@ -165,7 +165,7 @@ export default function ProductCard({ product, index = 0, isPriority = false, is
           </div>
 
           {/* Title */}
-          <Link href={`/product/${product.handle}`} className="text-decoration-none text-dark">
+          <Link href={`/products/${product.handle}`} className="text-decoration-none text-dark">
             <h6 className="fw-bold font-heading mb-1 hover-scale" style={{ fontSize: "clamp(0.85rem, 3.5vw, 1rem)", lineHeight: "1.3", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
               {product.title}
             </h6>

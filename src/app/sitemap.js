@@ -28,7 +28,7 @@ export default async function sitemap() {
     // Dynamic Product Routes
     const products = await getShopifyProducts();
     const productRoutes = products.map((product) => ({
-      url: `${baseUrl}/product/${product.handle}`,
+      url: `${baseUrl}/products/${product.handle}`,
       lastModified: new Date().toISOString(),
       changeFrequency: "weekly",
       priority: 0.9,

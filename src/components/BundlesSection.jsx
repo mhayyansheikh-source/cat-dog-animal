@@ -205,7 +205,7 @@ export default function BundlesSection({ dynamicProducts = [] }) {
         items: parsedItems,
         newPrice: currentPrice,
         oldPrice: oldPrice,
-        href: `/product/${product.handle}`,
+        href: `/products/${product.handle}`,
         btnStyle: isEven ? { backgroundColor: "var(--orange)", color: "white" } : { backgroundColor: "var(--teal)", color: "white" },
         btnHover: isEven ? "#C45A0E" : "#0F5E52",
       };

@@ -298,7 +298,7 @@ export default function CartDrawer() {
                       <h6 className="mb-0 small fw-bold text-dark">{upsellProduct.title}</h6>
                       <span className="text-zesty-orange fw-bold small">${upsellProduct.price}</span>
                     </div>
-                    <Link href={`/product/${upsellProduct.handle}`} onClick={() => setIsCartOpen(false)}>
+                    <Link href={`/products/${upsellProduct.handle}`} onClick={() => setIsCartOpen(false)}>
                       <button className="btn btn-sm btn-outline-zesty-primary rounded-circle p-2 hover-scale">
                         <PlusCircle size={18} />
                       </button>
