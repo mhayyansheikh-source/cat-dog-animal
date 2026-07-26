@@ -114,7 +114,7 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
               </ul>
             </details>
             <div className="d-none d-md-block">
-              <h6 className="fw-bold mb-4 text-uppercase  letter-spacing-wide" style={{ color: "var(--charcoal)" }}>Shop</h6>
+              <h6 className="fw-bold mb-4 text-uppercase letter-spacing-wide" style={{ color: "var(--charcoal)" }}>Shop</h6>
               <ul className="list-unstyled mb-0 font-body fs-6">
                 {mainMenu?.items?.map((link) => (
                   <li className="mb-3" key={link.id}>
@@ -190,10 +190,24 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
                   </li>
                 ))}
               </ul>
+              <div className="pt-2 pb-3 border-top border-secondary-subtle font-body" style={{ fontSize: "0.85rem", color: "var(--charcoal)", opacity: 0.85 }}>
+                <div className="d-flex align-items-start gap-2 mb-2">
+                  <MapPin size={16} className="mt-1 flex-shrink-0" style={{ color: "var(--zesty-orange)" }} />
+                  <span>30 N Gould St #26515 Sheridan, WY 82801, US</span>
+                </div>
+                <div className="d-flex align-items-center gap-2 mb-2">
+                  <Phone size={16} className="flex-shrink-0" style={{ color: "var(--zesty-orange)" }} />
+                  <a href="tel:+13074009538" className="footer-link" style={{ color: "inherit" }}>+13074009538</a>
+                </div>
+                <div className="d-flex align-items-center gap-2">
+                  <Mail size={16} className="flex-shrink-0" style={{ color: "var(--zesty-orange)" }} />
+                  <a href="mailto:shoppinghorizonstorellc@gmail.com" className="footer-link" style={{ color: "inherit", wordBreak: "break-all" }}>shoppinghorizonstorellc@gmail.com</a>
+                </div>
+              </div>
             </details>
             <div className="d-none d-md-block">
               <h6 className="fw-bold mb-4 text-uppercase  letter-spacing-wide" style={{ color: "var(--charcoal)" }}>Customer Care</h6>
-              <ul className="list-unstyled mb-0 font-body fs-6">
+              <ul className="list-unstyled mb-3 font-body fs-6">
                 {policyLinks.map((link, idx) => (
                   <li className="mb-3" key={idx}>
                     <Link href={link.url} className="footer-link" style={{ color: "var(--charcoal)", opacity: 0.8 }}>
@@ -202,6 +216,20 @@ export default function Footer({ menu, mainMenu, shop, policies, collections }) 
                   </li>
                 ))}
               </ul>
+              <div className="mt-4 pt-3 border-top border-secondary-subtle font-body" style={{ fontSize: "0.85rem", color: "var(--charcoal)", opacity: 0.85 }}>
+                <div className="d-flex align-items-start gap-2 mb-2">
+                  <MapPin size={16} className="mt-1 flex-shrink-0" style={{ color: "var(--zesty-orange)" }} />
+                  <span>30 N Gould St #26515 Sheridan, WY 82801, US</span>
+                </div>
+                <div className="d-flex align-items-center gap-2 mb-2">
+                  <Phone size={16} className="flex-shrink-0" style={{ color: "var(--zesty-orange)" }} />
+                  <a href="tel:+13074009538" className="footer-link" style={{ color: "inherit" }}>+13074009538</a>
+                </div>
+                <div className="d-flex align-items-center gap-2">
+                  <Mail size={16} className="flex-shrink-0" style={{ color: "var(--zesty-orange)" }} />
+                  <a href="mailto:shoppinghorizonstorellc@gmail.com" className="footer-link" style={{ color: "inherit", wordBreak: "break-all" }}>shoppinghorizonstorellc@gmail.com</a>
+                </div>
+              </div>
             </div>
           </div>
 

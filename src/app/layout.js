@@ -93,7 +93,8 @@ export default async function RootLayout({ children }) {
     "description": siteDesc,
     "contactPoint": {
       "@type": "ContactPoint",
-      "email": "shoppingmaniaglobalstore@gmail.com",
+      "email": "shoppinghorizonstorellc@gmail.com",
+      "telephone": "+13074009538",
       "contactType": "customer service"
     }
   };
