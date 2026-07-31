@@ -59,6 +59,16 @@ export function CartProvider({ children }) {
   };
 
   const removeFromCart = async (lineId) => {
+    const previousCart = cart;
+    if (cart?.lines?.edges) {
+      setCart({
+        ...cart,
+        lines: {
+          ...cart.lines,
+          edges: cart.lines.edges.filter(edge => edge.node.id !== lineId)
+        }
+      });
+    }
     setIsSyncing(true);
     try {
       const res = await fetch('/api/cart', {
@@ -72,12 +82,14 @@ export function CartProvider({ children }) {
       
       if (response?.userErrors?.length > 0) {
         toast.error(response.userErrors[0].message);
+        setCart(previousCart);
       } else if (response?.cart) {
         setCart(response.cart);
       }
     } catch (error) {
       console.error("Remove from cart error:", error);
       toast.error("Failed to remove item");
+      setCart(previousCart);
     } finally {
       setIsSyncing(false);
     }
@@ -86,6 +98,27 @@ export function CartProvider({ children }) {
   const updateQuantity = async (lineId, newQuantity) => {
     if (newQuantity <= 0) {
       return removeFromCart(lineId);
+    }
+    const previousCart = cart;
+    if (cart?.lines?.edges) {
+      setCart({
+        ...cart,
+        lines: {
+          ...cart.lines,
+          edges: cart.lines.edges.map(edge => {
+            if (edge.node.id === lineId) {
+              return {
+                ...edge,
+                node: {
+                  ...edge.node,
+                  quantity: newQuantity
+                }
+              };
+            }
+            return edge;
+          })
+        }
+      });
     }
     setIsSyncing(true);
     try {
@@ -100,12 +133,14 @@ export function CartProvider({ children }) {
       
       if (response?.userErrors?.length > 0) {
         toast.error(response.userErrors[0].message);
+        setCart(previousCart);
       } else if (response?.cart) {
         setCart(response.cart);
       }
     } catch (error) {
       console.error("Update quantity error:", error);
       toast.error("Failed to update quantity");
+      setCart(previousCart);
     } finally {
       setIsSyncing(false);
     }
@@ -131,7 +166,7 @@ export function CartProvider({ children }) {
   })) || [];
 
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = cart?.cost?.subtotalAmount?.amount ? parseFloat(cart.cost.subtotalAmount.amount) : 0;
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.variant.price * item.quantity), 0);
   
   // Custom discount logic mimicking the ProductDetailsClient logic
   // 3+ items = 15% off, 2 items = 10% off
