@@ -59,28 +59,23 @@ export async function PUT(request) {
   try {
     const { lines } = await request.json();
     const cookieStore = await cookies();
-    let cartId = cookieStore.get("shopify_cart_id")?.value;
-    
-    let result = null;
-    if (cartId) {
-      try {
-        result = await updateCartLines(cartId, lines);
-      } catch (err) {
-        result = null;
-      }
-    }
-    
-    // Self-healing: If updating fails due to expired cart, recreate cart with line
-    if (!result?.cart?.id && lines?.length > 0) {
-      const newCart = await createCart();
-      if (newCart?.id) {
-        cartId = newCart.id;
-        result = await addCartLines(cartId, lines.map(l => ({ merchandiseId: l.id || l.merchandiseId, quantity: l.quantity })));
-      }
+    const cartId = cookieStore.get("shopify_cart_id")?.value;
+
+    if (!cartId) {
+      return createJsonResponse({ cart: null });
     }
 
-    const finalCartId = result?.cart?.id || cartId;
-    return createJsonResponse(result || { cart: null }, finalCartId);
+    let result = null;
+    try {
+      result = await updateCartLines(cartId, lines);
+    } catch (err) {
+      console.error("updateCartLines error:", err);
+    }
+
+    // If Shopify rejected the update (e.g. invalid line ID), return cart:null
+    // so the client keeps its optimistic state and re-syncs on next page load.
+    // Do NOT fall back to addCartLines — that would add duplicate items.
+    return createJsonResponse(result || { cart: null }, cartId);
   } catch (error) {
     return createJsonResponse({ error: error.message });
   }
