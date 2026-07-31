@@ -2,15 +2,14 @@ import { Nunito, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
-import dynamic from "next/dynamic";
+import Footer from "@/components/Footer";
+import CartDrawer from "@/components/CartDrawer";
 import PageTransition from "@/components/PageTransition";
-
 import ToastProvider from "@/components/ToastProvider";
+import ConsentBanner from "@/components/ConsentBanner";
 import { getShopifyMenu, getShopInfo, getShopPolicies, getShopifyCollectionsWithProducts, getShopifyProducts } from "@/utils/shopify";
 
-const Footer = dynamic(() => import("@/components/Footer"), { ssr: true });
-const CartDrawer = dynamic(() => import("@/components/CartDrawer"));
-import ConsentBanner from "@/components/ConsentBanner";
+export const runtime = "edge";
 
 const nunito = Nunito({
   variable: "--font-nunito",
