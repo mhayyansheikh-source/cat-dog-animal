@@ -4,8 +4,6 @@ import Link from "next/link";
 import * as motion from "framer-motion/client";
 import { ShieldCheck, ArrowLeft, Mail } from "lucide-react";
 
-export const runtime = "edge";
-
 export async function generateMetadata(props) {
   const params = await props.params;
   const { handle } = params;

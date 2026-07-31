@@ -5,8 +5,6 @@ import Link from "next/link";
 import * as motion from "framer-motion/client";
 import { policyTitleMap, fallbackPolicies } from "@/data/policiesData";
 
-export const runtime = "edge";
-
 export async function generateMetadata(props) {
   const params = await props.params;
   const { handle } = params;
