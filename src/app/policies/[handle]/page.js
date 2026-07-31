@@ -4,6 +4,8 @@ import { ShieldCheck, ArrowRight, Undo2, Lock, FileText, Truck, Mail, Scale } fr
 import Link from "next/link";
 import * as motion from "framer-motion/client";
 
+export const runtime = "edge";
+
 export async function generateStaticParams() {
   return [
     { handle: 'refund-policy' },
