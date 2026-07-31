@@ -39,7 +39,7 @@ export async function POST(request) {
       }
     }
     
-    // If cart doesn't exist or adding lines failed, create a new cart
+    // Self-healing: Create new cart if missing or expired
     if (!result?.cart?.id) {
       const newCart = await createCart();
       if (newCart?.id) {
@@ -61,12 +61,26 @@ export async function PUT(request) {
     const cookieStore = await cookies();
     let cartId = cookieStore.get("shopify_cart_id")?.value;
     
-    if (!cartId) {
-      return createJsonResponse({ cart: null });
+    let result = null;
+    if (cartId) {
+      try {
+        result = await updateCartLines(cartId, lines);
+      } catch (err) {
+        result = null;
+      }
     }
     
-    const result = await updateCartLines(cartId, lines);
-    return createJsonResponse(result || { cart: null }, cartId);
+    // Self-healing: If updating fails due to expired cart, recreate cart with line
+    if (!result?.cart?.id && lines?.length > 0) {
+      const newCart = await createCart();
+      if (newCart?.id) {
+        cartId = newCart.id;
+        result = await addCartLines(cartId, lines.map(l => ({ merchandiseId: l.id || l.merchandiseId, quantity: l.quantity })));
+      }
+    }
+
+    const finalCartId = result?.cart?.id || cartId;
+    return createJsonResponse(result || { cart: null }, finalCartId);
   } catch (error) {
     return createJsonResponse({ error: error.message });
   }
@@ -82,7 +96,13 @@ export async function DELETE(request) {
       return createJsonResponse({ cart: null });
     }
     
-    const result = await removeCartLines(cartId, lineIds);
+    let result = null;
+    try {
+      result = await removeCartLines(cartId, lineIds);
+    } catch (err) {
+      result = null;
+    }
+    
     return createJsonResponse(result || { cart: null }, cartId);
   } catch (error) {
     return createJsonResponse({ error: error.message });

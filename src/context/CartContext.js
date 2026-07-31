@@ -5,178 +5,253 @@ import { toast } from "react-hot-toast";
 
 const CartContext = createContext();
 
-function extractId(gidOrId) {
-  if (!gidOrId) return "";
-  const str = gidOrId.toString();
+// Universal ID Normalizer
+export function toCleanId(id) {
+  if (!id) return "";
+  const str = id.toString();
   const parts = str.split('/');
   return parts[parts.length - 1];
 }
 
-function isMatchingLine(edge, lineId) {
-  if (!edge?.node || !lineId) return false;
-  const node = edge.node;
-  const targetStr = lineId.toString();
-  const targetClean = extractId(targetStr);
+// Universal Item Matcher
+export function isMatch(item, targetId) {
+  if (!item || !targetId) return false;
+  const cleanTarget = toCleanId(targetId);
+  if (!cleanTarget) return false;
 
-  if (node.id?.toString() === targetStr) return true;
-  if (extractId(node.id) === targetClean) return true;
-  if (extractId(node.merchandise?.id) === targetClean) return true;
-  return false;
+  return (
+    toCleanId(item.id) === cleanTarget ||
+    toCleanId(item.variantId) === cleanTarget ||
+    toCleanId(item.merchandiseId) === cleanTarget
+  );
+}
+
+// Standardized Item Normalizer for raw GraphQL nodes or custom objects
+export function normalizeCartLine(edge) {
+  const node = edge?.node || edge;
+  if (!node) return null;
+
+  const merch = node.merchandise || {};
+  const prod = merch.product || {};
+  const priceAmt = parseFloat(merch.price?.amount || "0");
+  const compareAmt = merch.compareAtPrice?.amount ? parseFloat(merch.compareAtPrice.amount) : null;
+
+  return {
+    id: node.id || `temp-line-${Date.now()}`,
+    variantId: toCleanId(merch.id),
+    merchandiseId: merch.id || `gid://shopify/ProductVariant/${toCleanId(merch.id)}`,
+    title: prod.title || merch.title || "Pet Product",
+    variantTitle: merch.title !== "Default Title" ? (merch.title || "") : "",
+    handle: prod.handle || "",
+    image: merch.image?.url || prod.images?.edges?.[0]?.node?.url || "/peteora.png",
+    price: priceAmt,
+    compareAtPrice: compareAmt,
+    quantity: node.quantity || 1,
+  };
 }
 
 export function CartProvider({ children }) {
-  const [cart, setCart] = useState(null);
+  const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSyncing, setIsSyncing] = useState(true);
+  const [checkoutUrl, setCheckoutUrl] = useState(null);
   const updateDebounceTimers = useRef({});
 
-  // Initialize cart from localStorage + Shopify API
+  // Helper to sync local state & localStorage cache
+  const updateLocalItemsState = (items, newCheckoutUrl = null) => {
+    setCartItems(items);
+    if (newCheckoutUrl !== null) {
+      setCheckoutUrl(newCheckoutUrl);
+    }
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.setItem("peteora_flat_cart", JSON.stringify(items));
+        if (newCheckoutUrl) {
+          localStorage.setItem("peteora_checkout_url", newCheckoutUrl);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to save local cart cache:", e);
+    }
+  };
+
+  // Helper to convert GraphQL cart object to flat CleanCartItems
+  const processServerCart = (cartData) => {
+    if (!cartData?.lines?.edges) return [];
+    
+    const rawItems = cartData.lines.edges.map(normalizeCartLine).filter(Boolean);
+    const variantMap = new Map();
+    const cleanList = [];
+
+    for (const item of rawItems) {
+      const key = item.variantId || item.id;
+      if (variantMap.has(key)) {
+        const existing = variantMap.get(key);
+        existing.quantity += item.quantity;
+      } else {
+        const clone = { ...item };
+        variantMap.set(key, clone);
+        cleanList.push(clone);
+      }
+    }
+
+    return cleanList;
+  };
+
+  // Initial Load & Background Shopify Sync
   useEffect(() => {
     let mounted = true;
 
-    // 1. Instant load from localStorage
+    // 1. Instant 0ms cache load
     try {
-      const savedCart = localStorage.getItem("peteora_local_cart");
-      if (savedCart) {
-        setCart(JSON.parse(savedCart));
-        setIsSyncing(false);
+      if (typeof window !== "undefined") {
+        const cached = localStorage.getItem("peteora_flat_cart");
+        const cachedUrl = localStorage.getItem("peteora_checkout_url");
+        if (cached) {
+          setCartItems(JSON.parse(cached));
+          if (cachedUrl) setCheckoutUrl(cachedUrl);
+          setIsSyncing(false);
+        }
       }
     } catch (e) {
       console.error("Failed to load local cart cache", e);
     }
 
-    // 2. Background sync with Shopify API
-    const fetchCart = async () => {
+    // 2. Background Shopify Sync
+    const syncWithServer = async () => {
       try {
         const res = await fetch('/api/cart');
         const data = await res.json();
         if (mounted && data?.cart) {
-          setCart(data.cart);
-          localStorage.setItem("peteora_local_cart", JSON.stringify(data.cart));
+          const freshItems = processServerCart(data.cart);
+          updateLocalItemsState(freshItems, data.cart.checkoutUrl || null);
         }
-      } catch (error) {
-        console.error("Failed to sync cart with Shopify:", error);
+      } catch (err) {
+        console.error("Failed to sync cart with Shopify API:", err);
       } finally {
         if (mounted) setIsSyncing(false);
       }
     };
 
-    fetchCart();
+    syncWithServer();
     return () => { mounted = false; };
   }, []);
 
-  // Save cart changes to localStorage for 0ms page transitions
-  const updateLocalCartState = (newCart) => {
-    setCart(newCart);
-    try {
-      if (newCart) {
-        localStorage.setItem("peteora_local_cart", JSON.stringify(newCart));
-      } else {
-        localStorage.removeItem("peteora_local_cart");
-      }
-    } catch (e) {
-      console.error("Failed to save local cart", e);
-    }
-  };
-
+  // 1. CREATE (Add to Cart)
   const addToCart = async (product, variant, quantity = 1, redirect = true) => {
-    const targetVariantId = extractId(variant.id);
+    const targetVariantId = toCleanId(variant.id);
+    const fullMerchId = variant.id?.toString().includes("gid://") 
+      ? variant.id 
+      : `gid://shopify/ProductVariant/${targetVariantId}`;
 
-    // 1. Instant 0ms Optimistic Update
-    updateLocalCartState(prev => {
-      const existingEdges = prev?.lines?.edges ? [...prev.lines.edges] : [];
-      const matchIndex = existingEdges.findIndex(
-        e => isMatchingLine(e, variant.id) || extractId(e.node?.merchandise?.id) === targetVariantId
-      );
+    // A. Instant 0ms Optimistic Local State Update
+    const currentItems = [...cartItems];
+    const matchIndex = currentItems.findIndex(item => isMatch(item, targetVariantId));
 
-      if (matchIndex !== -1) {
-        const existingNode = existingEdges[matchIndex].node;
-        existingEdges[matchIndex] = {
-          ...existingEdges[matchIndex],
-          node: {
-            ...existingNode,
-            quantity: existingNode.quantity + quantity
-          }
-        };
-      } else {
-        const tempLineId = `temp-line-${Date.now()}-${Math.random()}`;
-        existingEdges.push({
-          node: {
-            id: tempLineId,
-            quantity: quantity,
-            merchandise: {
-              id: variant.id,
-              title: variant.title || "Default Title",
-              price: { amount: (variant.price || 0).toString() },
-              compareAtPrice: variant.compare_at_price ? { amount: variant.compare_at_price.toString() } : null,
-              image: { url: variant.image?.url || variant.image || product.images?.[0] || "" },
-              product: {
-                title: product.title,
-                handle: product.handle,
-                images: { edges: [{ node: { url: product.images?.[0] || "" } }] }
-              }
-            }
-          }
-        });
-      }
-
-      return {
-        ...prev,
-        lines: { edges: existingEdges }
+    if (matchIndex !== -1) {
+      currentItems[matchIndex] = {
+        ...currentItems[matchIndex],
+        quantity: currentItems[matchIndex].quantity + quantity
       };
-    });
+    } else {
+      currentItems.push({
+        id: `temp-line-${Date.now()}-${Math.random()}`,
+        variantId: targetVariantId,
+        merchandiseId: fullMerchId,
+        title: product.title,
+        variantTitle: variant.title !== "Default Title" ? (variant.title || "") : "",
+        handle: product.handle || "",
+        image: variant.image?.url || variant.image || product.images?.[0] || "/peteora.png",
+        price: parseFloat(variant.price || "0"),
+        compareAtPrice: variant.compare_at_price ? parseFloat(variant.compare_at_price) : null,
+        quantity: quantity
+      });
+    }
 
+    updateLocalItemsState(currentItems);
     toast.success(`${product.title} added to cart`);
 
-    // Redirect directly to /cart page if requested
+    // B. Immediate Redirect if on product page
     if (redirect && typeof window !== "undefined" && window.location.pathname !== "/cart") {
       window.location.href = "/cart";
     }
 
-    // 2. Background Shopify Sync
+    // C. Background Shopify Sync
     setIsSyncing(true);
     try {
       const res = await fetch('/api/cart', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lines: [{ merchandiseId: variant.id, quantity }] })
+        body: JSON.stringify({ lines: [{ merchandiseId: fullMerchId, quantity }] })
       });
       const response = await res.json();
-
       if (response?.cart) {
-        updateLocalCartState(response.cart);
+        const freshItems = processServerCart(response.cart);
+        updateLocalItemsState(freshItems, response.cart.checkoutUrl || null);
       }
-    } catch (error) {
-      console.error("Add to cart sync error:", error);
+    } catch (err) {
+      console.error("Add to cart sync error:", err);
     } finally {
       setIsSyncing(false);
     }
   };
 
-  const removeFromCart = async (lineId) => {
-    let removedEdge = null;
-    let shopifyLineId = lineId;
-
-    if (cart?.lines?.edges) {
-      const match = cart.lines.edges.find(edge => isMatchingLine(edge, lineId));
-      if (match?.node?.id && !match.node.id.startsWith("temp-line-")) {
-        shopifyLineId = match.node.id;
-      }
+  // 2. UPDATE (Quantity Adjustment)
+  const updateQuantity = async (targetId, newQuantity) => {
+    if (newQuantity <= 0) {
+      return removeFromCart(targetId);
     }
 
-    updateLocalCartState(prev => {
-      if (!prev?.lines?.edges) return prev;
-      removedEdge = prev.lines.edges.find(edge => isMatchingLine(edge, lineId));
-      return {
-        ...prev,
-        lines: {
-          ...prev.lines,
-          edges: prev.lines.edges.filter(edge => !isMatchingLine(edge, lineId))
-        }
-      };
+    // A. Instant 0ms Optimistic UI Update
+    const updatedItems = cartItems.map(item => {
+      if (isMatch(item, targetId)) {
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
     });
 
-    if (removedEdge) {
+    updateLocalItemsState(updatedItems);
+
+    // B. Debounced 300ms Background Shopify Sync
+    const cleanTargetId = toCleanId(targetId);
+    if (updateDebounceTimers.current[cleanTargetId]) {
+      clearTimeout(updateDebounceTimers.current[cleanTargetId]);
+    }
+
+    updateDebounceTimers.current[cleanTargetId] = setTimeout(async () => {
+      setIsSyncing(true);
+      try {
+        const targetItem = cartItems.find(item => isMatch(item, targetId));
+        const lineIdToSend = targetItem?.id?.startsWith("gid://") ? targetItem.id : targetItem?.variantId;
+
+        const res = await fetch('/api/cart', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lines: [{ id: lineIdToSend, quantity: newQuantity }] })
+        });
+        const response = await res.json();
+        if (response?.cart) {
+          const freshItems = processServerCart(response.cart);
+          updateLocalItemsState(freshItems, response.cart.checkoutUrl || null);
+        }
+      } catch (err) {
+        console.error("Update quantity sync error:", err);
+      } finally {
+        setIsSyncing(false);
+      }
+    }, 300);
+  };
+
+  // 3. DELETE (Remove Line Item)
+  const removeFromCart = async (targetId) => {
+    const removedItem = cartItems.find(item => isMatch(item, targetId));
+    const filteredItems = cartItems.filter(item => !isMatch(item, targetId));
+
+    // A. Instant 0ms Optimistic Deletion
+    updateLocalItemsState(filteredItems);
+
+    // B. 4-Second Undo Toast
+    if (removedItem) {
       toast(
         (t) => (
           <div className="d-flex align-items-center justify-content-between gap-3">
@@ -184,10 +259,7 @@ export function CartProvider({ children }) {
             <button
               onClick={() => {
                 toast.dismiss(t.id);
-                updateLocalCartState(prev => {
-                  const edges = prev?.lines?.edges ? [...prev.lines.edges, removedEdge] : [removedEdge];
-                  return { ...prev, lines: { edges } };
-                });
+                updateLocalItemsState([...cartItems, removedItem]);
               }}
               className="btn btn-sm btn-dark rounded-pill py-1 px-3 fw-bold text-warning hover-scale"
               style={{ fontSize: "12px" }}
@@ -200,134 +272,37 @@ export function CartProvider({ children }) {
       );
     }
 
+    // C. Background Shopify Delete Request
     setIsSyncing(true);
     try {
+      const lineIdToSend = removedItem?.id?.startsWith("gid://") ? removedItem.id : removedItem?.variantId;
+
       const res = await fetch('/api/cart', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lineIds: [shopifyLineId] })
+        body: JSON.stringify({ lineIds: [lineIdToSend] })
       });
       const response = await res.json();
       if (response?.cart) {
-        updateLocalCartState(response.cart);
+        const freshItems = processServerCart(response.cart);
+        updateLocalItemsState(freshItems, response.cart.checkoutUrl || null);
       }
-    } catch (error) {
-      console.error("Remove from cart sync error:", error);
+    } catch (err) {
+      console.error("Remove from cart sync error:", err);
     } finally {
       setIsSyncing(false);
     }
   };
 
-  const updateQuantity = async (lineId, newQuantity) => {
-    if (newQuantity <= 0) {
-      return removeFromCart(lineId);
-    }
-
-    let shopifyLineId = lineId;
-    if (cart?.lines?.edges) {
-      const match = cart.lines.edges.find(edge => isMatchingLine(edge, lineId));
-      if (match?.node?.id && !match.node.id.startsWith("temp-line-")) {
-        shopifyLineId = match.node.id;
-      }
-    }
-
-    // 1. Instant 0ms Optimistic UI update
-    updateLocalCartState(prev => {
-      if (!prev?.lines?.edges) return prev;
-      return {
-        ...prev,
-        lines: {
-          ...prev.lines,
-          edges: prev.lines.edges.map(edge => {
-            if (isMatchingLine(edge, lineId)) {
-              return {
-                ...edge,
-                node: {
-                  ...edge.node,
-                  quantity: newQuantity
-                }
-              };
-            }
-            return edge;
-          })
-        }
-      };
-    });
-
-    // 2. Debounced 300ms background sync with Shopify API
-    if (updateDebounceTimers.current[lineId]) {
-      clearTimeout(updateDebounceTimers.current[lineId]);
-    }
-
-    updateDebounceTimers.current[lineId] = setTimeout(async () => {
-      setIsSyncing(true);
-      try {
-        const res = await fetch('/api/cart', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ lines: [{ id: shopifyLineId, quantity: newQuantity }] })
-        });
-        const response = await res.json();
-        if (response?.cart) {
-          updateLocalCartState(response.cart);
-        }
-      } catch (error) {
-        console.error("Update quantity sync error:", error);
-      } finally {
-        setIsSyncing(false);
-      }
-    }, 300);
-  };
-
+  // 4. CLEAR CART
   const clearCart = () => {
-    updateLocalCartState(null);
+    updateLocalItemsState([], null);
   };
 
-  // Map and deduplicate cart items cleanly
-  const rawCartItems = cart?.lines?.edges?.map(edge => {
-    const node = edge?.node;
-    if (!node) return null;
-    const merch = node.merchandise || {};
-    const prod = merch.product || {};
-    const priceAmt = parseFloat(merch.price?.amount || "0");
-    const compareAmt = merch.compareAtPrice?.amount ? parseFloat(merch.compareAtPrice.amount) : null;
-    
-    return {
-      id: node.id,
-      variantId: extractId(merch.id),
-      variant: {
-        id: merch.id || "",
-        title: merch.title || "",
-        price: priceAmt,
-        compare_at_price: compareAmt,
-      },
-      title: prod.title || merch.title || "Pet Product",
-      handle: prod.handle || "",
-      image: merch.image?.url || prod.images?.edges?.[0]?.node?.url || "",
-      quantity: node.quantity || 1,
-    };
-  }).filter(Boolean) || [];
-
-  // Deduplicate items with the same variant ID
-  const cartItems = [];
-  const variantMap = new Map();
-
-  for (const item of rawCartItems) {
-    const key = item.variantId || item.id;
-    if (variantMap.has(key)) {
-      const existing = variantMap.get(key);
-      existing.quantity += item.quantity;
-    } else {
-      const clone = { ...item };
-      variantMap.set(key, clone);
-      cartItems.push(clone);
-    }
-  }
-
+  // Derived Financial Calculations
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.variant.price * item.quantity), 0);
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   
-  // Custom discount logic: 3+ items = 15% off, 2 items = 10% off
   let calculatedTotal = subtotal;
   let discountAmount = 0;
   
@@ -339,14 +314,12 @@ export function CartProvider({ children }) {
   
   discountAmount = subtotal - calculatedTotal;
 
-  // Add $4.95 shipping if under $35
   const shippingThreshold = 35.0;
   if (calculatedTotal > 0 && calculatedTotal < shippingThreshold) {
     calculatedTotal += 4.95;
   }
 
   const total = calculatedTotal;
-  const checkoutUrl = cart?.checkoutUrl || null;
 
   return (
     <CartContext.Provider
