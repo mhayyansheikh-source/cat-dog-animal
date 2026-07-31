@@ -14,6 +14,16 @@ const nextConfig = {
     ],
   },
 
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.optimization = {
+        ...config.optimization,
+        minimize: true,
+      };
+    }
+    return config;
+  },
+
   async rewrites() {
     return [
       {
