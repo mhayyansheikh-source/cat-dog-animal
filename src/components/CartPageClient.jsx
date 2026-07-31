@@ -23,6 +23,12 @@ import ShippingTimer from "@/components/ShippingTimer";
 import TrustBadges from "@/components/TrustBadges";
 
 export default function CartPageClient() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const {
     cartItems,
     removeFromCart,
@@ -38,7 +44,7 @@ export default function CartPageClient() {
 
   const [upsellProducts, setUpsellProducts] = useState([]);
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const [addedItemIds, setAddedItemIds] = useState(new Set());
+  const [addedItemIds, setAddedItemIds] = useState({});
 
   // Fetch cross-sell recommendations
   useEffect(() => {
@@ -108,16 +114,22 @@ export default function CartPageClient() {
   const handleAddCrossSell = (prod) => {
     if (prod.variants?.[0]) {
       addToCart(prod, prod.variants[0], 1, false);
-      setAddedItemIds((prev) => new Set(prev).add(prod.id));
+      setAddedItemIds((prev) => ({ ...prev, [prod.id]: true }));
       setTimeout(() => {
-        setAddedItemIds((prev) => {
-          const next = new Set(prev);
-          next.delete(prod.id);
-          return next;
-        });
+        setAddedItemIds((prev) => ({ ...prev, [prod.id]: false }));
       }, 2000);
     }
   };
+
+  if (!mounted) {
+    return (
+      <div className="bg-light min-vh-100 py-5 text-center d-flex align-items-center justify-content-center">
+        <div className="spinner-border text-warning" role="status">
+          <span className="visually-hidden">Loading Cart...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -362,7 +374,7 @@ export default function CartPageClient() {
                   </div>
                   <div className="row g-3">
                     {upsellProducts.map((prod) => {
-                      const isAdded = addedItemIds.has(prod.id);
+                      const isAdded = !!addedItemIds[prod.id];
                       return (
                         <div key={prod.id} className="col-12 col-sm-6">
                           <div className="p-3 border rounded-3 d-flex align-items-center justify-content-between gap-3 h-100 bg-light">
