@@ -11,26 +11,105 @@ export function CartProvider({ children }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSyncing, setIsSyncing] = useState(true);
 
-  // Initialize cart from Shopify
+  // Initialize cart from localStorage + Shopify API
   useEffect(() => {
     let mounted = true;
+
+    // 1. Instant load from localStorage
+    try {
+      const savedCart = localStorage.getItem("peteora_local_cart");
+      if (savedCart) {
+        setCart(JSON.parse(savedCart));
+        setIsSyncing(false);
+      }
+    } catch (e) {
+      console.error("Failed to load local cart cache", e);
+    }
+
+    // 2. Background sync with Shopify API
     const fetchCart = async () => {
       try {
         const res = await fetch('/api/cart');
         const data = await res.json();
-        if (mounted) setCart(data.cart);
+        if (mounted && data?.cart) {
+          setCart(data.cart);
+          localStorage.setItem("peteora_local_cart", JSON.stringify(data.cart));
+        }
       } catch (error) {
-        console.error("Failed to load cart:", error);
+        console.error("Failed to sync cart with Shopify:", error);
       } finally {
         if (mounted) setIsSyncing(false);
       }
     };
+
     fetchCart();
     return () => { mounted = false; };
   }, []);
 
+  // Save cart changes to localStorage for 0ms page transitions
+  const updateLocalCartState = (newCart) => {
+    setCart(newCart);
+    try {
+      if (newCart) {
+        localStorage.setItem("peteora_local_cart", JSON.stringify(newCart));
+      } else {
+        localStorage.removeItem("peteora_local_cart");
+      }
+    } catch (e) {
+      console.error("Failed to save local cart", e);
+    }
+  };
+
   const addToCart = async (product, variant, quantity = 1) => {
     setIsCartOpen(true);
+
+    // 1. Instant 0ms Optimistic Update
+    updateLocalCartState(prev => {
+      const existingEdges = prev?.lines?.edges ? [...prev.lines.edges] : [];
+      const matchIndex = existingEdges.findIndex(
+        e => e.node?.merchandise?.id?.toString() === variant.id?.toString()
+      );
+
+      if (matchIndex !== -1) {
+        const existingNode = existingEdges[matchIndex].node;
+        existingEdges[matchIndex] = {
+          ...existingEdges[matchIndex],
+          node: {
+            ...existingNode,
+            quantity: existingNode.quantity + quantity
+          }
+        };
+      } else {
+        const tempLineId = `temp-line-${Date.now()}-${Math.random()}`;
+        existingEdges.push({
+          node: {
+            id: tempLineId,
+            quantity: quantity,
+            merchandise: {
+              id: variant.id,
+              title: variant.title || "Default Title",
+              price: { amount: (variant.price || 0).toString() },
+              compareAtPrice: variant.compare_at_price ? { amount: variant.compare_at_price.toString() } : null,
+              image: { url: variant.image?.url || variant.image || product.images?.[0] || "" },
+              product: {
+                title: product.title,
+                handle: product.handle,
+                images: { edges: [{ node: { url: product.images?.[0] || "" } }] }
+              }
+            }
+          }
+        });
+      }
+
+      return {
+        ...prev,
+        lines: { edges: existingEdges }
+      };
+    });
+
+    toast.success(`${product.title} added to cart`);
+
+    // 2. Background Shopify Sync
     setIsSyncing(true);
     try {
       const res = await fetch('/api/cart', {
@@ -39,27 +118,19 @@ export function CartProvider({ children }) {
         body: JSON.stringify({ lines: [{ merchandiseId: variant.id, quantity }] })
       });
       const response = await res.json();
-      
-      if (response?.error) {
-        throw new Error(response.error);
-      }
-      
-      if (response?.userErrors?.length > 0) {
-        toast.error(response.userErrors[0].message);
-      } else if (response?.cart) {
-        toast.success(`${product.title} added to cart`);
-        setCart(response.cart);
+
+      if (response?.cart) {
+        updateLocalCartState(response.cart);
       }
     } catch (error) {
-      console.error("Add to cart error:", error);
-      toast.error(error.message || "Could not add item to cart");
+      console.error("Add to cart sync error:", error);
     } finally {
       setIsSyncing(false);
     }
   };
 
   const removeFromCart = async (lineId) => {
-    setCart(prev => {
+    updateLocalCartState(prev => {
       if (!prev?.lines?.edges) return prev;
       return {
         ...prev,
@@ -69,6 +140,7 @@ export function CartProvider({ children }) {
         }
       };
     });
+
     setIsSyncing(true);
     try {
       const res = await fetch('/api/cart', {
@@ -78,10 +150,10 @@ export function CartProvider({ children }) {
       });
       const response = await res.json();
       if (response?.cart) {
-        setCart(response.cart);
+        updateLocalCartState(response.cart);
       }
     } catch (error) {
-      console.error("Remove from cart error:", error);
+      console.error("Remove from cart sync error:", error);
     } finally {
       setIsSyncing(false);
     }
@@ -91,7 +163,8 @@ export function CartProvider({ children }) {
     if (newQuantity <= 0) {
       return removeFromCart(lineId);
     }
-    setCart(prev => {
+
+    updateLocalCartState(prev => {
       if (!prev?.lines?.edges) return prev;
       return {
         ...prev,
@@ -112,6 +185,7 @@ export function CartProvider({ children }) {
         }
       };
     });
+
     setIsSyncing(true);
     try {
       const res = await fetch('/api/cart', {
@@ -121,17 +195,17 @@ export function CartProvider({ children }) {
       });
       const response = await res.json();
       if (response?.cart) {
-        setCart(response.cart);
+        updateLocalCartState(response.cart);
       }
     } catch (error) {
-      console.error("Update quantity error:", error);
+      console.error("Update quantity sync error:", error);
     } finally {
       setIsSyncing(false);
     }
   };
 
   const clearCart = () => {
-    setCart(null);
+    updateLocalCartState(null);
   };
 
   // Map Shopify cart data to our UI expectations
