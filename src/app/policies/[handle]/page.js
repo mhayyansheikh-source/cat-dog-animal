@@ -6,17 +6,6 @@ import * as motion from "framer-motion/client";
 
 export const runtime = "edge";
 
-export async function generateStaticParams() {
-  return [
-    { handle: 'refund-policy' },
-    { handle: 'privacy-policy' },
-    { handle: 'terms-of-service' },
-    { handle: 'shipping-policy' },
-    { handle: 'contact-information' },
-    { handle: 'legal-notice' },
-  ];
-}
-
 export async function generateMetadata(props) {
   const params = await props.params;
   const { handle } = params;
