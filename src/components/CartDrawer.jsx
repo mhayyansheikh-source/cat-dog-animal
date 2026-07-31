@@ -6,7 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Trash2, Plus, Minus, ShoppingBag, CreditCard, Shield, PlusCircle } from "lucide-react";
 import Link from "next/link";
-import { checkoutAction } from "@/app/actions";
+// checkoutAction removed — using direct checkout URL redirect instead
 
 export default function CartDrawer() {
   const [mounted, setMounted] = useState(false);
@@ -73,7 +73,8 @@ export default function CartDrawer() {
 
   // Shipping Threshold Calculations
   const shippingThreshold = 35.0;
-  const remainingForFreeShipping = shippingThreshold - subtotal;
+  // [D2-FIX] Always >= 0 so we never display negative dollar amounts
+  const remainingForFreeShipping = Math.max(0, shippingThreshold - subtotal);
   const shippingProgress = Math.min((subtotal / shippingThreshold) * 100, 100);
 
   // Volume Discount Promotion Text
@@ -219,27 +220,30 @@ export default function CartDrawer() {
                         transition={{ duration: 0.25 }}
                         className="d-flex gap-3 p-2 border rounded align-items-center bg-white shadow-sm overflow-hidden"
                       >
-                        {/* Product Image */}
+                        {/* Product Image — [D1-FIX] onError fallback prevents broken-image crash */}
                         <img
-                          src={item.image}
+                          src={item.image || "/peteora.png"}
                           alt={item.title}
                           className="rounded object-fit-cover"
                           style={{ width: "80px", height: "80px", backgroundColor: "#f9f9f9" }}
+                          onError={(e) => { e.currentTarget.src = "/peteora.png"; }}
                         />
 
                         {/* Info & Quantity controls */}
                         <div className="flex-grow-1 text-start">
                           <h6 className="fw-bold mb-0 small text-charcoal-dark">{item.title}</h6>
                           <span className="small text-muted d-block mb-1">
-                            {item.variant.title !== "Default Title" ? item.variant.title : ""}
+                            {/* [D3-FIX] optional chain — variant may be missing on temp items */}
+                            {item.variant?.title && item.variant.title !== "Default Title" ? item.variant.title : ""}
                           </span>
 
                           {/* Price */}
                           <div className="d-flex align-items-center gap-2 mb-2">
-                            <span className="fw-bold text-zesty-orange">${(item.variant.price * item.quantity).toFixed(2)}</span>
-                            {item.variant.compare_at_price && (
+                            {/* [D3-FIX] optional chain on variant fields */}
+                            <span className="fw-bold text-zesty-orange">${((item.variant?.price || item.price || 0) * item.quantity).toFixed(2)}</span>
+                            {(item.variant?.compare_at_price || item.compareAtPrice) && (
                               <span className="text-decoration-line-through text-muted small">
-                                ${(item.variant.compare_at_price * item.quantity).toFixed(2)}
+                                ${( (item.variant?.compare_at_price || item.compareAtPrice || 0) * item.quantity).toFixed(2)}
                               </span>
                             )}
                           </div>

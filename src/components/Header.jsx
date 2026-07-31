@@ -9,7 +9,8 @@ import PredictiveSearch from "@/components/PredictiveSearch";
 import MarqueeTopBar from "@/components/MarqueeTopBar";
 
 export default function Header({ menu, shop, collections, products }) {
-  const { setIsCartOpen, cartCount } = useCart();
+  // [D4-FIX] setIsCartOpen removed — cart icons use <Link href="/cart"> not drawer
+  const { cartCount } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
