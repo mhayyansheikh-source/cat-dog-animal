@@ -6,6 +6,13 @@ import { toast } from "react-hot-toast";
 
 const CartContext = createContext();
 
+function extractId(gidOrId) {
+  if (!gidOrId) return "";
+  const str = gidOrId.toString();
+  const parts = str.split('/');
+  return parts[parts.length - 1];
+}
+
 export function CartProvider({ children }) {
   const [cart, setCart] = useState(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -62,12 +69,13 @@ export function CartProvider({ children }) {
 
   const addToCart = async (product, variant, quantity = 1) => {
     setIsCartOpen(true);
+    const targetVariantId = extractId(variant.id);
 
     // 1. Instant 0ms Optimistic Update
     updateLocalCartState(prev => {
       const existingEdges = prev?.lines?.edges ? [...prev.lines.edges] : [];
       const matchIndex = existingEdges.findIndex(
-        e => e.node?.merchandise?.id?.toString() === variant.id?.toString()
+        e => extractId(e.node?.merchandise?.id) === targetVariantId
       );
 
       if (matchIndex !== -1) {
@@ -208,26 +216,51 @@ export function CartProvider({ children }) {
     updateLocalCartState(null);
   };
 
-  // Map Shopify cart data to our UI expectations
-  const cartItems = cart?.lines?.edges?.map(edge => ({
-    id: edge.node.id, // This is the LINE ID, not the variant ID
-    variant: {
-      id: edge.node.merchandise.id,
-      title: edge.node.merchandise.title,
-      price: parseFloat(edge.node.merchandise.price.amount),
-      compare_at_price: edge.node.merchandise.compareAtPrice ? parseFloat(edge.node.merchandise.compareAtPrice.amount) : null,
-    },
-    title: edge.node.merchandise.product.title,
-    handle: edge.node.merchandise.product.handle,
-    image: edge.node.merchandise.image?.url || edge.node.merchandise.product?.images?.edges?.[0]?.node?.url || "",
-    quantity: edge.node.quantity,
-  })) || [];
+  // Map and deduplicate cart items cleanly
+  const rawCartItems = cart?.lines?.edges?.map(edge => {
+    const node = edge?.node;
+    if (!node) return null;
+    const merch = node.merchandise || {};
+    const prod = merch.product || {};
+    const priceAmt = parseFloat(merch.price?.amount || "0");
+    const compareAmt = merch.compareAtPrice?.amount ? parseFloat(merch.compareAtPrice.amount) : null;
+    
+    return {
+      id: node.id,
+      variantId: extractId(merch.id),
+      variant: {
+        id: merch.id || "",
+        title: merch.title || "",
+        price: priceAmt,
+        compare_at_price: compareAmt,
+      },
+      title: prod.title || merch.title || "Pet Product",
+      handle: prod.handle || "",
+      image: merch.image?.url || prod.images?.edges?.[0]?.node?.url || "",
+      quantity: node.quantity || 1,
+    };
+  }).filter(Boolean) || [];
+
+  // Deduplicate items with the same variant ID
+  const cartItems = [];
+  const variantMap = new Map();
+
+  for (const item of rawCartItems) {
+    const key = item.variantId || item.id;
+    if (variantMap.has(key)) {
+      const existing = variantMap.get(key);
+      existing.quantity += item.quantity;
+    } else {
+      const clone = { ...item };
+      variantMap.set(key, clone);
+      cartItems.push(clone);
+    }
+  }
 
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cartItems.reduce((sum, item) => sum + (item.variant.price * item.quantity), 0);
   
-  // Custom discount logic mimicking the ProductDetailsClient logic
-  // 3+ items = 15% off, 2 items = 10% off
+  // Custom discount logic: 3+ items = 15% off, 2 items = 10% off
   let calculatedTotal = subtotal;
   let discountAmount = 0;
   
