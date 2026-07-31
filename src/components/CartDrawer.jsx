@@ -28,6 +28,8 @@ export default function CartDrawer() {
   // Close drawer on clicking outside
   useEffect(() => {
     const handleOutsideClick = (e) => {
+      // Ignore if target is no longer attached to DOM (e.g. unmounted during re-render/state update)
+      if (e.target && !document.body.contains(e.target)) return;
       if (isCartOpen && drawerRef.current && !drawerRef.current.contains(e.target)) {
         setIsCartOpen(false);
       }
@@ -99,7 +101,8 @@ export default function CartDrawer() {
             animate={{ opacity: 0.5 }}
             exit={{ opacity: 0 }}
             className="position-fixed top-0 start-0 w-100 h-100 bg-dark"
-            style={{ zIndex: 1040 }}
+            style={{ zIndex: 1040, cursor: "pointer" }}
+            onClick={() => setIsCartOpen(false)}
           />
 
           {/* Drawer container */}
