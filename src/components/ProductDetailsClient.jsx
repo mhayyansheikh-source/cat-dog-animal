@@ -276,10 +276,9 @@ export default function ProductDetailsClient({ product }) {
     ];
   } else if (product.handle === "quick-release-dog-harness-vest") {
     actionVideos = [
-      { url: "https://cdn.shopify.com/videos/c/o/v/c838d67100f5445a989a57cec154a6cb.mp4" },
-      { url: "https://cdn.shopify.com/videos/c/o/v/cac9d1c7e82b457ab030dd4269812955.mp4" },
-      { url: "https://cdn.shopify.com/videos/c/o/v/078683ecd17a4aa58e4c5b2da181ccc8.mp4" },
-      { url: "https://cdn.shopify.com/videos/c/o/v/f809b7f1d96146e894b29d22d9a587d6.mp4" }
+      { url: "https://cdn.shopify.com/videos/c/o/v/3295a1410f344f728cdb3ea079c54ed0.mp4" },
+      { url: "https://cdn.shopify.com/videos/c/o/v/22d13ca5bc4e430a9cd299bbe725e3ca.mp4" },
+      { url: "https://cdn.shopify.com/videos/c/o/v/f811cf2da0d84c7bb36eaf80d9032b1b.mp4" }
     ];
   } else if (product.handle === "freeze-dried-minnows-dog-cat-treats") {
     actionVideos = [
