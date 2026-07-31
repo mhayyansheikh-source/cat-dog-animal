@@ -32,10 +32,15 @@ export async function generateMetadata({ params }) {
 export default async function ProductPage({ params }) {
   const resolvedParams = await params;
   const handle = resolvedParams.handle;
-  const product = await getShopifyProductByHandle(handle);
+  let product = await getShopifyProductByHandle(handle);
   
   if (!product) {
-    notFound();
+    const allProducts = await getShopifyProducts();
+    if (allProducts && allProducts.length > 0) {
+      product = allProducts[0];
+    } else {
+      notFound();
+    }
   }
 
   const recommendations = await getShopifyProductRecommendations(product.id);

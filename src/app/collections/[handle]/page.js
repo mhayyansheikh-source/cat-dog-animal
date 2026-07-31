@@ -47,13 +47,26 @@ export default async function CollectionPage({ params, searchParams }) {
   try {
     collection = await getShopifyCollectionByHandle(handle, filters);
     if (!collection) {
-      notFound();
+      const allProducts = await getShopifyProducts();
+      collection = {
+        title: handle.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" "),
+        descriptionHtml: `<p>Explore our selection of ${handle.replace(/-/g, " ")} products.</p>`,
+        products: allProducts,
+        filters: []
+      };
     }
     products = collection.products || [];
     collectionFilters = collection.filters || [];
   } catch (err) {
     console.error("Error fetching collection:", err);
-    notFound();
+    const allProducts = await getShopifyProducts();
+    collection = {
+      title: handle.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" "),
+      descriptionHtml: `<p>Explore our selection of ${handle.replace(/-/g, " ")} products.</p>`,
+      products: allProducts,
+      filters: []
+    };
+    products = allProducts;
   }
 
   // Fallback defaults if no description

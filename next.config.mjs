@@ -11,6 +11,15 @@ const nextConfig = {
     ],
   },
 
+  async rewrites() {
+    return [
+      {
+        source: '/pages/:path*',
+        destination: '/pages/:path*',
+      },
+    ];
+  },
+
   async redirects() {
     return [
       /**
