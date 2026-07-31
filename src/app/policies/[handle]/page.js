@@ -1,9 +1,8 @@
-import { notFound } from "next/navigation";
 import { getShopPolicies, getShopInfo } from "@/utils/shopify";
-import { ShieldCheck, ArrowRight, Undo2, Lock, FileText, Truck, Mail, Scale } from "lucide-react";
 import Link from "next/link";
-import * as motion from "framer-motion/client";
 import { policyTitleMap, fallbackPolicies } from "@/data/policiesData";
+
+export const runtime = "edge";
 
 export async function generateMetadata(props) {
   const params = await props.params;
@@ -18,7 +17,6 @@ export default async function PolicyPage(props) {
   const params = await props.params;
   const { handle } = params;
   const policies = await getShopPolicies();
-  const shopInfo = await getShopInfo();
 
   let policyData = null;
 
@@ -46,17 +44,6 @@ export default async function PolicyPage(props) {
     };
   }
 
-  const iconMap = {
-    "refund-policy": Undo2,
-    "privacy-policy": Lock,
-    "terms-of-service": Scale,
-    "shipping-policy": Truck,
-    "contact-information": Mail,
-    "legal-notice": FileText
-  };
-
-  const IconComponent = iconMap[handle] || ShieldCheck;
-
   return (
     <div className="bg-light py-5 min-vh-100 font-body">
       <div className="container" style={{ maxWidth: "900px" }}>
@@ -76,12 +63,7 @@ export default async function PolicyPage(props) {
         </nav>
 
         {/* Main Card */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="card border-0 shadow-sm rounded-4 overflow-hidden"
-        >
+        <div className="card border-0 shadow-sm rounded-4 overflow-hidden">
           {/* Header */}
           <div 
             className="card-header border-bottom p-4 p-md-5 text-white position-relative"
@@ -90,12 +72,6 @@ export default async function PolicyPage(props) {
             }}
           >
             <div className="d-flex align-items-center gap-3 mb-3">
-              <div 
-                className="rounded-circle d-flex align-items-center justify-content-center bg-white bg-opacity-20 p-2"
-                style={{ width: "48px", height: "48px", backdropFilter: "blur(4px)" }}
-              >
-                <IconComponent size={24} className="text-white" />
-              </div>
               <span className="badge rounded-pill bg-white bg-opacity-20 text-white px-3 py-2 small fw-semibold">
                 Official Peteora Policy
               </span>
@@ -123,20 +99,20 @@ export default async function PolicyPage(props) {
                 href="mailto:shoppinghorizonstorellc@gmail.com" 
                 className="btn btn-zesty-primary rounded-pill px-4 py-2 small fw-bold d-inline-flex align-items-center gap-2 hover-scale text-decoration-none"
               >
-                <Mail size={16} /> Contact Support
+                ✉ Contact Support
               </a>
             </div>
 
             {/* Footer Trust Disclaimer */}
             <div className="mt-4 pt-3 border-top d-flex flex-wrap align-items-center justify-content-between text-muted small">
               <div className="d-flex align-items-center gap-2">
-                <ShieldCheck size={18} className="text-success" />
+                <span className="text-success">✓</span>
                 <span>256-Bit SSL Encrypted & Protected</span>
               </div>
               <div>© {new Date().getFullYear()} Peteora (Shopping Horizon Store LLC).</div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

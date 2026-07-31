@@ -1,8 +1,7 @@
-import { notFound } from "next/navigation";
 import { getShopInfo } from "@/utils/shopify";
 import Link from "next/link";
-import * as motion from "framer-motion/client";
-import { ShieldCheck, ArrowLeft, Mail } from "lucide-react";
+
+export const runtime = "edge";
 
 export async function generateMetadata(props) {
   const params = await props.params;
@@ -21,7 +20,6 @@ export async function generateMetadata(props) {
 export default async function PagesHandler(props) {
   const params = await props.params;
   const { handle } = params;
-  const shopInfo = await getShopInfo();
 
   const formattedTitle = handle
     .split("-")
@@ -36,16 +34,11 @@ export default async function PagesHandler(props) {
             href="/"
             className="text-decoration-none text-muted small d-inline-flex align-items-center gap-1 hover-scale"
           >
-            <ArrowLeft size={16} /> Back to Shop
+            ← Back to Shop
           </Link>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="card border-0 shadow-sm rounded-4 overflow-hidden"
-        >
+        <div className="card border-0 shadow-sm rounded-4 overflow-hidden">
           <div className="card-header bg-white border-bottom p-4 p-md-5">
             <div className="d-flex align-items-center gap-2 mb-2">
               <span className="badge bg-soft-sand text-dark rounded-pill px-3 py-2 fw-semibold small">
@@ -82,13 +75,13 @@ export default async function PagesHandler(props) {
 
             <div className="mt-5 pt-4 border-top d-flex flex-wrap align-items-center justify-content-between text-muted small">
               <div className="d-flex align-items-center gap-2">
-                <ShieldCheck size={18} className="text-success" />
+                <span className="text-success">✓</span>
                 <span>Verified SSL Secure Checkout & Data Protection</span>
               </div>
               <div>© {new Date().getFullYear()} Peteora. All rights reserved.</div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
