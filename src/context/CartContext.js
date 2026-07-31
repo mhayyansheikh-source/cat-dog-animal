@@ -106,6 +106,15 @@ function writeStorage(items, checkoutUrl = null) {
   }
 }
 
+
+// ─── [S1-FIX] Pure function — no need to live inside CartProvider or be wrapped in useCallback.
+// Being module-level makes it completely immune to stale closure bugs.
+function processServerCart(cartData) {
+  if (!cartData?.lines?.edges) return [];
+  // Each edge = one unique line; do NOT accumulate quantities
+  return cartData.lines.edges.map(normalizeCartLine).filter(Boolean);
+}
+
 // ─── Provider ─────────────────────────────────────────────────────────────────
 
 export function CartProvider({ children }) {
@@ -126,6 +135,7 @@ export function CartProvider({ children }) {
   // Track the last known good cart ID to detect expiry
   const lastCartIdRef = useRef(null);
 
+
   // ── Commit items to state + localStorage atomically ────────────────────────
   const commit = useCallback((items, url = null) => {
     setCartItems(items);
@@ -133,12 +143,7 @@ export function CartProvider({ children }) {
     if (url !== null) setCheckoutUrl(url);
   }, []);
 
-  // ── Convert Shopify GraphQL cart → flat array ──────────────────────────────
-  const processServerCart = useCallback((cartData) => {
-    if (!cartData?.lines?.edges) return [];
-    // Each Shopify edge = one unique line; do NOT accumulate quantities
-    return cartData.lines.edges.map(normalizeCartLine).filter(Boolean);
-  }, []);
+  // ── [S1-FIX] processServerCart is now a module-level pure function — removed from here ──
 
   // ── [C5-FIX] Background sync with Shopify on mount ────────────────────────
   // Merges server state with local optimistic items intelligently
@@ -333,7 +338,7 @@ export function CartProvider({ children }) {
         setIsSyncing(false);
       }
     },
-    [commit, processServerCart]
+    [commit] // processServerCart is module-level, not a dep
   );
 
   // ── 2. UPDATE QUANTITY ────────────────────────────────────────────────────
@@ -410,27 +415,25 @@ export function CartProvider({ children }) {
         }
       }, 400);
     },
-    [commit, processServerCart]
+    [commit] // processServerCart is module-level, not a dep
   );
 
   // ── 3. REMOVE FROM CART ───────────────────────────────────────────────────
   const removeFromCart = useCallback(
     async (targetId) => {
-      // [C3-FIX] Read directly from current React state (via setCartItems functional updater)
-      // to avoid stale-closure or localStorage timing issues
-      let removedItem = null;
-      setCartItems((prev) => {
-        removedItem = prev.find((item) => isMatch(item, targetId)) || null;
-        const next = prev.filter((item) => !isMatch(item, targetId));
-        writeStorage(next);
-        return next;
-      });
+      // [S1b-FIX] Read removedItem synchronously from localStorage BEFORE commit.
+      // Previous pattern (setCartItems functional updater + await Promise.resolve())
+      // was a race: React's scheduler does not guarantee the updater runs within
+      // a single microtask, so removedItem could still be null when the DELETE ran.
+      const snapshot = readStorage().items;
+      const removedItem = snapshot.find((item) => isMatch(item, targetId)) ?? null;
+      const nextItems = snapshot.filter((item) => !isMatch(item, targetId));
 
-      // Show undo toast — capture removedItem from closure
-      // Small timeout ensures setCartItems functional updater has resolved removedItem
-      setTimeout(() => {
-        if (!removedItem) return;
-        const capturedItem = removedItem;
+      // Atomic commit: updates React state + localStorage in one call
+      commit(nextItems);
+
+      // Show undo toast with the item we just captured above
+      if (removedItem) {
         toast(
           (t) => (
             <div className="d-flex align-items-center justify-content-between gap-3">
@@ -438,11 +441,9 @@ export function CartProvider({ children }) {
               <button
                 onClick={() => {
                   toast.dismiss(t.id);
-                  setCartItems((prev) => {
-                    const restored = [...prev, capturedItem];
-                    writeStorage(restored);
-                    return restored;
-                  });
+                  // Re-insert the captured item into whatever is current at undo time
+                  const atUndo = readStorage().items;
+                  commit([...atUndo, removedItem]);
                 }}
                 className="btn btn-sm btn-dark rounded-pill py-1 px-3 fw-bold text-warning"
                 style={{ fontSize: "12px" }}
@@ -453,18 +454,13 @@ export function CartProvider({ children }) {
           ),
           { duration: 4000 }
         );
-      }, 0);
+      }
 
-      // Background Shopify DELETE — read from localStorage to get clean item
-      const current = readStorage().items; // after writeStorage above, removed item is already gone
-      // We need removedItem's lineId — captured above synchronously
-      // Wait one microtask for the setCartItems callback to have set removedItem
-      await Promise.resolve();
-      if (!removedItem) return;
-
-      const lineId = removedItem.id?.startsWith("gid://shopify/CartLine")
+      // Background Shopify DELETE
+      // Prefer the Shopify CartLine GID; fall back to variant GID for temp items
+      const lineId = removedItem?.id?.startsWith("gid://shopify/CartLine")
         ? removedItem.id
-        : removedItem.variantId
+        : removedItem?.variantId
         ? `gid://shopify/ProductVariant/${removedItem.variantId}`
         : null;
 
@@ -479,8 +475,7 @@ export function CartProvider({ children }) {
         });
         const data = await res.json();
         if (data?.cart) {
-          const fresh = processServerCart(data.cart);
-          commit(fresh, data.cart.checkoutUrl || null);
+          commit(processServerCart(data.cart), data.cart.checkoutUrl || null);
         }
       } catch (err) {
         console.error("Remove from cart error:", err);
@@ -488,18 +483,18 @@ export function CartProvider({ children }) {
         setIsSyncing(false);
       }
     },
-    [commit, processServerCart]
+    [commit]
   );
 
   // ── 4. CLEAR ──────────────────────────────────────────────────────────────
+  // [S1c-FIX] Use commit() for consistency — updates state + storage atomically
   const clearCart = useCallback(() => {
-    setCartItems([]);
+    commit([]);
     try {
-      localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(CHECKOUT_KEY);
       localStorage.removeItem(LEGACY_KEY);
     } catch {}
-  }, []);
+  }, [commit]);
 
   // ── Derived totals ────────────────────────────────────────────────────────
   const cartCount = cartItems.reduce((s, i) => s + (i.quantity || 0), 0);
