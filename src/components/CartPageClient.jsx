@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,7 +17,7 @@ import {
   PlusCircle, 
   CheckCircle,
   HelpCircle,
-  Clock
+  Check
 } from "lucide-react";
 import ShippingTimer from "@/components/ShippingTimer";
 import TrustBadges from "@/components/TrustBadges";
@@ -38,8 +38,9 @@ export default function CartPageClient() {
 
   const [upsellProducts, setUpsellProducts] = useState([]);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [addedItemIds, setAddedItemIds] = useState(new Set());
 
-  // Fetch cross-sell upsell recommendations
+  // Fetch cross-sell recommendations
   useEffect(() => {
     fetch("/api/search?q=comb")
       .then((res) => res.json())
@@ -51,21 +52,30 @@ export default function CartPageClient() {
       .catch((err) => console.error("Failed to fetch upsells", err));
   }, []);
 
-  // Shipping & Bulk Discount Calculations
-  const shippingThreshold = 35.0;
-  const remainingForFreeShipping = shippingThreshold - subtotal;
-  const shippingProgress = Math.min((subtotal / shippingThreshold) * 100, 100);
+  // Memoized Financial & Threshold Calculation Engine
+  const summary = useMemo(() => {
+    const shippingThreshold = 35.0;
+    const remainingForFreeShipping = Math.max(0, shippingThreshold - subtotal);
+    const shippingProgress = Math.min((subtotal / shippingThreshold) * 100, 100);
 
-  let discountPromoText = "";
-  if (cartCount === 0) {
-    discountPromoText = "Buy 2 items save 10%, Buy 3+ items save 15%!";
-  } else if (cartCount === 1) {
-    discountPromoText = "⚡ Add 1 more item to unlock 10% OFF your entire order!";
-  } else if (cartCount === 2) {
-    discountPromoText = "🔥 Great job! Add 1 more item to unlock 15% OFF!";
-  } else {
-    discountPromoText = "🎉 Maximum 15% bulk discount applied to your order!";
-  }
+    let discountPromoText = "";
+    if (cartCount === 0) {
+      discountPromoText = "Buy 2 items save 10%, Buy 3+ items save 15%!";
+    } else if (cartCount === 1) {
+      discountPromoText = "⚡ Add 1 more item to unlock 10% OFF your entire order!";
+    } else if (cartCount === 2) {
+      discountPromoText = "🔥 Great job! Add 1 more item to unlock 15% OFF!";
+    } else {
+      discountPromoText = "🎉 Maximum 15% bulk discount applied to your order!";
+    }
+
+    return {
+      shippingThreshold,
+      remainingForFreeShipping,
+      shippingProgress,
+      discountPromoText
+    };
+  }, [subtotal, cartCount]);
 
   // Multi-tier Checkout Redirection Strategy
   const handleCheckout = () => {
@@ -95,8 +105,27 @@ export default function CartPageClient() {
     setIsRedirecting(false);
   };
 
+  const handleAddCrossSell = (prod) => {
+    if (prod.variants?.[0]) {
+      addToCart(prod, prod.variants[0], 1, false);
+      setAddedItemIds((prev) => new Set(prev).add(prod.id));
+      setTimeout(() => {
+        setAddedItemIds((prev) => {
+          const next = new Set(prev);
+          next.delete(prod.id);
+          return next;
+        });
+      }, 2000);
+    }
+  };
+
   return (
-    <div className="bg-light min-vh-100 py-4 py-md-5 font-body">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="bg-light min-vh-100 py-4 py-md-5 font-body"
+    >
       <div className="container" style={{ maxWidth: "1140px" }}>
         
         {/* Header Breadcrumbs & Back Link */}
@@ -110,28 +139,33 @@ export default function CartPageClient() {
 
           <div className="d-flex align-items-center gap-2">
             <span className="badge bg-soft-sand text-dark rounded-pill px-3 py-2 fw-semibold small">
-              🛒 Peteora Shopping Cart ({cartCount} {cartCount === 1 ? "Item" : "Items"})
+              🛒 Peteora Shopping Cart ({cartCount} {cartCount === 1 ? "Unit" : "Units"})
             </span>
           </div>
         </div>
 
         {/* Free Shipping & Bulk Discount Banners */}
-        <div className="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.3 }}
+          className="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white"
+        >
           <div className="row g-3 align-items-center">
             {/* Free Shipping Progress */}
             <div className="col-12 col-md-6 border-end-md">
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <span className="fw-bold small text-charcoal-dark d-inline-flex align-items-center gap-2">
                   <Truck size={18} className="text-zesty-orange" />
-                  {subtotal >= shippingThreshold ? (
+                  {subtotal >= summary.shippingThreshold ? (
                     <span className="text-success font-heading">🎉 FREE Tracked US Shipping Unlocked!</span>
                   ) : (
                     <span>Free US Shipping Progress</span>
                   )}
                 </span>
-                {subtotal < shippingThreshold && (
+                {subtotal < summary.shippingThreshold && (
                   <span className="small text-muted font-heading fw-bold">
-                    ${remainingForFreeShipping.toFixed(2)} left
+                    ${summary.remainingForFreeShipping.toFixed(2)} left
                   </span>
                 )}
               </div>
@@ -140,8 +174,8 @@ export default function CartPageClient() {
                   className="progress-bar bg-success"
                   role="progressbar"
                   initial={{ width: 0 }}
-                  animate={{ width: `${shippingProgress}%` }}
-                  transition={{ duration: 0.5 }}
+                  animate={{ width: `${summary.shippingProgress}%` }}
+                  transition={{ type: "spring", stiffness: 90, damping: 15 }}
                 />
               </div>
             </div>
@@ -151,7 +185,7 @@ export default function CartPageClient() {
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <span className="fw-bold small text-charcoal-dark d-inline-flex align-items-center gap-2 font-heading">
                   <Sparkles size={18} className="text-zesty-orange" />
-                  {discountPromoText}
+                  {summary.discountPromoText}
                 </span>
               </div>
               <div className="progress overflow-hidden bg-light" style={{ height: "10px", borderRadius: "10px" }}>
@@ -160,17 +194,21 @@ export default function CartPageClient() {
                   role="progressbar"
                   initial={{ width: 0 }}
                   animate={{ width: cartCount >= 3 ? "100%" : cartCount === 2 ? "66%" : cartCount === 1 ? "33%" : "0%" }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ type: "spring", stiffness: 90, damping: 15 }}
                 />
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Main Cart Content Grid */}
         {cartItems.length === 0 ? (
           /* Empty Cart State */
-          <div className="card border-0 shadow-sm rounded-4 p-5 text-center bg-white my-5">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="card border-0 shadow-sm rounded-4 p-5 text-center bg-white my-5"
+          >
             <div className="mb-4 text-muted d-inline-flex justify-content-center">
               <div className="p-4 rounded-circle bg-light">
                 <ShoppingBag size={64} strokeWidth={1} className="text-zesty-orange" />
@@ -188,7 +226,7 @@ export default function CartPageClient() {
                 Browse All Pet Products
               </Link>
             </div>
-          </div>
+          </motion.div>
         ) : (
           /* Active Cart 2-Column Layout */
           <div className="row g-4 align-items-start">
@@ -197,7 +235,7 @@ export default function CartPageClient() {
               <div className="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
                 <div className="card-header bg-white border-bottom p-3 p-md-4 d-flex align-items-center justify-content-between">
                   <h5 className="font-heading fw-bold mb-0 text-charcoal-dark">
-                    Your Selected Items ({cartItems.length})
+                    Your Selected Items ({cartItems.length} {cartItems.length === 1 ? "product" : "products"} • {cartCount} {cartCount === 1 ? "unit" : "units"} total)
                   </h5>
                   <span className="small text-muted">Instant 0ms Updates</span>
                 </div>
@@ -236,9 +274,17 @@ export default function CartPageClient() {
                                 </span>
                               )}
                               <div className="d-flex align-items-center gap-2">
-                                <span className="fw-bold text-zesty-orange fs-5">
-                                  ${(item.variant.price * item.quantity).toFixed(2)}
-                                </span>
+                                <AnimatePresence mode="wait">
+                                  <motion.span 
+                                    key={item.quantity * item.variant.price}
+                                    initial={{ opacity: 0, y: -4 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 4 }}
+                                    className="fw-bold text-zesty-orange fs-5"
+                                  >
+                                    ${(item.variant.price * item.quantity).toFixed(2)}
+                                  </motion.span>
+                                </AnimatePresence>
                                 {item.variant.compare_at_price && (
                                   <span className="text-decoration-line-through text-muted small">
                                     ${(item.variant.compare_at_price * item.quantity).toFixed(2)}
@@ -254,7 +300,9 @@ export default function CartPageClient() {
                               className="d-flex align-items-center border border-2 rounded-pill overflow-hidden bg-light"
                               style={{ height: "42px" }}
                             >
-                              <button
+                              <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9, rotate: -5 }}
                                 type="button"
                                 onClick={(e) => {
                                   e.preventDefault();
@@ -264,9 +312,11 @@ export default function CartPageClient() {
                                 aria-label="Decrease quantity"
                               >
                                 <Minus size={16} />
-                              </button>
+                              </motion.button>
                               <span className="px-3 fw-bold fs-6 text-dark">{item.quantity}</span>
-                              <button
+                              <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9, rotate: 5 }}
                                 type="button"
                                 onClick={(e) => {
                                   e.preventDefault();
@@ -276,21 +326,23 @@ export default function CartPageClient() {
                                 aria-label="Increase quantity"
                               >
                                 <Plus size={16} />
-                              </button>
+                              </motion.button>
                             </div>
 
-                            <button
+                            <motion.button
+                              whileHover={{ scale: 1.15, backgroundColor: "#fee2e2" }}
+                              whileTap={{ scale: 0.85 }}
                               type="button"
                               onClick={(e) => {
                                 e.preventDefault();
                                 removeFromCart(item.id);
                               }}
-                              className="btn btn-sm text-danger border-0 p-2 hover-scale d-flex align-items-center justify-content-center rounded-circle bg-light"
+                              className="btn btn-sm text-danger border-0 p-2 d-flex align-items-center justify-content-center rounded-circle bg-light"
                               style={{ height: "42px", width: "42px" }}
                               aria-label="Remove item"
                             >
                               <Trash2 size={18} />
-                            </button>
+                            </motion.button>
                           </div>
                         </motion.div>
                       ))}
@@ -309,35 +361,44 @@ export default function CartPageClient() {
                     <span className="badge bg-danger rounded-pill px-3 py-1">Recommended</span>
                   </div>
                   <div className="row g-3">
-                    {upsellProducts.map((prod) => (
-                      <div key={prod.id} className="col-12 col-sm-6">
-                        <div className="p-3 border rounded-3 d-flex align-items-center justify-content-between gap-3 h-100 bg-light">
-                          <div className="d-flex align-items-center gap-3">
-                            <img
-                              src={prod.images?.[0] || ""}
-                              alt={prod.title}
-                              className="rounded object-fit-cover"
-                              style={{ width: "60px", height: "60px", backgroundColor: "#fff" }}
-                            />
-                            <div>
-                              <h6 className="fw-bold mb-0 small text-dark line-clamp-1">{prod.title}</h6>
-                              <span className="fw-bold text-zesty-orange small">${prod.price}</span>
+                    {upsellProducts.map((prod) => {
+                      const isAdded = addedItemIds.has(prod.id);
+                      return (
+                        <div key={prod.id} className="col-12 col-sm-6">
+                          <div className="p-3 border rounded-3 d-flex align-items-center justify-content-between gap-3 h-100 bg-light">
+                            <div className="d-flex align-items-center gap-3">
+                              <img
+                                src={prod.images?.[0] || ""}
+                                alt={prod.title}
+                                className="rounded object-fit-cover"
+                                style={{ width: "60px", height: "60px", backgroundColor: "#fff" }}
+                              />
+                              <div>
+                                <h6 className="fw-bold mb-0 small text-dark line-clamp-1">{prod.title}</h6>
+                                <span className="fw-bold text-zesty-orange small">${prod.price}</span>
+                              </div>
                             </div>
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              type="button"
+                              onClick={() => handleAddCrossSell(prod)}
+                              className={`btn btn-sm ${isAdded ? "btn-success" : "btn-zesty-primary"} rounded-pill px-3 py-2 text-nowrap fw-bold d-inline-flex align-items-center gap-1 hover-scale`}
+                            >
+                              {isAdded ? (
+                                <>
+                                  <Check size={14} /> Added!
+                                </>
+                              ) : (
+                                <>
+                                  <PlusCircle size={14} /> Add
+                                </>
+                              )}
+                            </motion.button>
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (prod.variants?.[0]) {
-                                addToCart(prod, prod.variants[0], 1);
-                              }
-                            }}
-                            className="btn btn-sm btn-zesty-primary rounded-pill px-3 py-2 text-nowrap fw-bold d-inline-flex align-items-center gap-1 hover-scale"
-                          >
-                            <PlusCircle size={14} /> Add
-                          </button>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -352,21 +413,39 @@ export default function CartPageClient() {
 
                 <div className="d-flex flex-column gap-2 mb-3">
                   <div className="d-flex justify-content-between align-items-center">
-                    <span className="text-muted">Subtotal ({cartCount} items)</span>
-                    <span className="fw-bold text-dark">${subtotal.toFixed(2)}</span>
+                    <span className="text-muted">Subtotal ({cartCount} {cartCount === 1 ? "unit" : "units"})</span>
+                    <AnimatePresence mode="wait">
+                      <motion.span 
+                        key={subtotal}
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 4 }}
+                        className="fw-bold text-dark"
+                      >
+                        ${subtotal.toFixed(2)}
+                      </motion.span>
+                    </AnimatePresence>
                   </div>
 
                   {discountAmount > 0 && (
                     <div className="d-flex justify-content-between align-items-center text-success fw-bold">
                       <span>Volume Discount Savings</span>
-                      <span>-${discountAmount.toFixed(2)}</span>
+                      <AnimatePresence mode="wait">
+                        <motion.span
+                          key={discountAmount}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                        >
+                          -${discountAmount.toFixed(2)}
+                        </motion.span>
+                      </AnimatePresence>
                     </div>
                   )}
 
                   <div className="d-flex justify-content-between align-items-center">
                     <span className="text-muted">US Shipping</span>
-                    <span className={subtotal >= shippingThreshold ? "text-success fw-bold" : "text-dark"}>
-                      {subtotal >= shippingThreshold ? "FREE Tracked" : "$4.95"}
+                    <span className={subtotal >= summary.shippingThreshold ? "text-success fw-bold" : "text-dark"}>
+                      {subtotal >= summary.shippingThreshold ? "FREE Tracked" : "$4.95"}
                     </span>
                   </div>
 
@@ -381,7 +460,17 @@ export default function CartPageClient() {
                 {/* Total */}
                 <div className="d-flex justify-content-between align-items-center mb-4">
                   <span className="fs-5 fw-bold font-heading text-dark">Total</span>
-                  <span className="fs-3 fw-bold text-zesty-orange">${total.toFixed(2)}</span>
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={total}
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 4 }}
+                      className="fs-3 fw-bold text-zesty-orange"
+                    >
+                      ${total.toFixed(2)}
+                    </motion.span>
+                  </AnimatePresence>
                 </div>
 
                 {/* Shipping Dispatch Timer */}
@@ -390,7 +479,9 @@ export default function CartPageClient() {
                 </div>
 
                 {/* Checkout CTA Button */}
-                <button
+                <motion.button
+                  whileHover={{ scale: isRedirecting ? 1 : 1.02, y: isRedirecting ? 0 : -2 }}
+                  whileTap={{ scale: isRedirecting ? 1 : 0.97 }}
                   onClick={handleCheckout}
                   disabled={isRedirecting || cartItems.length === 0}
                   className={`w-100 rounded-pill-cta btn-zesty-primary fs-5 d-flex align-items-center justify-content-center gap-2 py-3 mb-3 shadow ${
@@ -408,7 +499,7 @@ export default function CartPageClient() {
                       <span className="fw-bold">PROCEED TO CHECKOUT</span>
                     </>
                   )}
-                </button>
+                </motion.button>
 
                 {/* Trust Badges */}
                 <div className="pt-2">
@@ -419,6 +510,6 @@ export default function CartPageClient() {
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
