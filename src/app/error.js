@@ -1,5 +1,7 @@
 "use client";
 
+export const runtime = "edge";
+
 import { useEffect } from "react";
 import Link from "next/link";
 import { RefreshCcw, Wrench } from "lucide-react";
