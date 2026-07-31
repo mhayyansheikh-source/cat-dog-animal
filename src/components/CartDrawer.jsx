@@ -88,14 +88,35 @@ export default function CartDrawer() {
     discountPromoText = "🎉 Max 15% bulk discount applied to your order!";
   }
 
-  // Handle Shopify checkout redirect
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
+  // Handle Shopify checkout redirect with multi-tier fallback strategy
   const handleCheckout = () => {
+    setIsRedirecting(true);
+
     if (checkoutUrl) {
-      // Direct redirect to Shopify's secure checkout
-      window.location.href = checkoutUrl; 
-    } else {
-      alert("Checkout session not found. Please try again.");
+      window.location.href = checkoutUrl;
+      return;
     }
+
+    // Fallback: Construct direct Shopify cart URL from cart items
+    if (cartItems.length > 0) {
+      const linePermutations = cartItems
+        .map(item => {
+          const rawId = item.variant?.id ? item.variant.id.toString().split('/').pop() : "";
+          return rawId ? `${rawId}:${item.quantity}` : null;
+        })
+        .filter(Boolean);
+
+      if (linePermutations.length > 0) {
+        const fallbackCheckoutUrl = `https://peteora.com/cart/${linePermutations.join(',')}`;
+        window.location.href = fallbackCheckoutUrl;
+        return;
+      }
+    }
+
+    alert("Checkout session not found. Please refresh or try again.");
+    setIsRedirecting(false);
   };
 
   if (!mounted) return null;
@@ -138,69 +159,42 @@ export default function CartDrawer() {
               </div>
               <button
                 onClick={() => setIsCartOpen(false)}
-                className="btn p-1 rounded-circle border-0 d-flex align-items-center justify-content-center hover-scale"
-                style={{ backgroundColor: "var(--soft-sand)" }}
-                aria-label="Close cart drawer"
-              >
-                <X size={20} />
-              </button>
+                className="btn-close"
+                aria-label="Close cart"
+              />
             </div>
 
-            {/* Free Shipping & Discount Meters */}
-            {cartCount > 0 && (
-              <div className="p-3 border-bottom bg-soft-sand">
-                {/* Shipping Meter */}
-                <div className="mb-2">
-                  <p className="small mb-1 font-body text-start">
-                    {remainingForFreeShipping > 0 ? (
-                      <>
-                        Add <strong className="text-zesty-orange">${remainingForFreeShipping.toFixed(2)}</strong> more for <strong>FREE Tracked US Shipping</strong>!
-                      </>
-                    ) : (
-                      <strong className="text-forest-green">🎉 You've unlocked FREE Tracked US Shipping!</strong>
-                    )}
-                  </p>
-                  <div className="progress overflow-hidden bg-white" style={{ height: "8px", borderRadius: "10px" }}>
-                    <motion.div
-                      className={`progress-bar ${remainingForFreeShipping <= 0 ? "bg-success" : "bg-warning"}`}
-                      role="progressbar"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${shippingProgress}%` }}
-                      transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                      aria-valuenow={shippingProgress}
-                      aria-valuemin="0"
-                      aria-valuemax="100"
-                      aria-label="Shipping status gauge"
-                    />
-                  </div>
-                </div>
-
-                {/* Bulk Discount Meter */}
-                <div className="mt-3 text-start">
-                  <p className="small mb-1 font-body text-dark fw-semibold">{discountPromoText}</p>
-                  <div className="progress overflow-hidden bg-white" style={{ height: "8px", borderRadius: "10px" }}>
-                    <motion.div
-                      className="progress-bar bg-success"
-                      role="progressbar"
-                      initial={{ width: 0 }}
-                      animate={{ width: cartCount >= 3 ? "100%" : cartCount === 2 ? "66%" : cartCount === 1 ? "33%" : "0%" }}
-                      transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                      aria-valuenow={cartCount}
-                      aria-valuemin="0"
-                      aria-valuemax="3"
-                      aria-label="Volume discount gauge"
-                    />
-                  </div>
-                </div>
+            {/* Shipping & Volume Discount Meters */}
+            <div className="p-3 bg-light border-bottom">
+              <div className="d-flex justify-content-between align-items-center mb-1 small font-body">
+                {subtotal >= shippingThreshold ? (
+                  <span className="fw-bold text-success">🎉 You've unlocked FREE Tracked US Shipping!</span>
+                ) : (
+                  <span>Add <strong className="text-zesty-orange">${remainingForFreeShipping.toFixed(2)}</strong> more for <strong>FREE Tracked US Shipping</strong>!</span>
+                )}
               </div>
-            )}
+              
+              <div className="progress mb-2" style={{ height: "8px", borderRadius: "10px", backgroundColor: "#e9ecef" }}>
+                <div
+                  className="progress-bar bg-success"
+                  role="progressbar"
+                  style={{ width: `${shippingProgress}%`, transition: "width 0.4s ease" }}
+                />
+              </div>
 
-            {/* Cart Body */}
+              {discountPromoText && (
+                <div className="small font-body text-charcoal-dark fw-bold border-top pt-2 mt-2">
+                  {discountPromoText}
+                </div>
+              )}
+            </div>
+
+            {/* Cart Items List */}
             <div className="flex-grow-1 overflow-auto p-3">
               {cartItems.length === 0 ? (
-                <div className="text-center py-5 d-flex flex-column align-items-center justify-content-center h-100">
-                  <div className="mb-4">
-                    <img src="/peteora.png" alt="Peteora Logo" style={{ height: "60px", width: "auto", opacity: 0.8 }} />
+                <div className="text-center py-5">
+                  <div className="mb-3 text-muted">
+                    <ShoppingBag size={48} strokeWidth={1} />
                   </div>
                   <h5 className="font-heading fw-bold">Your cart is empty</h5>
                   <p className="text-muted small max-w-sm mb-4">
@@ -215,75 +209,81 @@ export default function CartDrawer() {
                 </div>
               ) : (
                 <div className="d-flex flex-column gap-3">
-                  {cartItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="d-flex gap-3 p-2 border rounded align-items-center bg-white shadow-sm"
-                    >
-                      {/* Product Image */}
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="rounded object-fit-cover"
-                        style={{ width: "80px", height: "80px", backgroundColor: "#f9f9f9" }}
-                      />
+                  <AnimatePresence>
+                    {cartItems.map((item) => (
+                      <motion.div
+                        key={item.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, x: 50, height: 0, marginBottom: 0, padding: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="d-flex gap-3 p-2 border rounded align-items-center bg-white shadow-sm overflow-hidden"
+                      >
+                        {/* Product Image */}
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="rounded object-fit-cover"
+                          style={{ width: "80px", height: "80px", backgroundColor: "#f9f9f9" }}
+                        />
 
-                      {/* Info & Quantity controls */}
-                      <div className="flex-grow-1 text-start">
-                        <h6 className="fw-bold mb-0 small text-charcoal-dark">{item.title}</h6>
-                        <span className="small text-muted d-block mb-1">
-                          {item.variant.title !== "Default Title" ? item.variant.title : ""}
-                        </span>
+                        {/* Info & Quantity controls */}
+                        <div className="flex-grow-1 text-start">
+                          <h6 className="fw-bold mb-0 small text-charcoal-dark">{item.title}</h6>
+                          <span className="small text-muted d-block mb-1">
+                            {item.variant.title !== "Default Title" ? item.variant.title : ""}
+                          </span>
 
-                        {/* Price */}
-                        <div className="d-flex align-items-center gap-2 mb-2">
-                          <span className="fw-bold text-zesty-orange">${(item.variant.price * item.quantity).toFixed(2)}</span>
-                          {item.variant.compare_at_price && (
-                            <span className="text-decoration-line-through text-muted small">
-                              ${(item.variant.compare_at_price * item.quantity).toFixed(2)}
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Quantity Counter */}
-                        <div className="d-flex align-items-center gap-2">
-                          <div
-                            className="d-flex align-items-center border rounded-pill overflow-hidden bg-light"
-                            style={{ height: "36px" }}
-                          >
-                            <button
-                              type="button"
-                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateQuantity(item.id, item.quantity - 1); }}
-                              className="btn btn-sm px-3 border-0 d-flex align-items-center h-100"
-                              aria-label="Decrease quantity"
-                            >
-                              <Minus size={14} />
-                            </button>
-                            <span className="px-2 small fw-bold">{item.quantity}</span>
-                            <button
-                              type="button"
-                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateQuantity(item.id, item.quantity + 1); }}
-                              className="btn btn-sm px-3 border-0 d-flex align-items-center h-100"
-                              aria-label="Increase quantity"
-                            >
-                              <Plus size={14} />
-                            </button>
+                          {/* Price */}
+                          <div className="d-flex align-items-center gap-2 mb-2">
+                            <span className="fw-bold text-zesty-orange">${(item.variant.price * item.quantity).toFixed(2)}</span>
+                            {item.variant.compare_at_price && (
+                              <span className="text-decoration-line-through text-muted small">
+                                ${(item.variant.compare_at_price * item.quantity).toFixed(2)}
+                              </span>
+                            )}
                           </div>
 
-                          {/* Delete button */}
-                          <button
-                            type="button"
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeFromCart(item.id); }}
-                            className="btn btn-sm text-danger border-0 p-2 hover-scale d-flex align-items-center justify-content-center"
-                            style={{ height: "36px", width: "36px" }}
-                            aria-label="Remove item"
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                          {/* Quantity Counter */}
+                          <div className="d-flex align-items-center gap-2">
+                            <div
+                              className="d-flex align-items-center border rounded-pill overflow-hidden bg-light"
+                              style={{ height: "36px" }}
+                            >
+                              <button
+                                type="button"
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateQuantity(item.id, item.quantity - 1); }}
+                                className="btn btn-sm px-3 border-0 d-flex align-items-center h-100"
+                                aria-label="Decrease quantity"
+                              >
+                                <Minus size={14} />
+                              </button>
+                              <span className="px-2 small fw-bold">{item.quantity}</span>
+                              <button
+                                type="button"
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateQuantity(item.id, item.quantity + 1); }}
+                                className="btn btn-sm px-3 border-0 d-flex align-items-center h-100"
+                                aria-label="Increase quantity"
+                              >
+                                <Plus size={14} />
+                              </button>
+                            </div>
+
+                            {/* Delete button */}
+                            <button
+                              type="button"
+                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeFromCart(item.id); }}
+                              className="btn btn-sm text-danger border-0 p-2 hover-scale d-flex align-items-center justify-content-center"
+                              style={{ height: "36px", width: "36px" }}
+                              aria-label="Remove item"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  ))}
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                 </div>
               )}
               
@@ -369,10 +369,20 @@ export default function CartDrawer() {
                 {/* Checkout CTA */}
                 <button
                   onClick={handleCheckout}
-                  className="w-100 rounded-pill-cta btn-zesty-primary d-flex align-items-center justify-content-center gap-2 mb-3 py-3"
+                  disabled={isRedirecting || cartItems.length === 0}
+                  className={`w-100 rounded-pill-cta btn-zesty-primary d-flex align-items-center justify-content-center gap-2 mb-3 py-3 ${isRedirecting ? "opacity-75" : ""}`}
                 >
-                  <CreditCard size={20} />
-                  PROCEED TO SECURE CHECKOUT
+                  {isRedirecting ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <span>REDIRECTING TO SHOPIFY CHECKOUT...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard size={20} />
+                      <span>PROCEED TO SECURE CHECKOUT</span>
+                    </>
+                  )}
                 </button>
 
                 {/* Safe payment note */}

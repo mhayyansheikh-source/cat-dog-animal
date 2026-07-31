@@ -1,7 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { checkoutAction } from "@/app/actions";
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { toast } from "react-hot-toast";
 
 const CartContext = createContext();
@@ -17,6 +16,7 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useState(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSyncing, setIsSyncing] = useState(true);
+  const updateDebounceTimers = useRef({});
 
   // Initialize cart from localStorage + Shopify API
   useEffect(() => {
@@ -138,8 +138,10 @@ export function CartProvider({ children }) {
   };
 
   const removeFromCart = async (lineId) => {
+    let removedEdge = null;
     updateLocalCartState(prev => {
       if (!prev?.lines?.edges) return prev;
+      removedEdge = prev.lines.edges.find(edge => edge.node.id === lineId);
       return {
         ...prev,
         lines: {
@@ -148,6 +150,30 @@ export function CartProvider({ children }) {
         }
       };
     });
+
+    if (removedEdge) {
+      toast(
+        (t) => (
+          <div className="d-flex align-items-center justify-content-between gap-3">
+            <span className="small fw-semibold">Item removed from cart</span>
+            <button
+              onClick={() => {
+                toast.dismiss(t.id);
+                updateLocalCartState(prev => {
+                  const edges = prev?.lines?.edges ? [...prev.lines.edges, removedEdge] : [removedEdge];
+                  return { ...prev, lines: { edges } };
+                });
+              }}
+              className="btn btn-sm btn-dark rounded-pill py-1 px-3 fw-bold text-warning hover-scale"
+              style={{ fontSize: "12px" }}
+            >
+              Undo
+            </button>
+          </div>
+        ),
+        { duration: 4000 }
+      );
+    }
 
     setIsSyncing(true);
     try {
@@ -172,6 +198,7 @@ export function CartProvider({ children }) {
       return removeFromCart(lineId);
     }
 
+    // 1. Instant 0ms Optimistic UI update
     updateLocalCartState(prev => {
       if (!prev?.lines?.edges) return prev;
       return {
@@ -194,22 +221,29 @@ export function CartProvider({ children }) {
       };
     });
 
-    setIsSyncing(true);
-    try {
-      const res = await fetch('/api/cart', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lines: [{ id: lineId, quantity: newQuantity }] })
-      });
-      const response = await res.json();
-      if (response?.cart) {
-        updateLocalCartState(response.cart);
-      }
-    } catch (error) {
-      console.error("Update quantity sync error:", error);
-    } finally {
-      setIsSyncing(false);
+    // 2. Debounced 350ms background sync with Shopify API
+    if (updateDebounceTimers.current[lineId]) {
+      clearTimeout(updateDebounceTimers.current[lineId]);
     }
+
+    updateDebounceTimers.current[lineId] = setTimeout(async () => {
+      setIsSyncing(true);
+      try {
+        const res = await fetch('/api/cart', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lines: [{ id: lineId, quantity: newQuantity }] })
+        });
+        const response = await res.json();
+        if (response?.cart) {
+          updateLocalCartState(response.cart);
+        }
+      } catch (error) {
+        console.error("Update quantity sync error:", error);
+      } finally {
+        setIsSyncing(false);
+      }
+    }, 350);
   };
 
   const clearCart = () => {
