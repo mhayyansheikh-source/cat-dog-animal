@@ -806,15 +806,50 @@ export default function ProductDetailsClient({ product }) {
                 </motion.button>
               </div>
 
-              {/* Unified Add to Cart Button for Bundles */}
-              <div className="mt-3">
+              {/* Unified Add to Cart Button & Quantity Stepper for Bundles */}
+              <div className="mt-3 d-flex flex-column flex-sm-row align-items-stretch gap-3">
+                <div 
+                  className="d-flex align-items-center border border-2 rounded-pill overflow-hidden bg-white shadow-sm justify-content-between px-2"
+                  style={{ height: "56px", minWidth: "140px" }}
+                >
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const next = Math.max(1, selectedBundleQty - 1);
+                      setSelectedBundleQty(next);
+                    }}
+                    disabled={selectedBundleQty <= 1 || !activeVariant.available}
+                    className="btn btn-sm border-0 d-flex align-items-center justify-content-center h-100 text-charcoal-dark fw-bold px-3"
+                    aria-label="Decrease quantity"
+                  >
+                    <Minus size={18} />
+                  </button>
+                  <span className="fw-bold fs-5 text-charcoal-dark px-2">
+                    {selectedBundleQty}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectedBundleQty(prev => prev + 1);
+                    }}
+                    disabled={!activeVariant.available}
+                    className="btn btn-sm border-0 d-flex align-items-center justify-content-center h-100 text-charcoal-dark fw-bold px-3"
+                    aria-label="Increase quantity"
+                  >
+                    <Plus size={18} />
+                  </button>
+                </div>
+
                 <motion.button
                   type="button"
                   whileHover={{ scale: activeVariant.available ? 1.02 : 1 }}
                   whileTap={{ scale: activeVariant.available ? 0.98 : 1 }}
                   onClick={(e) => { e.preventDefault(); addToCart(product, activeVariant, selectedBundleQty); }}
                   disabled={!activeVariant.available}
-                  className={`w-100 rounded-pill-cta fs-5 d-flex align-items-center justify-content-center gap-2 shadow ${!activeVariant.available ? "btn-secondary opacity-75" : "btn-zesty-primary"}`}
+                  className={`flex-grow-1 rounded-pill-cta fs-5 d-flex align-items-center justify-content-center gap-2 shadow ${!activeVariant.available ? "btn-secondary opacity-75" : "btn-zesty-primary"}`}
+                  style={{ minHeight: "56px" }}
                 >
                   <ShoppingCart size={22} />
                   <span className="fw-bold">
@@ -826,18 +861,55 @@ export default function ProductDetailsClient({ product }) {
               </div>
             </div>
           ) : (
-            <div className="mb-3">
+            <div className="mb-3 d-flex flex-column flex-sm-row align-items-stretch gap-3">
+              <div 
+                className="d-flex align-items-center border border-2 rounded-pill overflow-hidden bg-white shadow-sm justify-content-between px-2"
+                style={{ height: "56px", minWidth: "140px" }}
+              >
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSelectedBundleQty(prev => Math.max(1, prev - 1));
+                  }}
+                  disabled={selectedBundleQty <= 1 || !activeVariant.available}
+                  className="btn btn-sm border-0 d-flex align-items-center justify-content-center h-100 text-charcoal-dark fw-bold px-3"
+                  aria-label="Decrease quantity"
+                >
+                  <Minus size={18} />
+                </button>
+                <span className="fw-bold fs-5 text-charcoal-dark px-2">
+                  {selectedBundleQty}
+                </span>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSelectedBundleQty(prev => prev + 1);
+                  }}
+                  disabled={!activeVariant.available}
+                  className="btn btn-sm border-0 d-flex align-items-center justify-content-center h-100 text-charcoal-dark fw-bold px-3"
+                  aria-label="Increase quantity"
+                >
+                  <Plus size={18} />
+                </button>
+              </div>
+
               <motion.button
                 type="button"
                 whileHover={{ scale: activeVariant.available ? 1.02 : 1 }}
                 whileTap={{ scale: activeVariant.available ? 0.98 : 1 }}
-                onClick={(e) => { e.preventDefault(); addToCart(product, activeVariant, 1); }}
+                onClick={(e) => { e.preventDefault(); addToCart(product, activeVariant, selectedBundleQty); }}
                 disabled={!activeVariant.available}
-                className={`w-100 rounded-pill-cta fs-5 d-flex align-items-center justify-content-center gap-2 shadow ${!activeVariant.available ? "btn-secondary opacity-75" : "btn-zesty-primary"}`}
+                className={`flex-grow-1 rounded-pill-cta fs-5 d-flex align-items-center justify-content-center gap-2 shadow ${!activeVariant.available ? "btn-secondary opacity-75" : "btn-zesty-primary"}`}
                 style={{ minHeight: "56px" }}
               >
                 <ShoppingCart size={22} />
-                {activeVariant.available ? "ADD TO CART" : "OUT OF STOCK"}
+                <span className="fw-bold">
+                  {activeVariant.available 
+                    ? `Add ${selectedBundleQty} to Cart - ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(basePrice * selectedBundleQty)}` 
+                    : "OUT OF STOCK"}
+                </span>
               </motion.button>
             </div>
           )}
