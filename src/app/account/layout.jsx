@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
 export default function AccountLayout({ children }) {
-  const pathname = usePathname() || '';
+  const pathname = usePathname();
   const isAuthPage = pathname.includes('/login') || pathname.includes('/register');
 
   if (isAuthPage) {

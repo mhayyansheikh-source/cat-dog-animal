@@ -220,30 +220,37 @@ export default function CartDrawer() {
                         transition={{ duration: 0.25 }}
                         className="d-flex gap-3 p-2 border rounded align-items-center bg-white shadow-sm overflow-hidden"
                       >
-                        {/* Product Image — [D1-FIX] onError fallback prevents broken-image crash */}
-                        <img
-                          src={item.image || "/peteora.png"}
-                          alt={item.title}
-                          className="rounded object-fit-cover"
-                          style={{ width: "80px", height: "80px", backgroundColor: "#f9f9f9" }}
-                          onError={(e) => { e.currentTarget.src = "/peteora.png"; }}
-                        />
+                        {/* Product Image */}
+                        <Link href={`/products/${item.handle}`} onClick={() => setIsCartOpen(false)} className="d-block flex-shrink-0">
+                          <img
+                            src={item.image || "/peteora.png"}
+                            alt={item.title}
+                            className="rounded object-fit-cover hover-scale transition-transform"
+                            style={{ width: "80px", height: "80px", backgroundColor: "#f9f9f9" }}
+                            onError={(e) => { e.currentTarget.src = "/peteora.png"; }}
+                          />
+                        </Link>
 
                         {/* Info & Quantity controls */}
                         <div className="flex-grow-1 text-start">
-                          <h6 className="fw-bold mb-0 small text-charcoal-dark">{item.title}</h6>
+                          <Link href={`/products/${item.handle}`} onClick={() => setIsCartOpen(false)} className="text-decoration-none">
+                            <h6 className="fw-bold mb-0 small text-charcoal-dark hover-orange">{item.title}</h6>
+                          </Link>
                           <span className="small text-muted d-block mb-1">
-                            {/* [D3-FIX] optional chain — variant may be missing on temp items */}
                             {item.variant?.title && item.variant.title !== "Default Title" ? item.variant.title : ""}
                           </span>
 
                           {/* Price */}
-                          <div className="d-flex align-items-center gap-2 mb-2">
-                            {/* [D3-FIX] optional chain on variant fields */}
+                          <div className="d-flex flex-wrap align-items-baseline gap-2 mb-2">
                             <span className="fw-bold text-zesty-orange">${((item.variant?.price || item.price || 0) * item.quantity).toFixed(2)}</span>
                             {(item.variant?.compare_at_price || item.compareAtPrice) && (
                               <span className="text-decoration-line-through text-muted small">
-                                ${( (item.variant?.compare_at_price || item.compareAtPrice || 0) * item.quantity).toFixed(2)}
+                                ${((item.variant?.compare_at_price || item.compareAtPrice || 0) * item.quantity).toFixed(2)}
+                              </span>
+                            )}
+                            {item.quantity > 1 && (
+                              <span className="text-muted small ms-1" style={{ fontSize: "0.75rem" }}>
+                                (${(item.variant?.price || item.price || 0).toFixed(2)} ea)
                               </span>
                             )}
                           </div>
@@ -251,22 +258,41 @@ export default function CartDrawer() {
                           {/* Quantity Counter */}
                           <div className="d-flex align-items-center gap-2">
                             <div
-                              className="d-flex align-items-center border rounded-pill overflow-hidden bg-light"
+                              className="d-flex align-items-center border rounded-pill overflow-hidden bg-light shadow-sm"
                               style={{ height: "36px" }}
                             >
                               <button
                                 type="button"
                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateQuantity(item.id, item.quantity - 1); }}
-                                className="btn btn-sm px-3 border-0 d-flex align-items-center h-100"
+                                className="btn btn-sm px-2 border-0 d-flex align-items-center h-100 text-dark"
                                 aria-label="Decrease quantity"
                               >
                                 <Minus size={14} />
                               </button>
-                              <span className="px-2 small fw-bold">{item.quantity}</span>
+                              <input
+                                type="number"
+                                min="1"
+                                max="999"
+                                value={item.quantity}
+                                onChange={(e) => {
+                                  const val = parseInt(e.target.value, 10);
+                                  if (!isNaN(val) && val > 0) {
+                                    updateQuantity(item.id, val);
+                                  }
+                                }}
+                                onBlur={(e) => {
+                                  const val = parseInt(e.target.value, 10);
+                                  if (isNaN(val) || val <= 0) {
+                                    updateQuantity(item.id, 1);
+                                  }
+                                }}
+                                className="form-control border-0 bg-transparent text-center fw-bold small p-0 text-dark"
+                                style={{ width: "36px", MozAppearance: "textfield" }}
+                              />
                               <button
                                 type="button"
                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateQuantity(item.id, item.quantity + 1); }}
-                                className="btn btn-sm px-3 border-0 d-flex align-items-center h-100"
+                                className="btn btn-sm px-2 border-0 d-flex align-items-center h-100 text-dark"
                                 aria-label="Increase quantity"
                               >
                                 <Plus size={14} />
@@ -277,9 +303,10 @@ export default function CartDrawer() {
                             <button
                               type="button"
                               onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeFromCart(item.id); }}
-                              className="btn btn-sm text-danger border-0 p-2 hover-scale d-flex align-items-center justify-content-center"
+                              className="btn btn-sm text-danger border-0 p-2 hover-scale d-flex align-items-center justify-content-center rounded-circle bg-light"
                               style={{ height: "36px", width: "36px" }}
                               aria-label="Remove item"
+                              title="Remove item"
                             >
                               <Trash2 size={16} />
                             </button>

@@ -230,19 +230,21 @@ export default function CartPageClient() {
                       >
                         {/* Image & Title */}
                         <div className="d-flex align-items-center gap-3">
-                          <img
-                            src={item.image || "/peteora.png"}
-                            alt={item.title}
-                            className="rounded-3 object-fit-cover"
-                            style={{ width: "90px", height: "90px", backgroundColor: "#f9f9f9" }}
-                            onError={(e) => {
-                              e.currentTarget.src = "/peteora.png";
-                            }}
-                          />
+                          <Link href={`/products/${item.handle}`} className="d-block flex-shrink-0">
+                            <img
+                              src={item.image || "/peteora.png"}
+                              alt={item.title}
+                              className="rounded-3 object-fit-cover hover-scale transition-transform"
+                              style={{ width: "90px", height: "90px", backgroundColor: "#f9f9f9" }}
+                              onError={(e) => {
+                                e.currentTarget.src = "/peteora.png";
+                              }}
+                            />
+                          </Link>
                           <div>
                             <Link
                               href={`/products/${item.handle}`}
-                              className="fw-bold text-charcoal-dark text-decoration-none font-heading d-block mb-1"
+                              className="fw-bold text-charcoal-dark text-decoration-none font-heading d-block mb-1 hover-orange"
                               style={{ fontSize: "1.05rem" }}
                             >
                               {item.title}
@@ -253,7 +255,7 @@ export default function CartPageClient() {
                                   {item.variant?.title || item.variantTitle}
                                 </span>
                               )}
-                            <div className="d-flex align-items-center gap-2">
+                            <div className="d-flex flex-wrap align-items-baseline gap-2">
                               <span className="fw-bold text-zesty-orange fs-5">
                                 ${((item.variant?.price || item.price || 0) * item.quantity).toFixed(2)}
                               </span>
@@ -265,6 +267,11 @@ export default function CartPageClient() {
                                   ).toFixed(2)}
                                 </span>
                               )}
+                              {item.quantity > 1 && (
+                                <span className="text-muted small ms-1">
+                                  (${(item.variant?.price || item.price || 0).toFixed(2)} ea)
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -272,24 +279,41 @@ export default function CartPageClient() {
                         {/* Stepper & Delete */}
                         <div className="d-flex align-items-center justify-content-between justify-content-sm-end gap-3 mt-2 mt-sm-0 pt-2 pt-sm-0 border-top border-top-sm-0">
                           <div
-                            className="d-flex align-items-center border border-2 rounded-pill overflow-hidden bg-light"
+                            className="d-flex align-items-center border border-2 rounded-pill overflow-hidden bg-light shadow-sm"
                             style={{ height: "42px" }}
                           >
                             <button
                               type="button"
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              className="btn btn-sm px-3 border-0 d-flex align-items-center h-100 text-dark fw-bold"
+                              className="btn btn-sm px-3 border-0 d-flex align-items-center h-100 text-dark fw-bold hover-bg-gray"
                               aria-label="Decrease quantity"
                             >
                               <Minus size={16} />
                             </button>
-                            <span className="px-3 fw-bold fs-6 text-dark" style={{ minWidth: "32px", textAlign: "center" }}>
-                              {item.quantity}
-                            </span>
+                            <input
+                              type="number"
+                              min="1"
+                              max="999"
+                              value={item.quantity}
+                              onChange={(e) => {
+                                const val = parseInt(e.target.value, 10);
+                                if (!isNaN(val) && val > 0) {
+                                  updateQuantity(item.id, val);
+                                }
+                              }}
+                              onBlur={(e) => {
+                                const val = parseInt(e.target.value, 10);
+                                if (isNaN(val) || val <= 0) {
+                                  updateQuantity(item.id, 1);
+                                }
+                              }}
+                              className="form-control border-0 bg-transparent text-center fw-bold fs-6 p-0 text-dark"
+                              style={{ width: "42px", MozAppearance: "textfield" }}
+                            />
                             <button
                               type="button"
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              className="btn btn-sm px-3 border-0 d-flex align-items-center h-100 text-dark fw-bold"
+                              className="btn btn-sm px-3 border-0 d-flex align-items-center h-100 text-dark fw-bold hover-bg-gray"
                               aria-label="Increase quantity"
                             >
                               <Plus size={16} />
@@ -299,9 +323,10 @@ export default function CartPageClient() {
                           <button
                             type="button"
                             onClick={() => removeFromCart(item.id)}
-                            className="btn btn-sm text-danger border-0 p-2 d-flex align-items-center justify-content-center rounded-circle bg-light"
-                            style={{ height: "42px", width: "42px" }}
+                            className="btn btn-sm text-danger border-0 p-2 d-flex align-items-center justify-content-center rounded-circle bg-light hover-danger-btn"
+                            style={{ height: "42px", width: "42px", transition: "all 0.2s ease" }}
                             aria-label="Remove item"
+                            title="Remove item"
                           >
                             <Trash2 size={18} />
                           </button>
