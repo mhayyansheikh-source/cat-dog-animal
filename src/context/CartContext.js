@@ -59,16 +59,16 @@ export function CartProvider({ children }) {
   };
 
   const removeFromCart = async (lineId) => {
-    const previousCart = cart;
-    if (cart?.lines?.edges) {
-      setCart({
-        ...cart,
+    setCart(prev => {
+      if (!prev?.lines?.edges) return prev;
+      return {
+        ...prev,
         lines: {
-          ...cart.lines,
-          edges: cart.lines.edges.filter(edge => edge.node.id !== lineId)
+          ...prev.lines,
+          edges: prev.lines.edges.filter(edge => edge.node.id !== lineId)
         }
-      });
-    }
+      };
+    });
     setIsSyncing(true);
     try {
       const res = await fetch('/api/cart', {
@@ -77,19 +77,11 @@ export function CartProvider({ children }) {
         body: JSON.stringify({ lineIds: [lineId] })
       });
       const response = await res.json();
-      
-      if (response?.error) throw new Error(response.error);
-      
-      if (response?.userErrors?.length > 0) {
-        toast.error(response.userErrors[0].message);
-        setCart(previousCart);
-      } else if (response?.cart) {
+      if (response?.cart) {
         setCart(response.cart);
       }
     } catch (error) {
       console.error("Remove from cart error:", error);
-      toast.error("Failed to remove item");
-      setCart(previousCart);
     } finally {
       setIsSyncing(false);
     }
@@ -99,13 +91,13 @@ export function CartProvider({ children }) {
     if (newQuantity <= 0) {
       return removeFromCart(lineId);
     }
-    const previousCart = cart;
-    if (cart?.lines?.edges) {
-      setCart({
-        ...cart,
+    setCart(prev => {
+      if (!prev?.lines?.edges) return prev;
+      return {
+        ...prev,
         lines: {
-          ...cart.lines,
-          edges: cart.lines.edges.map(edge => {
+          ...prev.lines,
+          edges: prev.lines.edges.map(edge => {
             if (edge.node.id === lineId) {
               return {
                 ...edge,
@@ -118,8 +110,8 @@ export function CartProvider({ children }) {
             return edge;
           })
         }
-      });
-    }
+      };
+    });
     setIsSyncing(true);
     try {
       const res = await fetch('/api/cart', {
@@ -128,19 +120,11 @@ export function CartProvider({ children }) {
         body: JSON.stringify({ lines: [{ id: lineId, quantity: newQuantity }] })
       });
       const response = await res.json();
-      
-      if (response?.error) throw new Error(response.error);
-      
-      if (response?.userErrors?.length > 0) {
-        toast.error(response.userErrors[0].message);
-        setCart(previousCart);
-      } else if (response?.cart) {
+      if (response?.cart) {
         setCart(response.cart);
       }
     } catch (error) {
       console.error("Update quantity error:", error);
-      toast.error("Failed to update quantity");
-      setCart(previousCart);
     } finally {
       setIsSyncing(false);
     }

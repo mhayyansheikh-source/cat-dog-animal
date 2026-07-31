@@ -64,10 +64,18 @@ export async function PUT(request) {
   try {
     const { lines } = await request.json();
     const cookieStore = await cookies();
-    const cartId = cookieStore.get("shopify_cart_id")?.value;
-    if (!cartId) return Response.json({ error: "Cart not found" }, { status: 404 });
-    const result = await updateCartLines(cartId, lines);
-    return Response.json(result || { cart: null });
+    let cartId = cookieStore.get("shopify_cart_id")?.value;
+    if (!cartId) {
+      cartId = await getOrCreateCartId();
+    }
+    if (!cartId) return Response.json({ cart: null });
+    
+    try {
+      const result = await updateCartLines(cartId, lines);
+      return Response.json(result || { cart: null });
+    } catch (graphQLError) {
+      return Response.json({ cart: null });
+    }
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
@@ -77,10 +85,15 @@ export async function DELETE(request) {
   try {
     const { lineIds } = await request.json();
     const cookieStore = await cookies();
-    const cartId = cookieStore.get("shopify_cart_id")?.value;
-    if (!cartId) return Response.json({ error: "Cart not found" }, { status: 404 });
-    const result = await removeCartLines(cartId, lineIds);
-    return Response.json(result || { cart: null });
+    let cartId = cookieStore.get("shopify_cart_id")?.value;
+    if (!cartId) return Response.json({ cart: null });
+    
+    try {
+      const result = await removeCartLines(cartId, lineIds);
+      return Response.json(result || { cart: null });
+    } catch (graphQLError) {
+      return Response.json({ cart: null });
+    }
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
