@@ -12,6 +12,18 @@ function extractId(gidOrId) {
   return parts[parts.length - 1];
 }
 
+function isMatchingLine(edge, lineId) {
+  if (!edge?.node || !lineId) return false;
+  const node = edge.node;
+  const targetStr = lineId.toString();
+  const targetClean = extractId(targetStr);
+
+  if (node.id?.toString() === targetStr) return true;
+  if (extractId(node.id) === targetClean) return true;
+  if (extractId(node.merchandise?.id) === targetClean) return true;
+  return false;
+}
+
 export function CartProvider({ children }) {
   const [cart, setCart] = useState(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -75,7 +87,7 @@ export function CartProvider({ children }) {
     updateLocalCartState(prev => {
       const existingEdges = prev?.lines?.edges ? [...prev.lines.edges] : [];
       const matchIndex = existingEdges.findIndex(
-        e => extractId(e.node?.merchandise?.id) === targetVariantId
+        e => isMatchingLine(e, variant.id) || extractId(e.node?.merchandise?.id) === targetVariantId
       );
 
       if (matchIndex !== -1) {
@@ -139,14 +151,23 @@ export function CartProvider({ children }) {
 
   const removeFromCart = async (lineId) => {
     let removedEdge = null;
+    let shopifyLineId = lineId;
+
+    if (cart?.lines?.edges) {
+      const match = cart.lines.edges.find(edge => isMatchingLine(edge, lineId));
+      if (match?.node?.id && !match.node.id.startsWith("temp-line-")) {
+        shopifyLineId = match.node.id;
+      }
+    }
+
     updateLocalCartState(prev => {
       if (!prev?.lines?.edges) return prev;
-      removedEdge = prev.lines.edges.find(edge => edge.node.id === lineId);
+      removedEdge = prev.lines.edges.find(edge => isMatchingLine(edge, lineId));
       return {
         ...prev,
         lines: {
           ...prev.lines,
-          edges: prev.lines.edges.filter(edge => edge.node.id !== lineId)
+          edges: prev.lines.edges.filter(edge => !isMatchingLine(edge, lineId))
         }
       };
     });
@@ -180,7 +201,7 @@ export function CartProvider({ children }) {
       const res = await fetch('/api/cart', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lineIds: [lineId] })
+        body: JSON.stringify({ lineIds: [shopifyLineId] })
       });
       const response = await res.json();
       if (response?.cart) {
@@ -198,6 +219,14 @@ export function CartProvider({ children }) {
       return removeFromCart(lineId);
     }
 
+    let shopifyLineId = lineId;
+    if (cart?.lines?.edges) {
+      const match = cart.lines.edges.find(edge => isMatchingLine(edge, lineId));
+      if (match?.node?.id && !match.node.id.startsWith("temp-line-")) {
+        shopifyLineId = match.node.id;
+      }
+    }
+
     // 1. Instant 0ms Optimistic UI update
     updateLocalCartState(prev => {
       if (!prev?.lines?.edges) return prev;
@@ -206,7 +235,7 @@ export function CartProvider({ children }) {
         lines: {
           ...prev.lines,
           edges: prev.lines.edges.map(edge => {
-            if (edge.node.id === lineId) {
+            if (isMatchingLine(edge, lineId)) {
               return {
                 ...edge,
                 node: {
@@ -221,7 +250,7 @@ export function CartProvider({ children }) {
       };
     });
 
-    // 2. Debounced 350ms background sync with Shopify API
+    // 2. Debounced 300ms background sync with Shopify API
     if (updateDebounceTimers.current[lineId]) {
       clearTimeout(updateDebounceTimers.current[lineId]);
     }
@@ -232,7 +261,7 @@ export function CartProvider({ children }) {
         const res = await fetch('/api/cart', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ lines: [{ id: lineId, quantity: newQuantity }] })
+          body: JSON.stringify({ lines: [{ id: shopifyLineId, quantity: newQuantity }] })
         });
         const response = await res.json();
         if (response?.cart) {
@@ -243,7 +272,7 @@ export function CartProvider({ children }) {
       } finally {
         setIsSyncing(false);
       }
-    }, 350);
+    }, 300);
   };
 
   const clearCart = () => {
