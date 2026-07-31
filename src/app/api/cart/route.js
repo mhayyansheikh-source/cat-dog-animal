@@ -3,60 +3,55 @@ import { cookies } from "next/headers";
 
 export const runtime = "edge";
 
-async function getOrCreateCartId() {
-  const cookieStore = await cookies();
-  let cartId = cookieStore.get("shopify_cart_id")?.value;
-  if (!cartId) {
-    const cart = await createCart();
-    if (cart?.id) {
-      cartId = cart.id;
-      cookieStore.set("shopify_cart_id", cartId, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 7,
-        path: "/",
-      });
-    }
+function createJsonResponse(data, cartId = null) {
+  const headers = new Headers({
+    "Content-Type": "application/json",
+  });
+  if (cartId) {
+    headers.append(
+      "Set-Cookie",
+      `shopify_cart_id=${encodeURIComponent(cartId)}; Path=/; Max-Age=${60 * 60 * 24 * 30}; SameSite=Lax; ${process.env.NODE_ENV === "production" ? "Secure;" : ""}`
+    );
   }
-  return cartId;
+  return new Response(JSON.stringify(data), { status: 200, headers });
 }
 
 export async function GET() {
   const cookieStore = await cookies();
   const cartId = cookieStore.get("shopify_cart_id")?.value;
-  if (!cartId) return Response.json({ cart: null });
+  if (!cartId) return createJsonResponse({ cart: null });
   const cart = await getCart(cartId);
-  return Response.json({ cart });
+  return createJsonResponse({ cart }, cartId);
 }
 
 export async function POST(request) {
   try {
     const { lines } = await request.json();
-    let cartId = await getOrCreateCartId();
-    if (!cartId) return Response.json({ error: "Could not create cart" }, { status: 500 });
+    const cookieStore = await cookies();
+    let cartId = cookieStore.get("shopify_cart_id")?.value;
     
-    try {
-      const result = await addCartLines(cartId, lines);
-      return Response.json(result || { cart: null });
-    } catch (graphQLError) {
-      const cart = await createCart();
-      if (cart?.id) {
-        const cookieStore = await cookies();
-        cookieStore.set("shopify_cart_id", cart.id, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          maxAge: 60 * 60 * 24 * 7,
-          path: "/",
-        });
-        const result = await addCartLines(cart.id, lines);
-        return Response.json(result || { cart: null });
+    let result = null;
+    if (cartId) {
+      try {
+        result = await addCartLines(cartId, lines);
+      } catch (err) {
+        result = null;
       }
-      return Response.json({ error: "Could not recreate cart" }, { status: 500 });
     }
+    
+    // If cart doesn't exist or adding lines failed, create a new cart
+    if (!result?.cart?.id) {
+      const newCart = await createCart();
+      if (newCart?.id) {
+        cartId = newCart.id;
+        result = await addCartLines(cartId, lines);
+      }
+    }
+
+    const finalCartId = result?.cart?.id || cartId;
+    return createJsonResponse(result || { cart: null }, finalCartId);
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return createJsonResponse({ error: error.message });
   }
 }
 
@@ -65,19 +60,15 @@ export async function PUT(request) {
     const { lines } = await request.json();
     const cookieStore = await cookies();
     let cartId = cookieStore.get("shopify_cart_id")?.value;
-    if (!cartId) {
-      cartId = await getOrCreateCartId();
-    }
-    if (!cartId) return Response.json({ cart: null });
     
-    try {
-      const result = await updateCartLines(cartId, lines);
-      return Response.json(result || { cart: null });
-    } catch (graphQLError) {
-      return Response.json({ cart: null });
+    if (!cartId) {
+      return createJsonResponse({ cart: null });
     }
+    
+    const result = await updateCartLines(cartId, lines);
+    return createJsonResponse(result || { cart: null }, cartId);
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return createJsonResponse({ error: error.message });
   }
 }
 
@@ -86,15 +77,14 @@ export async function DELETE(request) {
     const { lineIds } = await request.json();
     const cookieStore = await cookies();
     let cartId = cookieStore.get("shopify_cart_id")?.value;
-    if (!cartId) return Response.json({ cart: null });
     
-    try {
-      const result = await removeCartLines(cartId, lineIds);
-      return Response.json(result || { cart: null });
-    } catch (graphQLError) {
-      return Response.json({ cart: null });
+    if (!cartId) {
+      return createJsonResponse({ cart: null });
     }
+    
+    const result = await removeCartLines(cartId, lineIds);
+    return createJsonResponse(result || { cart: null }, cartId);
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return createJsonResponse({ error: error.message });
   }
 }
