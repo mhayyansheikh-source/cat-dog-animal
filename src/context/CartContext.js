@@ -79,8 +79,7 @@ export function CartProvider({ children }) {
     }
   };
 
-  const addToCart = async (product, variant, quantity = 1) => {
-    setIsCartOpen(true);
+  const addToCart = async (product, variant, quantity = 1, redirect = true) => {
     const targetVariantId = extractId(variant.id);
 
     // 1. Instant 0ms Optimistic Update
@@ -128,6 +127,11 @@ export function CartProvider({ children }) {
     });
 
     toast.success(`${product.title} added to cart`);
+
+    // Redirect directly to /cart page if requested
+    if (redirect && typeof window !== "undefined" && window.location.pathname !== "/cart") {
+      window.location.href = "/cart";
+    }
 
     // 2. Background Shopify Sync
     setIsSyncing(true);

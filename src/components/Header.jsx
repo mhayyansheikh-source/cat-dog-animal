@@ -99,10 +99,10 @@ export default function Header({ menu, shop, collections, products }) {
             >
               <Search size={22} strokeWidth={2.5} />
             </button>
-            <button
-              onClick={() => setIsCartOpen(true)}
+            <Link
+              href="/cart"
               className="btn p-0 border-0 position-relative text-charcoal-dark"
-              aria-label="Open cart"
+              aria-label="View cart page"
             >
               <ShoppingCart size={22} strokeWidth={2.5} />
               {cartCount > 0 && (
@@ -120,7 +120,7 @@ export default function Header({ menu, shop, collections, products }) {
                   {cartCount}
                 </span>
               )}
-            </button>
+            </Link>
           </div>
 
           {/* Desktop Navigation Links */}
@@ -160,12 +160,10 @@ export default function Header({ menu, shop, collections, products }) {
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
               </Link>
 
-              <motion.button 
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn p-0 border-0 bg-transparent text-charcoal-dark position-relative" 
-                onClick={() => setIsCartOpen(true)}
-                title="Cart"
+              <Link 
+                href="/cart"
+                className="btn p-0 border-0 bg-transparent text-charcoal-dark position-relative text-decoration-none" 
+                title="Cart Page"
                 aria-label="Shopping cart"
               >
                 <ShoppingCart size={22} strokeWidth={2.5} />
@@ -187,7 +185,7 @@ export default function Header({ menu, shop, collections, products }) {
                     </motion.span>
                   )}
                 </AnimatePresence>
-              </motion.button>
+              </Link>
             </div>
           </div>
         </div>
