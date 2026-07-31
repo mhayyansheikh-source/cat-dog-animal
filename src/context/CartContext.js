@@ -316,17 +316,22 @@ export function CartProvider({ children }) {
     async (targetId, newQuantity) => {
       if (newQuantity <= 0) return removeFromCart(targetId);
 
-      // Optimistic update — immediately reflect in UI and localStorage
+      // Instantly update React state AND local storage so the UI never lags or resets
+      let updatedItem = null;
       setCartItems((prev) => {
-        const next = prev.map((item) =>
-          isMatch(item, targetId) ? { ...item, quantity: newQuantity } : item
-        );
+        const next = prev.map((item) => {
+          if (isMatch(item, targetId)) {
+            updatedItem = { ...item, quantity: newQuantity };
+            return updatedItem;
+          }
+          return item;
+        });
         writeStorage(next);
         return next;
       });
 
-      // Debounce the API call (400ms)
-      const key = targetId.toString(); // use full ID as key, not just numeric tail [S3-FIX]
+      // Debounce API sync to Shopify (300ms)
+      const key = targetId.toString();
       clearTimeout(debounceTimers.current[key]);
       debounceTimers.current[key] = setTimeout(async () => {
         const current = readStorage().items;
@@ -335,57 +340,41 @@ export function CartProvider({ children }) {
 
         const isRealLine = targetItem.id?.startsWith("gid://shopify/CartLine");
 
-        if (isRealLine) {
-          // Normal path: update existing Shopify line
-          setIsSyncing(true);
-          try {
-            const res = await fetch("/api/cart", {
+        setIsSyncing(true);
+        try {
+          let res, data;
+          if (isRealLine) {
+            // Existing Shopify CartLine -> PUT update
+            res = await fetch("/api/cart", {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                lines: [{ id: targetItem.id, quantity: newQuantity }],
+                lines: [{ id: targetItem.id, quantity: targetItem.quantity }],
               }),
             });
-            const data = await res.json();
-            if (data?.cart) {
-              const fresh = processServerCart(data.cart);
-              commit(fresh, data.cart.checkoutUrl || null);
-            }
-          } catch (err) {
-            console.error("Update quantity API error:", err);
-          } finally {
-            setIsSyncing(false);
-          }
-        } else {
-          // [C4-FIX] Item still has temp ID → POST to create it on Shopify instead of silently skipping
-          setIsSyncing(true);
-          try {
-            const res = await fetch("/api/cart", {
+          } else {
+            // Temporary local item -> POST add/sync to Shopify
+            res = await fetch("/api/cart", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                lines: [
-                  {
-                    merchandiseId: targetItem.merchandiseId,
-                    quantity: newQuantity, // use the new desired quantity
-                  },
-                ],
+                lines: [{ merchandiseId: targetItem.merchandiseId, quantity: targetItem.quantity }],
               }),
             });
-            const data = await res.json();
-            if (data?.cart) {
-              const fresh = processServerCart(data.cart);
-              commit(fresh, data.cart.checkoutUrl || null);
-            }
-          } catch (err) {
-            console.error("Temp-item update via POST error:", err);
-          } finally {
-            setIsSyncing(false);
           }
+          data = await res.json();
+          if (data?.cart) {
+            const fresh = processServerCart(data.cart);
+            commit(fresh, data.cart.checkoutUrl || null);
+          }
+        } catch (err) {
+          console.error("Update quantity API error:", err);
+        } finally {
+          setIsSyncing(false);
         }
-      }, 400);
+      }, 300);
     },
-    [commit] // processServerCart is module-level, not a dep
+    [commit, removeFromCart]
   );
 
   // ── 3. REMOVE FROM CART ───────────────────────────────────────────────────
