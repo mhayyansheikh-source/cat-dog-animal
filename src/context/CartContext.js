@@ -22,7 +22,8 @@ export function isMatch(item, targetId) {
   return (
     toCleanId(item.id) === cleanTarget ||
     toCleanId(item.variantId) === cleanTarget ||
-    toCleanId(item.merchandiseId) === cleanTarget
+    toCleanId(item.merchandiseId) === cleanTarget ||
+    toCleanId(item.variant?.id) === cleanTarget
   );
 }
 
@@ -35,13 +36,20 @@ export function normalizeCartLine(edge) {
   const prod = merch.product || {};
   const priceAmt = parseFloat(merch.price?.amount || "0");
   const compareAmt = merch.compareAtPrice?.amount ? parseFloat(merch.compareAtPrice.amount) : null;
+  const vTitle = merch.title && merch.title !== "Default Title" ? merch.title : "";
 
   return {
     id: node.id || `temp-line-${Date.now()}`,
     variantId: toCleanId(merch.id),
     merchandiseId: merch.id || `gid://shopify/ProductVariant/${toCleanId(merch.id)}`,
     title: prod.title || merch.title || "Pet Product",
-    variantTitle: merch.title !== "Default Title" ? (merch.title || "") : "",
+    variantTitle: vTitle,
+    variant: {
+      id: merch.id || "",
+      title: merch.title || "Default Title",
+      price: priceAmt,
+      compare_at_price: compareAmt,
+    },
     handle: prod.handle || "",
     image: merch.image?.url || prod.images?.edges?.[0]?.node?.url || "/peteora.png",
     price: priceAmt,
@@ -108,7 +116,11 @@ export function CartProvider({ children }) {
         const cached = localStorage.getItem("peteora_flat_cart");
         const cachedUrl = localStorage.getItem("peteora_checkout_url");
         if (cached) {
-          setCartItems(JSON.parse(cached));
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed)) {
+            // Re-normalize items to ensure variant object exists
+            setCartItems(parsed.map(normalizeCartLine).filter(Boolean));
+          }
           if (cachedUrl) setCheckoutUrl(cachedUrl);
           setIsSyncing(false);
         }
@@ -139,10 +151,14 @@ export function CartProvider({ children }) {
 
   // 1. CREATE (Add to Cart)
   const addToCart = async (product, variant, quantity = 1, redirect = true) => {
-    const targetVariantId = toCleanId(variant.id);
-    const fullMerchId = variant.id?.toString().includes("gid://") 
+    const targetVariantId = toCleanId(variant?.id);
+    const fullMerchId = variant?.id?.toString().includes("gid://") 
       ? variant.id 
       : `gid://shopify/ProductVariant/${targetVariantId}`;
+
+    const priceNum = parseFloat(variant?.price || "0");
+    const compareNum = variant?.compare_at_price ? parseFloat(variant.compare_at_price) : null;
+    const vTitle = variant?.title && variant.title !== "Default Title" ? variant.title : "";
 
     // A. Instant 0ms Optimistic Local State Update
     const currentItems = [...cartItems];
@@ -158,20 +174,26 @@ export function CartProvider({ children }) {
         id: `temp-line-${Date.now()}-${Math.random()}`,
         variantId: targetVariantId,
         merchandiseId: fullMerchId,
-        title: product.title,
-        variantTitle: variant.title !== "Default Title" ? (variant.title || "") : "",
-        handle: product.handle || "",
-        image: variant.image?.url || variant.image || product.images?.[0] || "/peteora.png",
-        price: parseFloat(variant.price || "0"),
-        compareAtPrice: variant.compare_at_price ? parseFloat(variant.compare_at_price) : null,
+        title: product?.title || "Pet Product",
+        variantTitle: vTitle,
+        variant: {
+          id: fullMerchId,
+          title: variant?.title || "Default Title",
+          price: priceNum,
+          compare_at_price: compareNum,
+        },
+        handle: product?.handle || "",
+        image: variant?.image?.url || variant?.image || product?.images?.[0] || "/peteora.png",
+        price: priceNum,
+        compareAtPrice: compareNum,
         quantity: quantity
       });
     }
 
     updateLocalItemsState(currentItems);
-    toast.success(`${product.title} added to cart`);
+    toast.success(`${product?.title || "Product"} added to cart`);
 
-    // B. Immediate Redirect if on product page
+    // B. Immediate Redirect if requested
     if (redirect && typeof window !== "undefined" && window.location.pathname !== "/cart") {
       window.location.href = "/cart";
     }
@@ -300,8 +322,8 @@ export function CartProvider({ children }) {
   };
 
   // Derived Financial Calculations
-  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const cartCount = cartItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
+  const subtotal = cartItems.reduce((sum, item) => sum + ((item.price || item.variant?.price || 0) * (item.quantity || 0)), 0);
   
   let calculatedTotal = subtotal;
   let discountAmount = 0;

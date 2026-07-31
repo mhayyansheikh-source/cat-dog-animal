@@ -283,26 +283,26 @@ export default function CartPageClient() {
                               >
                                 {item.title}
                               </Link>
-                              {item.variant.title !== "Default Title" && (
+                              {(item.variant?.title || item.variantTitle) && (item.variant?.title || item.variantTitle) !== "Default Title" && (
                                 <span className="badge bg-light text-secondary rounded-pill px-3 py-1 border small d-inline-block mb-2">
-                                  {item.variant.title}
+                                  {item.variant?.title || item.variantTitle}
                                 </span>
                               )}
                               <div className="d-flex align-items-center gap-2">
                                 <AnimatePresence mode="wait">
                                   <motion.span 
-                                    key={item.quantity * item.variant.price}
+                                    key={item.quantity * (item.variant?.price || item.price || 0)}
                                     initial={{ opacity: 0, y: -4 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: 4 }}
                                     className="fw-bold text-zesty-orange fs-5"
                                   >
-                                    ${(item.variant.price * item.quantity).toFixed(2)}
+                                    ${((item.variant?.price || item.price || 0) * item.quantity).toFixed(2)}
                                   </motion.span>
                                 </AnimatePresence>
-                                {item.variant.compare_at_price && (
+                                {(item.variant?.compare_at_price || item.compareAtPrice) && (
                                   <span className="text-decoration-line-through text-muted small">
-                                    ${(item.variant.compare_at_price * item.quantity).toFixed(2)}
+                                    ${((item.variant?.compare_at_price || item.compareAtPrice || 0) * item.quantity).toFixed(2)}
                                   </span>
                                 )}
                               </div>
