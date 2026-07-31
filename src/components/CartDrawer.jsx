@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useCart } from "@/context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Trash2, Plus, Minus, ShoppingBag, CreditCard, Shield, PlusCircle } from "lucide-react";
@@ -8,6 +9,12 @@ import Link from "next/link";
 import { checkoutAction } from "@/app/actions";
 
 export default function CartDrawer() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const {
     cartItems,
     isCartOpen,
@@ -91,7 +98,9 @@ export default function CartDrawer() {
     }
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {isCartOpen && (
         <>
@@ -118,6 +127,7 @@ export default function CartDrawer() {
               maxWidth: "480px",
               zIndex: 1050,
             }}
+            onClick={(e) => e.stopPropagation()}
           >
             {/* Drawer Header */}
             <div className="p-3 border-bottom d-flex align-items-center justify-content-between">
@@ -375,6 +385,7 @@ export default function CartDrawer() {
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
