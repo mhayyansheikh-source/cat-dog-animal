@@ -203,8 +203,20 @@ export default function ProductDetailsClient({ product }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const activeItem = uniqueGalleryItems[activeIndex] || uniqueGalleryItems[0];
   
-  // Variant states
-  const [activeVariant, setActiveVariant] = useState(product.variants[0]);
+  // Safe Variant states
+  const safeVariants = (product?.variants && product.variants.length > 0)
+    ? product.variants
+    : [
+        {
+          id: product?.id || "default-variant-id",
+          title: "Default Title",
+          price: product?.price || "19.99",
+          compare_at_price: product?.compare_at_price || "34.99",
+          available: true,
+        }
+      ];
+
+  const [activeVariant, setActiveVariant] = useState(safeVariants[0] || {});
   const [quantity, setQuantity] = useState(1);
   const [selectedBundleQty, setSelectedBundleQty] = useState(2);
 

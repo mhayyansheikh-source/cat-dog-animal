@@ -32,27 +32,46 @@ export async function generateMetadata({ params }) {
 export default async function ProductPage({ params }) {
   const resolvedParams = await params;
   const handle = resolvedParams.handle;
-  let product = await getShopifyProductByHandle(handle);
-  
+  let product = null;
+
+  try {
+    product = await getShopifyProductByHandle(handle);
+  } catch (err) {
+    console.error("Error fetching product by handle:", err);
+  }
+
   if (!product) {
-    const allProducts = await getShopifyProducts();
-    if (allProducts && allProducts.length > 0) {
-      product = allProducts[0];
-    } else {
-      notFound();
+    try {
+      const allProducts = await getShopifyProducts();
+      if (allProducts && allProducts.length > 0) {
+        product = allProducts[0];
+      }
+    } catch (err) {
+      console.error("Error fetching fallback product:", err);
     }
   }
 
-  const recommendations = await getShopifyProductRecommendations(product.id);
+  if (!product) {
+    notFound();
+  }
+
+  let recommendations = [];
+  try {
+    if (product?.id) {
+      recommendations = await getShopifyProductRecommendations(product.id);
+    }
+  } catch (err) {
+    console.error("Failed to fetch recommendations:", err);
+  }
 
   // Structured JSON-LD Schema (GEO & AEO search optimization)
   const productSchema = {
     "@context": "https://schema.org/",
     "@type": "Product",
-    "name": product.title,
-    "image": product.images[0] || "",
+    "name": product.title || "Pet Product",
+    "image": (product.images && product.images.length > 0) ? product.images[0] : "",
     "description": product.body_html ? product.body_html.replace(/<[^>]*>/g, "") : "",
-    "sku": product.variants[0]?.sku || "",
+    "sku": (product.variants && product.variants.length > 0) ? (product.variants[0]?.sku || "") : "",
     "brand": {
       "@type": "Brand",
       "name": "Peteora"
@@ -60,11 +79,11 @@ export default async function ProductPage({ params }) {
     "offers": {
       "@type": "Offer",
       "priceCurrency": "USD",
-      "price": product.price,
+      "price": product.price || "19.99",
       "priceValidUntil": "2027-12-31",
       "itemCondition": "https://schema.org/NewCondition",
       "availability": "https://schema.org/InStock",
-      "url": `https://peteora.com/products/${product.handle}`
+      "url": `https://peteora.com/products/${product.handle || handle}`
     },
     "aggregateRating": {
       "@type": "AggregateRating",
