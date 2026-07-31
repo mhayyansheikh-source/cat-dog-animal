@@ -111,8 +111,20 @@ function writeStorage(items, checkoutUrl = null) {
 // Being module-level makes it completely immune to stale closure bugs.
 function processServerCart(cartData) {
   if (!cartData?.lines?.edges) return [];
-  // Each edge = one unique line; do NOT accumulate quantities
-  return cartData.lines.edges.map(normalizeCartLine).filter(Boolean);
+  const rawItems = cartData.lines.edges.map(normalizeCartLine).filter(Boolean);
+  
+  // Deduplicate items by variantId (or merchandiseId) to prevent duplicate card rows
+  const mergedMap = new Map();
+  for (const item of rawItems) {
+    const key = item.variantId || item.merchandiseId || item.id;
+    if (mergedMap.has(key)) {
+      const existing = mergedMap.get(key);
+      existing.quantity += item.quantity;
+    } else {
+      mergedMap.set(key, { ...item });
+    }
+  }
+  return Array.from(mergedMap.values());
 }
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
