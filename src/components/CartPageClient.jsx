@@ -267,10 +267,13 @@ export default function CartPageClient() {
                           {/* Image & Title */}
                           <div className="d-flex align-items-center gap-3">
                             <img
-                              src={item.image}
+                              src={item.image || "/peteora.png"}
                               alt={item.title}
                               className="rounded-3 object-fit-cover"
                               style={{ width: "90px", height: "90px", backgroundColor: "#f9f9f9" }}
+                              onError={(e) => {
+                                e.currentTarget.src = "/peteora.png";
+                              }}
                             />
                             <div>
                               <Link
@@ -380,10 +383,13 @@ export default function CartPageClient() {
                           <div className="p-3 border rounded-3 d-flex align-items-center justify-content-between gap-3 h-100 bg-light">
                             <div className="d-flex align-items-center gap-3">
                               <img
-                                src={prod.images?.[0] || ""}
+                                src={prod.image || prod.images?.[0] || "/peteora.png"}
                                 alt={prod.title}
                                 className="rounded object-fit-cover"
                                 style={{ width: "60px", height: "60px", backgroundColor: "#fff" }}
+                                onError={(e) => {
+                                  e.currentTarget.src = "/peteora.png";
+                                }}
                               />
                               <div>
                                 <h6 className="fw-bold mb-0 small text-dark line-clamp-1">{prod.title}</h6>

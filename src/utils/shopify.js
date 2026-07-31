@@ -429,6 +429,8 @@ export async function getPredictiveSearch(queryStr) {
           variants(first: 1) {
             edges {
               node {
+                id
+                title
                 price {
                   amount
                   currencyCode
@@ -445,14 +447,29 @@ export async function getPredictiveSearch(queryStr) {
   
   if (!data?.predictiveSearch?.products) return [];
   
-  return data.predictiveSearch.products.map(node => ({
-    id: node.id,
-    title: node.title,
-    handle: node.handle,
-    image: node.images.edges[0]?.node?.url || null,
-    price: node.variants.edges[0]?.node?.price?.amount || "0.00",
-    currencyCode: node.variants.edges[0]?.node?.price?.currencyCode || "USD"
-  }));
+  return data.predictiveSearch.products.map(node => {
+    const imageUrl = node.images?.edges?.[0]?.node?.url || "/placeholder.jpg";
+    const variantNode = node.variants?.edges?.[0]?.node || {
+      id: node.id,
+      title: "Default Title",
+      price: { amount: "19.99" }
+    };
+
+    return {
+      id: node.id,
+      title: node.title,
+      handle: node.handle,
+      image: imageUrl,
+      images: [imageUrl],
+      price: variantNode.price?.amount || "0.00",
+      variants: [{
+        id: variantNode.id || node.id,
+        title: variantNode.title || "Default Title",
+        price: parseFloat(variantNode.price?.amount || "0.00")
+      }],
+      currencyCode: variantNode.price?.currencyCode || "USD"
+    };
+  });
 }
 
 
