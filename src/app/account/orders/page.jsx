@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
+export const dynamic = 'force-dynamic';
+
 export default function OrdersPage() {
   const [orders, setOrders] = useState(null);
   const router = useRouter();
@@ -70,14 +72,14 @@ export default function OrdersPage() {
                   <div className="fw-bold">
                     {new Intl.NumberFormat('en-US', {
                       style: 'currency',
-                      currency: order.totalPrice.currencyCode,
-                    }).format(order.totalPrice.amount)}
+                      currency: order.totalPrice?.currencyCode || 'USD',
+                    }).format(order.totalPrice?.amount || 0)}
                   </div>
                 </div>
               </div>
 
               <div className="d-flex flex-column gap-3">
-                {order.lineItems.edges.map(({ node: item }, idx) => (
+                {order.lineItems?.edges?.map(({ node: item }, idx) => (
                   <div key={idx} className="d-flex align-items-center gap-3">
                     {item.variant?.image?.url ? (
                       <div
@@ -86,7 +88,7 @@ export default function OrdersPage() {
                       >
                         <Image
                           src={item.variant.image.url}
-                          alt={item.title}
+                          alt={item.title || 'Product Image'}
                           fill
                           sizes="60px"
                           style={{ objectFit: 'cover' }}
