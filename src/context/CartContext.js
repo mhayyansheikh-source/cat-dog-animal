@@ -189,49 +189,7 @@ export function CartProvider({ children }) {
     return () => { mounted = false; };
   }, []);
 
-  // ── [C2-FIX] Pending temp-item sync on /cart page arrival ─────────────────
-  // Uses fetch with keepalive:true so the request survives page navigation
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (window.location.pathname !== "/cart") return;
 
-    const pending = readStorage().items.filter((i) => i.id?.startsWith("temp-"));
-    if (pending.length === 0) return;
-
-    let mounted = true;
-
-    const syncPending = async () => {
-      setIsSyncing(true);
-      // Build all lines in one POST call instead of one per item
-      const lines = pending.map((item) => ({
-        merchandiseId: item.merchandiseId,
-        quantity: item.quantity,
-      }));
-
-      try {
-        const res = await fetch("/api/cart", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ lines }),
-          keepalive: true, // survives page unload
-        });
-        const data = await res.json();
-        if (mounted && data?.cart) {
-          const fresh = processServerCart(data.cart);
-          if (fresh.length > 0) {
-            commit(fresh, data.cart.checkoutUrl || null);
-          }
-        }
-      } catch (err) {
-        console.error("Pending cart sync error:", err);
-      } finally {
-        if (mounted) setIsSyncing(false);
-      }
-    };
-
-    syncPending();
-    return () => { mounted = false; };
-  }, []); // Only on initial mount of /cart
 
   // ── 1. ADD TO CART ────────────────────────────────────────────────────────
   const addToCart = useCallback(
