@@ -19,11 +19,6 @@ import ShippingTimer from "@/components/ShippingTimer";
 import TrustBadges from "@/components/TrustBadges";
 
 export default function CartPageClient() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const {
     cartItems,
@@ -122,15 +117,6 @@ export default function CartPageClient() {
     }
   };
 
-  if (!mounted) {
-    return (
-      <div className="bg-light min-vh-100 py-5 text-center d-flex align-items-center justify-content-center">
-        <div className="spinner-border text-warning" role="status">
-          <span className="visually-hidden">Loading Cart...</span>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-light min-vh-100 py-4 py-md-5 font-body">
