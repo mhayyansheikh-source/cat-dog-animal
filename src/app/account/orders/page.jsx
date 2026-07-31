@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-export const dynamic = 'force-dynamic';
-
 export default function OrdersPage() {
   const [orders, setOrders] = useState(null);
   const router = useRouter();
