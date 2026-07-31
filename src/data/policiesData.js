@@ -4,10 +4,25 @@ export const policyTitleMap = {
   "terms-of-service": "Terms of Service",
   "shipping-policy": "Shipping Policy",
   "contact-information": "Contact Information",
-  "legal-notice": "Legal Notice"
+  "legal-notice": "Legal Notice",
+  "data-sharing-opt-out": "Data Sharing Opt-Out"
 };
 
 export const fallbackPolicies = {
+  "data-sharing-opt-out": {
+    title: "Data Sharing Opt-Out",
+    body: `
+      <p>Your privacy is extremely important to us at Peteora. Under certain state laws and privacy regulations, you have the right to opt out of the sale or sharing of your personal information for targeted advertising purposes.</p>
+      <h4>How to Submit an Opt-Out Request</h4>
+      <p>If you wish to opt out of data sharing, analytics tracking, or targeted marketing communications, please contact our privacy compliance team with your request:</p>
+      <ul>
+        <li><strong>Email:</strong> <a href="mailto:shoppinghorizonstorellc@gmail.com">shoppinghorizonstorellc@gmail.com</a></li>
+        <li><strong>Phone:</strong> +1 (307) 400-9538</li>
+        <li><strong>Mailing Address:</strong> 30 N Gould St #26515 Sheridan, WY 82801, USA</li>
+      </ul>
+      <p>Once received, we will process your request within 15 business days and notify our analytics partners.</p>
+    `
+  },
   "refund-policy": {
     title: "Return and Refund Policy",
     body: `
