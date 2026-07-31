@@ -29,31 +29,38 @@ export async function POST(request) {
     const { lines } = await request.json();
     const cookieStore = await cookies();
     let cartId = cookieStore.get("shopify_cart_id")?.value;
-    
+
     let result = null;
+
     if (cartId) {
+      // Try to add lines to existing cart
       try {
         result = await addCartLines(cartId, lines);
       } catch (err) {
+        // Cart likely expired — will create a fresh one below
         result = null;
       }
     }
-    
-    // Self-healing: Create new cart if missing or expired
+
+    // [S2-FIX] If no cart or it expired, create first THEN add lines (single path, no retry race)
     if (!result?.cart?.id) {
       const newCart = await createCart();
-      if (newCart?.id) {
-        cartId = newCart.id;
-        result = await addCartLines(cartId, lines);
+      if (!newCart?.id) {
+        return createJsonResponse({ error: "Failed to create cart" });
       }
+      cartId = newCart.id;
+      // Create empty cart successfully — now add the lines
+      result = await addCartLines(cartId, lines);
     }
 
     const finalCartId = result?.cart?.id || cartId;
     return createJsonResponse(result || { cart: null }, finalCartId);
   } catch (error) {
+    console.error("POST /api/cart error:", error);
     return createJsonResponse({ error: error.message });
   }
 }
+
 
 export async function PUT(request) {
   try {

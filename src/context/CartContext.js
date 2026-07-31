@@ -5,11 +5,13 @@ import { toast } from "react-hot-toast";
 
 const CartContext = createContext();
 
-// ─── Storage Key ──────────────────────────────────────────────────────────────
+// ─── Storage Keys ─────────────────────────────────────────────────────────────
 const STORAGE_KEY = "peteora_cart_v2";
 const CHECKOUT_KEY = "peteora_checkout_url";
+// Legacy key used by older code — migrated on first load
+const LEGACY_KEY = "peteora_flat_cart";
 
-// ─── ID Utilities ────────────────────────────────────────────────────────────
+// ─── ID Utilities ─────────────────────────────────────────────────────────────
 
 export function toCleanId(id) {
   if (!id) return "";
@@ -28,7 +30,7 @@ export function isMatch(item, targetId) {
   );
 }
 
-// ─── Normalizer ──────────────────────────────────────────────────────────────
+// ─── Normalizer ───────────────────────────────────────────────────────────────
 
 export function normalizeCartLine(edge) {
   const node = edge?.node || edge;
@@ -64,14 +66,30 @@ export function normalizeCartLine(edge) {
 
 // ─── localStorage helpers ─────────────────────────────────────────────────────
 
+/** Read items from storage, migrating legacy key on first call */
 function readStorage() {
   try {
     if (typeof window === "undefined") return { items: [], checkoutUrl: null };
+
+    // [C1-FIX] Migrate from legacy key if new key doesn't exist yet
     const raw = localStorage.getItem(STORAGE_KEY);
-    const url = localStorage.getItem(CHECKOUT_KEY);
+    if (!raw) {
+      const legacy = localStorage.getItem(LEGACY_KEY);
+      if (legacy) {
+        // Migrate: copy to new key and remove old one
+        localStorage.setItem(STORAGE_KEY, legacy);
+        localStorage.removeItem(LEGACY_KEY);
+        const parsed = JSON.parse(legacy);
+        return {
+          items: Array.isArray(parsed) ? parsed : [],
+          checkoutUrl: localStorage.getItem(CHECKOUT_KEY) || null,
+        };
+      }
+    }
+
     return {
       items: raw ? JSON.parse(raw) : [],
-      checkoutUrl: url || null,
+      checkoutUrl: localStorage.getItem(CHECKOUT_KEY) || null,
     };
   } catch {
     return { items: [], checkoutUrl: null };
@@ -91,45 +109,39 @@ function writeStorage(items, checkoutUrl = null) {
 // ─── Provider ─────────────────────────────────────────────────────────────────
 
 export function CartProvider({ children }) {
-  // Start with localStorage data synchronously to avoid flash of empty cart
+  // Synchronous init from localStorage — no flash of empty cart on /cart
   const [cartItems, setCartItems] = useState(() => {
     if (typeof window === "undefined") return [];
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
+    return readStorage().items;
   });
 
   const [checkoutUrl, setCheckoutUrl] = useState(() => {
     if (typeof window === "undefined") return null;
-    try {
-      return localStorage.getItem(CHECKOUT_KEY) || null;
-    } catch {
-      return null;
-    }
+    return readStorage().checkoutUrl;
   });
 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const debounceTimers = useRef({});
+  // Track the last known good cart ID to detect expiry
+  const lastCartIdRef = useRef(null);
 
-  // ── Commit items to both state and localStorage atomically ─────────────────
+  // ── Commit items to state + localStorage atomically ────────────────────────
   const commit = useCallback((items, url = null) => {
     setCartItems(items);
     writeStorage(items, url);
-    if (url) setCheckoutUrl(url);
+    if (url !== null) setCheckoutUrl(url);
   }, []);
 
-  // ── Shopify server cart → flat item list ───────────────────────────────────
+  // ── Convert Shopify GraphQL cart → flat array ──────────────────────────────
   const processServerCart = useCallback((cartData) => {
     if (!cartData?.lines?.edges) return [];
-    // No accumulation – each Shopify edge = one unique line
+    // Each Shopify edge = one unique line; do NOT accumulate quantities
     return cartData.lines.edges.map(normalizeCartLine).filter(Boolean);
   }, []);
 
-  // ── Background sync with Shopify on mount (reconcile) ─────────────────────
+  // ── [C5-FIX] Background sync with Shopify on mount ────────────────────────
+  // Merges server state with local optimistic items intelligently
   useEffect(() => {
     let mounted = true;
     const sync = async () => {
@@ -137,13 +149,31 @@ export function CartProvider({ children }) {
       try {
         const res = await fetch("/api/cart");
         const data = await res.json();
-        if (mounted && data?.cart) {
+
+        if (!mounted) return;
+
+        if (data?.cart?.id) {
+          lastCartIdRef.current = data.cart.id;
           const fresh = processServerCart(data.cart);
-          // Only replace if server has items, otherwise keep localStorage items
-          if (fresh.length > 0) {
+
+          // Read current local items to check for pending temp items
+          const local = readStorage().items;
+          const hasPending = local.some((i) => i.id?.startsWith("temp-"));
+
+          if (fresh.length > 0 && !hasPending) {
+            // Server has items and nothing pending locally → use server state
             commit(fresh, data.cart.checkoutUrl || null);
+          } else if (fresh.length > 0 && hasPending) {
+            // Server has items but we also have pending temp items
+            // Keep local state — pending sync effect below will reconcile
+          } else if (fresh.length === 0 && !hasPending) {
+            // Both empty — clear to keep in sync
+            commit([], data.cart.checkoutUrl || null);
           }
+          // If server is empty but we have pending items, do nothing here —
+          // the pending sync effect below will POST them
         }
+        // data.cart === null means no cart cookie → leave local items alone
       } catch (err) {
         console.error("Cart initial sync error:", err);
       } finally {
@@ -154,118 +184,143 @@ export function CartProvider({ children }) {
     return () => { mounted = false; };
   }, []);
 
-  // ── 1. ADD TO CART ────────────────────────────────────────────────────────
-  const addToCart = useCallback(async (product, variant, quantity = 1, redirect = true) => {
-    const cleanVariantId = toCleanId(variant?.id);
-    const fullMerchId = variant?.id?.toString().includes("gid://")
-      ? variant.id
-      : `gid://shopify/ProductVariant/${cleanVariantId}`;
+  // ── [C2-FIX] Pending temp-item sync on /cart page arrival ─────────────────
+  // Uses fetch with keepalive:true so the request survives page navigation
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.location.pathname !== "/cart") return;
 
-    const price = parseFloat(variant?.price || "0");
-    const compareAt = variant?.compare_at_price ? parseFloat(variant.compare_at_price) : null;
-    const vTitle = variant?.title && variant.title !== "Default Title" ? variant.title : "";
+    const pending = readStorage().items.filter((i) => i.id?.startsWith("temp-"));
+    if (pending.length === 0) return;
 
-    // 1. Build optimistic item
-    const newItem = {
-      id: `temp-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      variantId: cleanVariantId,
-      merchandiseId: fullMerchId,
-      title: product?.title || "Pet Product",
-      variantTitle: vTitle,
-      variant: {
-        id: fullMerchId,
-        title: variant?.title || "Default Title",
-        price,
-        compare_at_price: compareAt,
-      },
-      handle: product?.handle || "",
-      image: variant?.image?.url || variant?.image || product?.images?.[0] || "/peteora.png",
-      price,
-      compareAtPrice: compareAt,
-      quantity,
+    let mounted = true;
+
+    const syncPending = async () => {
+      setIsSyncing(true);
+      // Build all lines in one POST call instead of one per item
+      const lines = pending.map((item) => ({
+        merchandiseId: item.merchandiseId,
+        quantity: item.quantity,
+      }));
+
+      try {
+        const res = await fetch("/api/cart", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ lines }),
+          keepalive: true, // survives page unload
+        });
+        const data = await res.json();
+        if (mounted && data?.cart) {
+          const fresh = processServerCart(data.cart);
+          if (fresh.length > 0) {
+            commit(fresh, data.cart.checkoutUrl || null);
+          }
+        }
+      } catch (err) {
+        console.error("Pending cart sync error:", err);
+      } finally {
+        if (mounted) setIsSyncing(false);
+      }
     };
 
-    // 2. Compute next cart state
-    const current = readStorage().items;
-    const existingIdx = current.findIndex((item) => isMatch(item, cleanVariantId));
-    let nextItems;
-    if (existingIdx !== -1) {
-      nextItems = current.map((item, i) =>
-        i === existingIdx ? { ...item, quantity: item.quantity + quantity } : item
-      );
-    } else {
-      nextItems = [...current, newItem];
-    }
+    syncPending();
+    return () => { mounted = false; };
+  }, []); // Only on initial mount of /cart
 
-    // 3. Write to localStorage AND state BEFORE navigating
-    commit(nextItems);
+  // ── 1. ADD TO CART ────────────────────────────────────────────────────────
+  const addToCart = useCallback(
+    async (product, variant, quantity = 1, redirect = true) => {
+      const cleanVariantId = toCleanId(variant?.id);
+      const fullMerchId = variant?.id?.toString().includes("gid://")
+        ? variant.id
+        : `gid://shopify/ProductVariant/${cleanVariantId}`;
 
-    toast.success(`${product?.title || "Product"} added to cart`);
-
-    // 4. Navigate (localStorage is already written, cart page will read it)
-    if (redirect && typeof window !== "undefined" && window.location.pathname !== "/cart") {
-      window.location.href = "/cart";
-      return; // Stop here – page navigates away, no need to await API
-    }
-
-    // 5. Background Shopify POST (only runs if not redirecting)
-    setIsSyncing(true);
-    try {
-      const res = await fetch("/api/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lines: [{ merchandiseId: fullMerchId, quantity }] }),
-      });
-      const data = await res.json();
-      if (data?.cart) {
-        const fresh = processServerCart(data.cart);
-        commit(fresh, data.cart.checkoutUrl || null);
-      }
-    } catch (err) {
-      console.error("Add to cart API error:", err);
-    } finally {
-      setIsSyncing(false);
-    }
-  }, [commit, processServerCart]);
-
-  // ── 2. UPDATE QUANTITY ────────────────────────────────────────────────────
-  const updateQuantity = useCallback(async (targetId, newQuantity) => {
-    if (newQuantity <= 0) return removeFromCart(targetId);
-
-    // Optimistic update to state + localStorage
-    setCartItems((prev) => {
-      const next = prev.map((item) =>
-        isMatch(item, targetId) ? { ...item, quantity: newQuantity } : item
-      );
-      writeStorage(next);
-      return next;
-    });
-
-    // Debounced API call
-    const key = toCleanId(targetId);
-    clearTimeout(debounceTimers.current[key]);
-    debounceTimers.current[key] = setTimeout(async () => {
-      // Read fresh state to get correct line id
-      const current = readStorage().items;
-      const targetItem = current.find((item) => isMatch(item, targetId));
-      if (!targetItem) return;
-
-      const lineId = targetItem.id?.startsWith("gid://shopify/CartLine")
-        ? targetItem.id
+      const price = parseFloat(variant?.price || "0");
+      const compareAt = variant?.compare_at_price
+        ? parseFloat(variant.compare_at_price)
         : null;
+      const vTitle =
+        variant?.title && variant.title !== "Default Title" ? variant.title : "";
 
-      if (!lineId) {
-        // temp id still – POST to Shopify instead of update
-        // (will be resolved on next background sync)
+      // Build the optimistic item
+      const tempId = `temp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const newItem = {
+        id: tempId,
+        variantId: cleanVariantId,
+        merchandiseId: fullMerchId,
+        title: product?.title || "Pet Product",
+        variantTitle: vTitle,
+        variant: {
+          id: fullMerchId,
+          title: variant?.title || "Default Title",
+          price,
+          compare_at_price: compareAt,
+        },
+        handle: product?.handle || "",
+        image:
+          variant?.image?.url ||
+          variant?.image ||
+          product?.images?.[0] ||
+          "/peteora.png",
+        price,
+        compareAtPrice: compareAt,
+        quantity,
+      };
+
+      // Compute next state from localStorage (not React state) to avoid stale closure
+      const current = readStorage().items;
+      const existingIdx = current.findIndex((item) => isMatch(item, cleanVariantId));
+      const nextItems =
+        existingIdx !== -1
+          ? current.map((item, i) =>
+              i === existingIdx
+                ? { ...item, quantity: item.quantity + quantity }
+                : item
+            )
+          : [...current, newItem];
+
+      // [C2-FIX] Write to localStorage AND React state BEFORE any async work
+      commit(nextItems);
+      toast.success(`${product?.title || "Product"} added to cart`);
+
+      if (redirect && typeof window !== "undefined" && window.location.pathname !== "/cart") {
+        // [C2-FIX] Fire POST with keepalive:true BEFORE navigating
+        // keepalive ensures the browser completes this request even after page unload
+        fetch("/api/cart", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lines: [{ merchandiseId: fullMerchId, quantity }],
+          }),
+          keepalive: true, // ← critical: survives page navigation
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            // Response arrives on the new /cart page — update items with real IDs
+            if (data?.cart) {
+              const fresh = processServerCart(data.cart);
+              if (fresh.length > 0) {
+                commit(fresh, data.cart.checkoutUrl || null);
+              }
+            }
+          })
+          .catch((err) => console.error("Pre-navigate cart POST error:", err));
+
+        // Navigate immediately — keepalive fetch continues in background
+        window.location.href = "/cart";
         return;
       }
 
+      // Not redirecting — wait for the POST response normally
       setIsSyncing(true);
       try {
         const res = await fetch("/api/cart", {
-          method: "PUT",
+          method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ lines: [{ id: lineId, quantity: newQuantity }] }),
+          body: JSON.stringify({
+            lines: [{ merchandiseId: fullMerchId, quantity }],
+          }),
         });
         const data = await res.json();
         if (data?.cart) {
@@ -273,117 +328,178 @@ export function CartProvider({ children }) {
           commit(fresh, data.cart.checkoutUrl || null);
         }
       } catch (err) {
-        console.error("Update quantity API error:", err);
+        console.error("Add to cart API error:", err);
       } finally {
         setIsSyncing(false);
       }
-    }, 400);
-  }, [commit, processServerCart]);
+    },
+    [commit, processServerCart]
+  );
+
+  // ── 2. UPDATE QUANTITY ────────────────────────────────────────────────────
+  const updateQuantity = useCallback(
+    async (targetId, newQuantity) => {
+      if (newQuantity <= 0) return removeFromCart(targetId);
+
+      // Optimistic update — immediately reflect in UI and localStorage
+      setCartItems((prev) => {
+        const next = prev.map((item) =>
+          isMatch(item, targetId) ? { ...item, quantity: newQuantity } : item
+        );
+        writeStorage(next);
+        return next;
+      });
+
+      // Debounce the API call (400ms)
+      const key = targetId.toString(); // use full ID as key, not just numeric tail [S3-FIX]
+      clearTimeout(debounceTimers.current[key]);
+      debounceTimers.current[key] = setTimeout(async () => {
+        const current = readStorage().items;
+        const targetItem = current.find((item) => isMatch(item, targetId));
+        if (!targetItem) return;
+
+        const isRealLine = targetItem.id?.startsWith("gid://shopify/CartLine");
+
+        if (isRealLine) {
+          // Normal path: update existing Shopify line
+          setIsSyncing(true);
+          try {
+            const res = await fetch("/api/cart", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                lines: [{ id: targetItem.id, quantity: newQuantity }],
+              }),
+            });
+            const data = await res.json();
+            if (data?.cart) {
+              const fresh = processServerCart(data.cart);
+              commit(fresh, data.cart.checkoutUrl || null);
+            }
+          } catch (err) {
+            console.error("Update quantity API error:", err);
+          } finally {
+            setIsSyncing(false);
+          }
+        } else {
+          // [C4-FIX] Item still has temp ID → POST to create it on Shopify instead of silently skipping
+          setIsSyncing(true);
+          try {
+            const res = await fetch("/api/cart", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                lines: [
+                  {
+                    merchandiseId: targetItem.merchandiseId,
+                    quantity: newQuantity, // use the new desired quantity
+                  },
+                ],
+              }),
+            });
+            const data = await res.json();
+            if (data?.cart) {
+              const fresh = processServerCart(data.cart);
+              commit(fresh, data.cart.checkoutUrl || null);
+            }
+          } catch (err) {
+            console.error("Temp-item update via POST error:", err);
+          } finally {
+            setIsSyncing(false);
+          }
+        }
+      }, 400);
+    },
+    [commit, processServerCart]
+  );
 
   // ── 3. REMOVE FROM CART ───────────────────────────────────────────────────
-  const removeFromCart = useCallback(async (targetId) => {
-    const current = readStorage().items;
-    const removedItem = current.find((item) => isMatch(item, targetId));
-    const next = current.filter((item) => !isMatch(item, targetId));
-
-    commit(next);
-
-    if (removedItem) {
-      toast(
-        (t) => (
-          <div className="d-flex align-items-center justify-content-between gap-3">
-            <span className="small fw-semibold">Item removed from cart</span>
-            <button
-              onClick={() => {
-                toast.dismiss(t.id);
-                const restored = [...readStorage().items, removedItem];
-                commit(restored);
-              }}
-              className="btn btn-sm btn-dark rounded-pill py-1 px-3 fw-bold text-warning"
-              style={{ fontSize: "12px" }}
-            >
-              Undo
-            </button>
-          </div>
-        ),
-        { duration: 4000 }
-      );
-    }
-
-    const lineId = removedItem?.id?.startsWith("gid://shopify/CartLine")
-      ? removedItem.id
-      : removedItem?.variantId;
-
-    if (!lineId) return;
-
-    setIsSyncing(true);
-    try {
-      const res = await fetch("/api/cart", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lineIds: [lineId] }),
+  const removeFromCart = useCallback(
+    async (targetId) => {
+      // [C3-FIX] Read directly from current React state (via setCartItems functional updater)
+      // to avoid stale-closure or localStorage timing issues
+      let removedItem = null;
+      setCartItems((prev) => {
+        removedItem = prev.find((item) => isMatch(item, targetId)) || null;
+        const next = prev.filter((item) => !isMatch(item, targetId));
+        writeStorage(next);
+        return next;
       });
-      const data = await res.json();
-      if (data?.cart) {
-        const fresh = processServerCart(data.cart);
-        commit(fresh, data.cart.checkoutUrl || null);
+
+      // Show undo toast — capture removedItem from closure
+      // Small timeout ensures setCartItems functional updater has resolved removedItem
+      setTimeout(() => {
+        if (!removedItem) return;
+        const capturedItem = removedItem;
+        toast(
+          (t) => (
+            <div className="d-flex align-items-center justify-content-between gap-3">
+              <span className="small fw-semibold">Item removed from cart</span>
+              <button
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  setCartItems((prev) => {
+                    const restored = [...prev, capturedItem];
+                    writeStorage(restored);
+                    return restored;
+                  });
+                }}
+                className="btn btn-sm btn-dark rounded-pill py-1 px-3 fw-bold text-warning"
+                style={{ fontSize: "12px" }}
+              >
+                Undo
+              </button>
+            </div>
+          ),
+          { duration: 4000 }
+        );
+      }, 0);
+
+      // Background Shopify DELETE — read from localStorage to get clean item
+      const current = readStorage().items; // after writeStorage above, removed item is already gone
+      // We need removedItem's lineId — captured above synchronously
+      // Wait one microtask for the setCartItems callback to have set removedItem
+      await Promise.resolve();
+      if (!removedItem) return;
+
+      const lineId = removedItem.id?.startsWith("gid://shopify/CartLine")
+        ? removedItem.id
+        : removedItem.variantId
+        ? `gid://shopify/ProductVariant/${removedItem.variantId}`
+        : null;
+
+      if (!lineId) return;
+
+      setIsSyncing(true);
+      try {
+        const res = await fetch("/api/cart", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ lineIds: [lineId] }),
+        });
+        const data = await res.json();
+        if (data?.cart) {
+          const fresh = processServerCart(data.cart);
+          commit(fresh, data.cart.checkoutUrl || null);
+        }
+      } catch (err) {
+        console.error("Remove from cart error:", err);
+      } finally {
+        setIsSyncing(false);
       }
-    } catch (err) {
-      console.error("Remove from cart error:", err);
-    } finally {
-      setIsSyncing(false);
-    }
-  }, [commit, processServerCart]);
+    },
+    [commit, processServerCart]
+  );
 
   // ── 4. CLEAR ──────────────────────────────────────────────────────────────
   const clearCart = useCallback(() => {
-    commit([]);
+    setCartItems([]);
     try {
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(CHECKOUT_KEY);
+      localStorage.removeItem(LEGACY_KEY);
     } catch {}
-  }, [commit]);
-
-  // ── POST add-to-cart Shopify sync (runs on /cart page load) ───────────────
-  // When user lands on /cart after redirect, the temp item is in localStorage.
-  // We now fire the Shopify POST to register the item and get real line IDs.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (window.location.pathname !== "/cart") return;
-
-    const pendingItems = cartItems.filter((item) => item.id?.startsWith("temp-"));
-    if (pendingItems.length === 0) return;
-
-    let mounted = true;
-    const syncPending = async () => {
-      setIsSyncing(true);
-      for (const item of pendingItems) {
-        try {
-          const res = await fetch("/api/cart", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              lines: [{ merchandiseId: item.merchandiseId, quantity: item.quantity }],
-            }),
-          });
-          const data = await res.json();
-          if (mounted && data?.cart) {
-            const fresh = processServerCart(data.cart);
-            if (fresh.length > 0) {
-              commit(fresh, data.cart.checkoutUrl || null);
-              break; // All items synced via one cart response
-            }
-          }
-        } catch (err) {
-          console.error("Pending item sync error:", err);
-        }
-      }
-      if (mounted) setIsSyncing(false);
-    };
-
-    syncPending();
-    return () => { mounted = false; };
-  }, []); // Only on initial mount of /cart
+  }, []);
 
   // ── Derived totals ────────────────────────────────────────────────────────
   const cartCount = cartItems.reduce((s, i) => s + (i.quantity || 0), 0);
