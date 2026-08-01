@@ -37,6 +37,16 @@ const nextConfig = {
   async redirects() {
     return [
       /**
+       * [Cart Overhaul] /cart no longer exists — CartSheet replaces it.
+       * Permanent redirect so external links / email campaigns never 404.
+       * permanent: true → 308 (search engines transfer link equity).
+       */
+      {
+        source: '/cart',
+        destination: '/',
+        permanent: true,
+      },
+      /**
        * Shopify Customer Account API redirects users to /{shopId}/account/...
        * after login through the hosted portal. This catches that pattern and
        * redirects to the correct /account/... path on our headless store.
