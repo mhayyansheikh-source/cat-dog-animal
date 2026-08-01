@@ -1,7 +1,7 @@
 import React from "react";
 import { getShopifyProducts, getShopifyCollectionByHandle } from "@/utils/shopify";
 import ProductCard from "@/components/ProductCard";
-import CartDrawer from "@/components/CartDrawer";
+
 import CollectionFilters from "@/components/CollectionFilters";
 import MobileFilterDrawer from "@/components/MobileFilterDrawer";
 import Link from "next/link";
@@ -149,7 +149,7 @@ export default async function CollectionPage({ params, searchParams }) {
           </div>
         </div>
       </div>
-      <CartDrawer />
+
     </div>
   );
 }

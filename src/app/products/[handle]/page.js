@@ -1,6 +1,6 @@
 import { getShopifyProductByHandle, getShopifyProducts, getShopifyProductRecommendations } from "@/utils/shopify";
 import ProductDetailsClient from "@/components/ProductDetailsClient";
-import CartDrawer from "@/components/CartDrawer";
+
 import ProductCard from "@/components/ProductCard";
 import { notFound } from "next/navigation";
 
@@ -154,8 +154,7 @@ export default async function ProductPage({ params }) {
         </div>
       )}
 
-      {/* Dynamic slide-out Cart overlay */}
-      <CartDrawer />
+
     </div>
   );
 }

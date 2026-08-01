@@ -1,7 +1,7 @@
 import React from "react";
 import { getShopifyProducts } from "@/utils/shopify";
 import ProductCard from "@/components/ProductCard";
-import CartDrawer from "@/components/CartDrawer";
+
 import Link from "next/link";
 
 export const runtime = "edge";
@@ -55,7 +55,7 @@ export default async function AllProductsPage() {
           ))}
         </div>
       </div>
-      <CartDrawer />
+
     </div>
   );
 }
