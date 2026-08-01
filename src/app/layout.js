@@ -9,7 +9,7 @@ import ToastProvider from "@/components/ToastProvider";
 import { getShopifyMenu, getShopInfo, getShopPolicies, getShopifyCollectionsWithProducts, getShopifyProducts } from "@/utils/shopify";
 
 const Footer = dynamic(() => import("@/components/Footer"), { ssr: true });
-const CartDrawer = dynamic(() => import("@/components/CartDrawer"));
+const CartSheet = dynamic(() => import("@/components/CartSheet"));
 import ConsentBanner from "@/components/ConsentBanner";
 
 const nunito = Nunito({
@@ -118,7 +118,7 @@ export default async function RootLayout({ children }) {
             </PageTransition>
           </main>
           <Footer menu={footerMenu} mainMenu={mainMenu} shop={shop} policies={policies} collections={collectionsData} />
-          <CartDrawer />
+          <CartSheet />
           <ConsentBanner />
         </CartProvider>
       </body>
